@@ -6,6 +6,9 @@ import Tasks from "./Tasks";
 import Clients from "./Clients";
 import Reports from "./Reports";
 import Settings from "./Settings";
+import Transactions from "./Transactions.tsx";
+import Notes from "./Notes.tsx";
+import StoragePage from "./Storage.tsx";
 
 const AdminPanel = () => {
     const logout = () => {
@@ -24,6 +27,9 @@ const AdminPanel = () => {
                         <li><Link to="projects">Projects</Link></li>
                         <li><Link to="tasks">Tasks</Link></li>
                         <li><Link to="clients">Clients</Link></li>
+                        <li><Link to="/storage">Storage</Link></li>
+                        <li><Link to="/transactions">Transactions</Link></li>
+                        <li><Link to="/notes">Notes</Link></li>
                         <li><Link to="reports">Reports</Link></li>
                         <li><Link to="settings">Settings</Link></li>
                         <li><a onClick={logout}>Logout</a></li>
@@ -35,6 +41,9 @@ const AdminPanel = () => {
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/tasks" element={<Tasks />} />
                     <Route path="/clients" element={<Clients />} />
+                    <Route path="/storage" element={<StoragePage />} />
+                    <Route path="/transactions" element={<Transactions />} />
+                    <Route path="/notes" element={<Notes />} />
                     <Route path="/reports" element={<Reports />} />
                     <Route path="/settings" element={<Settings />} />
                 </Routes>

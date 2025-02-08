@@ -10,7 +10,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\StorageController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
@@ -67,6 +69,10 @@ Route::middleware([App\Http\Middleware\AdminMiddleware::class])->group(function 
     // Settings
     Route::get('/api/settings', [SettingsController::class, 'index']);
     Route::put('/api/settings', [SettingsController::class, 'update']);
+
+    Route::apiResource('storage', StorageController::class);
+    Route::apiResource('transactions', TransactionController::class);
+    Route::apiResource('notes', NoteController::class);
 });
 
 
