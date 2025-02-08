@@ -6,8 +6,7 @@ interface AppProps {
 
 export default function App({ children }: AppProps) {
     return (
-        <div className="min-h-screen bg-gray-100">
-            {/* Global header, sidebar, or other layout components can go here */}
+        <div className="min-h-screen">
             {children}
         </div>
     );

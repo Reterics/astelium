@@ -192,3 +192,7 @@ php artisan config:clear
 php artisan config:clear
 php artisan cache:clear
 ```
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
