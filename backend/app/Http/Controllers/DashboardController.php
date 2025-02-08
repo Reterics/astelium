@@ -10,7 +10,7 @@ class DashboardController extends Controller
     /**
      * Show the application dashboard.
      */
-    public function index(Request $request)
+    public function index(Request $request): \Inertia\Response
     {
 
         $user = $request->user();
