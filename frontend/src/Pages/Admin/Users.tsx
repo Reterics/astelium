@@ -1,45 +1,102 @@
-import React, { useState } from 'react';
-import { Inertia } from '@inertiajs/inertia';
+import React, { useState, useEffect } from 'react';
 
 interface User {
     id: number;
     name: string;
     email: string;
+    is_admin: boolean;
 }
 
-interface UsersProps {
-    users: User[];
-}
-
-const Users: React.FC<UsersProps> = ({ users }) => {
+const Users: React.FC = () => {
+    const [users, setUsers] = useState<User[]>([]);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
-        password_confirmation: ''
+        is_admin: false,
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [loading, setLoading] = useState<boolean>(false);
+
+    // Fetch users when the component mounts.
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch('/api/users');
+                if (!response.ok) {
+                    console.error('Failed to fetch users:', response.statusText);
+                    return;
+                }
+                const data = await response.json();
+                setUsers(data);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+
+        fetchUsers();
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: value,
+            [name]: type === 'checkbox' ? checked : value,
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        Inertia.post('/admin/users', formData, {
-            onError: (err) => setErrors(err as Record<string, string>),
-        });
+        setErrors({});
+        setLoading(true);
+
+        try {
+            const response = await fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // If your API uses CSRF tokens, make sure to send them too.
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                // On successful creation, get the new user from the response.
+                const newUser = await response.json();
+                setUsers(prev => [...prev, newUser]);
+                // Reset the form.
+                setFormData({ name: '', email: '', password: '', is_admin: false });
+            } else {
+                // Parse and display validation errors if available.
+                const errorData = await response.json();
+                setErrors(errorData.errors || {});
+            }
+        } catch (error) {
+            console.error('Error creating user:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <div>
-            <h1>Admin - Users</h1>
+            <h2>User Management</h2>
 
-            <h2>Register New User</h2>
+            <h3>User List</h3>
+            {users.length === 0 ? (
+                <p>No users found.</p>
+            ) : (
+                <ul>
+                    {users.map(user => (
+                        <li key={user.id}>
+                            {user.name} ({user.email}) {user.is_admin && '[Admin]'}
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            <h3>Add New User</h3>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Name:</label>
@@ -72,24 +129,20 @@ const Users: React.FC<UsersProps> = ({ users }) => {
                     {errors.password && <div style={{ color: 'red' }}>{errors.password}</div>}
                 </div>
                 <div>
-                    <label>Confirm Password:</label>
-                    <input
-                        type="password"
-                        name="password_confirmation"
-                        value={formData.password_confirmation}
-                        onChange={handleChange}
-                    />
-                    {errors.password_confirmation && <div style={{ color: 'red' }}>{errors.password_confirmation}</div>}
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="is_admin"
+                            checked={formData.is_admin}
+                            onChange={handleChange}
+                        />
+                        Admin?
+                    </label>
                 </div>
-                <button type="submit">Register</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Creating...' : 'Create User'}
+                </button>
             </form>
-
-            <h2>Existing Users</h2>
-            <ul>
-                {users.map(user => (
-                    <li key={user.id}>{user.name} ({user.email})</li>
-                ))}
-            </ul>
         </div>
     );
 };

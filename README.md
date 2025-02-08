@@ -5,19 +5,20 @@ Astelium is a unified Task & Project Management and CRM system built as a monore
 ## Overview
 
 - **Backend:** Laravel with Fortify (for authentication/MFA), Inertia.js, and MySQL.
-- **Frontend:** React with TypeScript (TSX), Vite, and TailwindCSS.
+- **Frontend:** React with TypeScript, Vite, and TailwindCSS.
 - **Containerization:** Docker and Docker Compose for development and deployment.
 
 ## Repository Structure
 
-- monorepo/
-- ├── backend/ _# Laravel application_
-- ├── frontend/ _# React SPA with Vite and TailwindCSS_
-- ├── docker/ _# Docker configuration files (Dockerfile.backend, Dockerfile.frontend)_ 
-- ├── docker-compose.yml _# Docker Compose configuration file_ 
-- ├── docs/ _# Additional documentation_ 
-- └── README.md _# Project overview and instructions_
-
+```
+monorepo/
+├── backend/            # Laravel application
+├── frontend/           # React SPA with Vite and TailwindCSS
+├── docker/             # Docker configuration files (Dockerfile.backend, Dockerfile.frontend)
+├── docker-compose.yml  # Docker Compose configuration file
+├── docs/               # Additional documentation
+└── README.md           # Project overview and instructions
+```
 
 ## Setup Instructions
 
@@ -28,68 +29,163 @@ Astelium is a unified Task & Project Management and CRM system built as a monore
 - [Composer](https://getcomposer.org/)
 - [Node.js & npm](https://nodejs.org/)
 
-### Environment Configuration
+### 1. Clone the Repository
 
-1. **Backend Environment Variables:**
+```bash
+git clone https://github.com/yourusername/your-repo.git
+cd your-repo
+```
 
-   Copy the provided `.env.example` in the `backend/` folder to create your local `.env` file. Ensure the database credentials match the ones defined in the `docker-compose.yml`:
+### 2. Environment Configuration
 
-   ```dotenv
-   DB_CONNECTION=mysql
-   DB_HOST=mysql
-   DB_PORT=3306
-   DB_DATABASE=laravel_db
-   DB_USERNAME=laravel_user
-   DB_PASSWORD=laravel_pass
-    ```
+#### Backend Environment Variables
 
-1. **Frontend Environment Variables:**
+Copy the provided `.env.example` file in the `backend/` folder to create your local `.env` file:
 
-   In the frontend/ folder, create a .env file if needed. Typically, you might include variables such as the API base URL or other configuration settings. For example:
-   ```dotenv
-   VITE_API_BASE_URL=http://localhost:9000
-    ```
+```bash
+cp backend/.env.example backend/.env
+```
+
+Ensure the database credentials match those defined in `docker-compose.yml`:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel_db
+DB_USERNAME=laravel_user
+DB_PASSWORD=laravel_pass
+```
+
+#### Frontend Environment Variables
+
+In the `frontend/` folder, create a `.env` file if needed. For example:
+
+```dotenv
+VITE_DEV_SERVER_URL=http://localhost:5173/
+```
+
+### 3. Install PHP Dependencies
+
+If you're using Docker Compose, run:
+
+```bash
+docker-compose run --rm app composer install
+```
+
+Otherwise, run:
+
+```bash
+composer install
+```
+
+### 4. Install Frontend Dependencies
+
+If using Docker Compose, run:
+
+```bash
+docker-compose run --rm app npm install
+```
+
+Or locally (from the `frontend/` folder):
+
+```bash
+npm install
+```
+
+### 5. Build Frontend Assets
+
+For development:
+
+```bash
+npm run dev
+```
+
+For production:
+
+```bash
+npm run build
+```
 
 ### Running the Application
 
-1. **Build and Start Containers:**
+#### Using Docker Compose
 
-   From the repository root, run:
+Start the application and its services with:
 
-   ```bash
-   docker-compose up --build
-   ```
+```bash
+docker-compose up -d
+```
 
-This command builds and starts the backend, MySQL, and (if configured) frontend containers.
+This will start your Laravel application, MySQL, and any other services defined in `docker-compose.yml`.
 
-2. **Access the Application:**
-   - **Laravel Backend**: Accessible through PHP-FPM (usually behind an Nginx proxy; adjust your proxy settings as needed).
-   - **React/Vite Frontend**: Accessible at http://localhost:3000 if the frontend container is used.
+#### Without Docker Compose
 
-3. **Database Migrations:**
+Ensure your MySQL database is running and your `.env` file is configured correctly, then start the Laravel development server (from the `backend/` folder):
 
-   Once the containers are running, execute Laravel migrations from within the backend container:
+```bash
+php artisan serve
+```
 
-   ```bash
-   docker-compose exec backend php artisan migrate
-   ```
+### Database Setup
 
+#### 1. Run Migrations
 
-### Running the Application
+Set up the database schema by running:
 
- - **Backend Tests:**
+```bash
+php artisan migrate
+```
 
-   Run within the backend container:
+If using Docker Compose:
 
-   ```bash
-   docker-compose exec backend php artisan test
-   ```
-   
- - **Frontend Tests:**
+```bash
+docker-compose run --rm app php artisan migrate
+```
 
-   Run inside the frontend/ folder:
+#### 2. Seed the Database
 
-   ```bash
-   npm run test
-   ```
+Seed the database with default data, including a default admin user:
 
+```bash
+php artisan db:seed
+```
+
+Or with Docker Compose:
+
+```bash
+docker-compose run --rm app php artisan db:seed
+```
+
+### Default User Data
+
+The seeder creates a default admin user with the following credentials:
+
+- **Email:** admin@example.com
+- **Password:** securepassword
+
+Adjust these values in `database/seeders/AdminUserSeeder.php` if needed.
+
+### Additional Notes
+
+- **Docker Networking:** Ensure that `DB_HOST` in your `.env` is set to the correct service name (e.g., `mysql`) so that Laravel can connect to the MySQL container.
+- **Clearing Configuration Cache:** If you make changes to your `.env` file, clear Laravel's configuration cache:
+
+```bash
+php artisan config:clear
+```
+
+- **Frontend Development:** If you experience issues with the frontend, verify that the Vite development server is running.
+
+### Troubleshooting
+
+- **Database Connection Issues:**  
+  Double-check your `.env` settings. The `DB_HOST` should be the name of the MySQL service (e.g., `mysql`) when using Docker Compose.
+
+- **Cache Problems:**  
+  Clear caches using the following commands:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+```

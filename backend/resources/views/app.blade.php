@@ -10,10 +10,5 @@
 <body>
 @inertia
 
-<!-- Debug output -->
-<pre>
-APP_ENV: {{ config('app.env') }}
-VITE_DEV_SERVER_URL: {{ config('vite.dev_server_url') ?? env('VITE_DEV_SERVER_URL') }}
-  </pre>
 </body>
 </html>

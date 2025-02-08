@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 
-class DashboardController extends Controller
+class AdminController extends Controller
 {
     public function index(): \Inertia\Response
     {
-        return Inertia::render('Admin/Dashboard');
+        return Inertia::render('Admin/Admin');
     }
 }
