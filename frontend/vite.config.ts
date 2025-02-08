@@ -25,8 +25,7 @@ export default defineConfig({
   },
   build: {
     manifest: true,
-    // Adjust the output directory relative to your frontend folder
-    outDir: `${backendPath}backend/public/build`,
+    outDir: `${backendPath}/public/build`,
     rollupOptions: {
       input: 'src/main.tsx',
     },

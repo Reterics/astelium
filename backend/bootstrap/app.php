@@ -10,9 +10,9 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
-        //
+    ->withMiddleware(function ($middleware) {
+        // Global middleware can be added here.
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function ($exceptions) {
         //
     })->create();
