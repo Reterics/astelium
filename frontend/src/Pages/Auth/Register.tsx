@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Inertia } from '@inertiajs/inertia';
+import {router} from "@inertiajs/react";
 
 const Register: React.FC = () => {
     const [data, setData] = useState({
@@ -20,7 +20,7 @@ const Register: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        Inertia.post('/register', data, {
+        router.post('/register', data, {
             onError: (err) => setErrors(err as Record<string, string>),
         });
     };
