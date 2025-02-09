@@ -2,8 +2,9 @@
 
 [![build](https://github.com/Reterics/astelium/actions/workflows/build.yml/badge.svg)](https://github.com/Reterics/astelium/actions/workflows/build.yml)
 
-
 Astelium is a unified Task & Project Management and CRM system built as a monorepo with a Laravel backend and a React/Vite frontend using Inertia.js and TailwindCSS. The project is containerized with Docker and Docker Compose.
+
+![table.png](docs/table.png)
 
 ## Overview
 

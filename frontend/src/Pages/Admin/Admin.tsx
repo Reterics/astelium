@@ -10,27 +10,36 @@ import Transactions from './Transactions.tsx';
 import Notes from './Notes.tsx';
 import StoragePage from './Storage.tsx';
 import Sidebar from '../../components/Sidebar.tsx';
-import { FiHome, FiUsers, FiFolder, FiList, FiUser, FiDatabase, FiCreditCard, FiFileText, FiSettings } from "react-icons/fi";
-import Header from "../../components/Header.tsx";
-import {useState} from "react";
-import MainContent from "./Example.tsx";
+import {
+  FiHome,
+  FiUsers,
+  FiFolder,
+  FiList,
+  FiUser,
+  FiDatabase,
+  FiCreditCard,
+  FiFileText,
+  FiSettings,
+} from 'react-icons/fi';
+import Header from '../../components/Header.tsx';
+import {useState} from 'react';
+import MainContent from './Example.tsx';
 
 const menu = [
-  { label: "Dashboard", path: "/dashboard", icon: FiHome },
-  { label: "Users", path: "/users", icon: FiUsers },
-  { label: "Projects", path: "/projects", icon: FiFolder },
-  { label: "Tasks", path: "/tasks", icon: FiList },
-  { label: "Clients", path: "/clients", icon: FiUser },
-  { label: "Storage", path: "/storage", icon: FiDatabase },
-  { label: "Transactions", path: "/transactions", icon: FiCreditCard },
-  { label: "Notes", path: "/notes", icon: FiFileText },
-  { label: "Reports", path: "/reports", icon: FiFileText },
-  { label: "Settings", path: "/settings", icon: FiSettings },
+  {label: 'Dashboard', path: '/dashboard', icon: FiHome},
+  {label: 'Users', path: '/users', icon: FiUsers},
+  {label: 'Projects', path: '/projects', icon: FiFolder},
+  {label: 'Tasks', path: '/tasks', icon: FiList},
+  {label: 'Clients', path: '/clients', icon: FiUser},
+  {label: 'Storage', path: '/storage', icon: FiDatabase},
+  {label: 'Transactions', path: '/transactions', icon: FiCreditCard},
+  {label: 'Notes', path: '/notes', icon: FiFileText},
+  {label: 'Reports', path: '/reports', icon: FiFileText},
+  {label: 'Settings', path: '/settings', icon: FiSettings},
 ];
 
 const AdminPanel = () => {
-
-  const [theme, setTheme] = useState<"light" | "dark">('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const logout = () => {
     fetch('/admin/logout', {method: 'POST', credentials: 'include'}).then(() =>
       window.location.reload()
@@ -42,7 +51,11 @@ const AdminPanel = () => {
       <div className='flex h-screen overflow-hidden bg-zinc-100 text-zinc-700'>
         <Sidebar menu={menu} logout={logout} />
         <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto relative'>
-          <Header theme={theme || 'light'} toggleTheme={()=>setTheme(theme === 'dark' ? 'light' : 'dark')} username={'Test'}></Header>
+          <Header
+            theme={theme || 'light'}
+            toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            username={'Test'}
+          ></Header>
 
           <Routes>
             <Route path='/dashboard' element={<Dashboard />} />
@@ -58,7 +71,6 @@ const AdminPanel = () => {
             <Route path='/example' element={<MainContent />} />
           </Routes>
         </div>
-
       </div>
     </BrowserRouter>
   );
