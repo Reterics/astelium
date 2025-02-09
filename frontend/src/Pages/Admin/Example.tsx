@@ -1,16 +1,20 @@
-import TableComponent, {TableRow} from "../../components/TableComponent.tsx";
+import TableComponent, {TableColumn, TableRow} from "../../components/TableComponent.tsx";
 import {useState} from "react";
 
-const columns = [
+const columns: TableColumn[] = [
   { key: "id", label: "ID", sortable: true },
-  { key: "name", label: "Name", sortable: true, editable: true },
-  { key: "status", label: "Status", sortable: true, editable: true },
+  { key: "name", label: "Name", sortable: true, editable: true, type: "text" },
+  { key: "status", label: "Status", sortable: true, editable: true, type: "select", options: ["Active", "Inactive"] },
+  { key: "age", label: "Age", sortable: true, editable: true, type: "number" },
+  { key: "role", label: "Role", sortable: true, editable: true, type: "select", options: ["Admin", "User", "Guest"] },
+  { key: "permissions", label: "Permissions", sortable: false, editable: true, type: "multiselect", options: ["Admin", "User", "Guest"] },
 ];
 
 const initialData = [
-  { id: 1, name: "Example Item", status: "Active" },
-  { id: 2, name: "Another Item", status: "Inactive" },
+  { id: 1, name: "Example Item", status: "Active", age: 30, role: "Admin", permissions: true },
+  { id: 2, name: "Another Item", status: "Inactive", age: 25, role: "User", permissions: false },
 ];
+
 const MainContent = () => {
   const [data, setData] = useState<TableRow[]>(initialData);
 
@@ -19,7 +23,6 @@ const MainContent = () => {
   };
   return (
     <div className="p-6 bg-white text-zinc-700 flex flex-col space-y-6">
-      {/* Box Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-4 shadow-md bg-zinc-50 rounded-lg">Box 1/4</div>
         <div className="p-4 shadow-md bg-zinc-50 rounded-lg">Box 2/4</div>
@@ -32,11 +35,9 @@ const MainContent = () => {
       </div>
       <div className="p-4 shadow-md bg-zinc-50 rounded-lg">Box 1/1</div>
 
-      {/* Table Section */}
       <TableComponent columns={columns} data={data} onEdit={setData} onDelete={handleDelete} />
 
 
-      {/* Checkbox List */}
       <div className="p-4 shadow-md bg-zinc-50 rounded-lg">
         <h3 className="font-semibold mb-2">Options</h3>
         <div className="space-y-2">

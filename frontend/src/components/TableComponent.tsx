@@ -1,11 +1,13 @@
-import React, {useState} from "react";
-import {FiRefreshCw, FiTrash} from "react-icons/fi";
+import React, { useState } from "react";
+import { FiTrash, FiRefreshCw, FiChevronDown } from "react-icons/fi";
 
 export interface TableColumn {
   key: string;
   label: string;
   sortable?: boolean;
   editable?: boolean;
+  type?: "text" | "number" | "select" | "multiselect";
+  options?: string[];
 }
 
 export interface TableRow {
@@ -16,7 +18,7 @@ interface TableProps {
   columns: TableColumn[];
   data: TableRow[];
   onEdit?: (updatedData: TableRow[]) => void;
-  onDelete?: (id: number|string) => void;
+  onDelete?: (id: number | string) => void;
 }
 
 const TableComponent: React.FC<TableProps> = ({ columns, data, onEdit, onDelete }) => {
@@ -25,6 +27,7 @@ const TableComponent: React.FC<TableProps> = ({ columns, data, onEdit, onDelete 
   const [editedRows, setEditedRows] = useState<{ [key: number]: boolean }>({});
   const [changes, setChanges] = useState<{ [key: number]: TableRow }>({});
   const [allowSort, setAllowSort] = useState<boolean>(true);
+  const [dropdownOpen, setDropdownOpen] = useState<{ [key: number]: boolean }>({});
 
   const handleSort = (key: string) => {
     setSortConfig((prev) => {
@@ -105,17 +108,59 @@ const TableComponent: React.FC<TableProps> = ({ columns, data, onEdit, onDelete 
         {tableData.map((row, rowIndex) => (
           <tr key={rowIndex} className={editedRows[rowIndex] ? "bg-yellow-100" : ""}>
             {columns.map((col) => (
-              <td
-                key={col.key}
-                className="border border-zinc-300 p-2"
-              >
+              <td key={col.key} className="border border-zinc-300 p-2">
                 {col.editable ? (
-                  <input
-                    type="text"
-                    value={changes[rowIndex]?.[col.key] ?? row[col.key]}
-                    onChange={(e) => handleEdit(rowIndex, col.key, e.target.value)}
-                    className="w-full bg-transparent border-b border-zinc-400 focus:outline-none"
-                  />
+                  col.type === "select" ? (
+                    <select
+                      value={changes[rowIndex]?.[col.key] ?? row[col.key]}
+                      onChange={(e) => handleEdit(rowIndex, col.key, e.target.value)}
+                      className="w-full bg-transparent border border-zinc-400 focus:outline-none p-1"
+                    >
+                      {col.options?.map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  ) : col.type === "multiselect" ? (
+                    <div className="relative">
+                      <button
+                        className="w-full bg-transparent border border-zinc-400 focus:outline-none p-1 flex justify-between"
+                        onClick={() => setDropdownOpen((prev) => ({ ...prev, [rowIndex]: !prev[rowIndex] }))}
+                      >
+                        {changes[rowIndex]?.[col.key]?.join(", ") ?? row[col.key]?.join(", ") ?? "Select options"}
+                        <FiChevronDown className='self-center' />
+                      </button>
+                      {dropdownOpen[rowIndex] && (
+                        <div className="absolute bg-white border border-zinc-400 mt-1 p-2 shadow-lg w-full z-20">
+                          {col.options?.map((option) => (
+                            <label key={option} className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                checked={changes[rowIndex]?.[col.key]?.includes(option) ?? row[col.key]?.includes(option)}
+                                onChange={(e) => {
+                                  const selected = changes[rowIndex]?.[col.key] ?? row[col.key] ?? [];
+                                  handleEdit(
+                                    rowIndex,
+                                    col.key,
+                                    e.target.checked
+                                      ? [...selected, option]
+                                      : selected.filter((item: string) => item !== option)
+                                  );
+                                }}
+                              />
+                              <span>{option}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      type={col.type || "text"}
+                      value={changes[rowIndex]?.[col.key] ?? row[col.key]}
+                      onChange={(e) => handleEdit(rowIndex, col.key, e.target.value)}
+                      className="w-full bg-transparent border-b border-zinc-400 focus:outline-none"
+                    />
+                  )
                 ) : (
                   row[col.key]
                 )}
