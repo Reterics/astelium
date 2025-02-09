@@ -1,7 +1,8 @@
 import {useEffect, useState} from 'react';
 import {fieldsToColumns, getFetchOptions} from '../utils.ts';
 import TableComponent from './TableComponent.tsx';
-import FormModal from "./FormModal.tsx";
+import FormModal from './FormModal.tsx';
+import {SelectOption, SelectOptions} from './SelectComponent.tsx';
 
 export interface CrudField<T> {
   name: keyof T & string;
@@ -9,7 +10,7 @@ export interface CrudField<T> {
   type: string;
   editable?: boolean;
   sortable?: boolean;
-  options?: string[];
+  options?: SelectOptions;
 }
 
 interface CrudManagerProps<T extends Record<string, any>> {
@@ -24,7 +25,7 @@ const CrudManager = <T extends Record<string, any>>({
   fields,
 }: CrudManagerProps<T>) => {
   const [data, setData] = useState<T[]>([]);
-  const [modalData, setModalData] = useState<Partial<T>|false>(false);
+  const [modalData, setModalData] = useState<Partial<T> | false>(false);
 
   useEffect(() => {
     fetch(apiEndpoint)
@@ -71,11 +72,30 @@ const CrudManager = <T extends Record<string, any>>({
     });
   };
 
+  const idFilters = fields.filter(
+    (field) => field.options?.filter((f) => f && typeof f !== 'string').length
+  );
+
+  const processedData = idFilters.length
+    ? data.map((item) => {
+        const out = {...item};
+        idFilters.forEach((filter) => {
+          const key = filter.name;
+          if (item[key]) {
+            out[key] = ((filter.options as SelectOption[]).find(
+              (f: SelectOption) => item[key] === f.value
+            )?.label || item[key]) as T[keyof T & string];
+          }
+        });
+        return out;
+      })
+    : data;
+
   return (
     <div>
       <TableComponent
         columns={fieldsToColumns(fields)}
-        data={data}
+        data={processedData}
         onDelete={(id) => deleteData(id as number)}
         onCreate={() => {
           setModalData({});
@@ -99,7 +119,7 @@ const CrudManager = <T extends Record<string, any>>({
           onClose={() => setModalData(false)}
           fields={fields}
           data={modalData}
-          onSave={(form)=>{
+          onSave={(form) => {
             return saveData(form as Partial<T>);
           }}
         />

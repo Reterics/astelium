@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {FiTrash, FiRefreshCw, FiSearch, FiPlus, FiSave} from 'react-icons/fi';
 import MultiSelectComponent from './MultiSelectComponent';
-import SelectComponent from './SelectComponent.tsx';
+import SelectComponent, {SelectOptions} from './SelectComponent.tsx';
 import Pagination from './Pagination.tsx';
 
 export interface TableColumn {
@@ -10,7 +10,7 @@ export interface TableColumn {
   sortable?: boolean;
   editable?: boolean;
   type?: 'text' | 'number' | 'select' | 'multiselect';
-  options?: string[];
+  options?: SelectOptions;
 }
 
 export interface TableRow {
@@ -253,7 +253,7 @@ const TableComponent: React.FC<TableProps> = ({
                         onChange={(e) =>
                           handleEdit(rowIndex, col.key, e.target.value)
                         }
-                        className='w-full bg-transparent border-b border-zinc-400 focus:outline-none'
+                        className='w-full bg-transparent border-b border-zinc-300 focus:outline-none'
                       />
                     )
                   ) : (
@@ -261,7 +261,7 @@ const TableComponent: React.FC<TableProps> = ({
                   )}
                 </td>
               ))}
-              <td className='p-4 flex items-end w-fit space-x-2 h-fit'>
+              <td className='p-4 flex items-end w-fit space-x-2 h-fit border-b border-zinc-300'>
                 <button
                   className='text-blue-500 cursor-pointer'
                   onClick={() => handleReset(rowIndex)}

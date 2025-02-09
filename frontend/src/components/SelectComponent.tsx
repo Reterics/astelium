@@ -1,10 +1,17 @@
 import React from 'react';
 
+export type SelectOptions = (string | SelectOption)[];
+
+export interface SelectOption {
+  label: string;
+  value: string;
+}
+
 interface SelectProps {
   column: {
     key: string;
     label: string;
-    options?: string[];
+    options?: SelectOptions;
   };
   filters: {[key: string]: string};
   handleFilterChange: (key: string, value: string) => void;
@@ -25,11 +32,17 @@ const SelectComponent: React.FC<SelectProps> = ({
       className='p-1 border border-zinc-300 rounded-xs'
     >
       {defaultLabel && <option value=''>{defaultLabel}</option>}
-      {column.options?.map((option) => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
+      {column.options?.map((option) =>
+        typeof option === 'string' ? (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ) : (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        )
+      )}
     </select>
   );
 };

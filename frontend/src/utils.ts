@@ -26,6 +26,7 @@ export const getFetchOptions = () =>
 export const fieldsToColumns = (fields: CrudField<any>[]) => {
   return fields.map((field) => ({
     key: field.name,
+    name: field.name,
     label: field.label,
     sortable: !!field.sortable,
     editable: !!field.editable,

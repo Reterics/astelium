@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import {FiChevronDown} from 'react-icons/fi';
+import {SelectOptions} from './SelectComponent.tsx';
 
 interface MultiSelectProps {
   column: {
     key: string;
     label: string;
-    options?: string[];
+    options?: SelectOptions;
   };
   filters: {[key: string]: string[]};
   handleFilterChange: (key: string, value: string[]) => void;
@@ -34,21 +35,30 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
       {dropdownOpen && (
         <div className='absolute bg-zinc-50 border border-zinc-300 p-1 shadow-lg w-full z-20'>
           {column.options?.map((option) => (
-            <label key={option} className='flex items-center space-x-2'>
+            <label
+              key={typeof option === 'string' ? option : option.value}
+              className='flex items-center space-x-2'
+            >
               <input
                 type='checkbox'
-                checked={filters[column.key]?.includes(option) ?? false}
+                checked={
+                  filters[column.key]?.includes(
+                    typeof option === 'string' ? option : option.value
+                  ) ?? false
+                }
                 onChange={(e) => {
+                  const value =
+                    typeof option === 'string' ? option : option.value;
                   const selected = filters[column.key] || [];
                   handleFilterChange(
                     column.key,
                     e.target.checked
-                      ? [...selected, option]
-                      : selected.filter((item: string) => item !== option)
+                      ? [...selected, value]
+                      : selected.filter((item: string) => item !== value)
                   );
                 }}
               />
-              <span>{option}</span>
+              <span>{typeof option === 'string' ? option : option.label}</span>
             </label>
           ))}
         </div>

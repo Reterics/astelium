@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
@@ -13,12 +14,20 @@ class ProjectController extends Controller
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|in:active,completed,on-hold',
-            'client_id' => 'nullable|exists:clients,id',
-        ]);
+        Log::info("Validate incoming project");
+
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'status' => 'required|in:active,completed,on-hold',
+                'client_id' => 'nullable|exists:clients,id',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+
+        Log::info("Create validated project:" . json_encode($validated));
 
         $project = Project::create($validated);
         return response()->json($project, 201);
