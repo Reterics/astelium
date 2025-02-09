@@ -11,8 +11,8 @@ const columns: TableColumn[] = [
 ];
 
 const initialData = [
-  { id: 1, name: "Example Item", status: "Active", age: 30, role: "Admin", permissions: true },
-  { id: 2, name: "Another Item", status: "Inactive", age: 25, role: "User", permissions: false },
+  { id: 1, name: "Example Item", status: "Active", age: 30, role: "Admin", permissions: [] },
+  { id: 2, name: "Another Item", status: "Inactive", age: 25, role: "User", permissions: [] },
 ];
 
 const MainContent = () => {

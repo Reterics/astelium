@@ -101,7 +101,7 @@ const TableComponent: React.FC<TableProps> = ({ columns, data, onEdit, onDelete 
               {col.label} {col.sortable && allowSort ? "⇅" : ""}
             </th>
           ))}
-          <th className="border border-zinc-300 p-2"></th>
+          <th className="border border-zinc-300 p-2 w-0"> </th>
         </tr>
         </thead>
         <tbody>
@@ -126,7 +126,7 @@ const TableComponent: React.FC<TableProps> = ({ columns, data, onEdit, onDelete 
                         className="w-full bg-transparent border border-zinc-400 focus:outline-none p-1 flex justify-between"
                         onClick={() => setDropdownOpen((prev) => ({ ...prev, [rowIndex]: !prev[rowIndex] }))}
                       >
-                        {changes[rowIndex]?.[col.key]?.join(", ") ?? row[col.key]?.join(", ") ?? "Select options"}
+                        {(changes[rowIndex]?.[col.key]?.join(", ") ?? row[col.key]?.join(", ")) || "Select options"}
                         <FiChevronDown className='self-center' />
                       </button>
                       {dropdownOpen[rowIndex] && (
@@ -166,15 +166,15 @@ const TableComponent: React.FC<TableProps> = ({ columns, data, onEdit, onDelete 
                 )}
               </td>
             ))}
-            <td className="border border-zinc-300 p-2 flex space-x-2 align-middle">
+            <td className="p-4 flex items-end w-fit space-x-2 h-fit">
               <button
-                className="text-blue-500"
+                className="text-blue-500 cursor-pointer"
                 onClick={() => handleReset(rowIndex)}
               >
                 <FiRefreshCw />
               </button>
               <button
-                className="text-red-500"
+                className="text-red-500 cursor-pointer"
                 onClick={() => onDelete && onDelete(row.id)}
               >
                 <FiTrash />
