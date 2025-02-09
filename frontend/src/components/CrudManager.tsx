@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
-import Modal from './Modal.tsx';
 import {fieldsToColumns, getFetchOptions} from '../utils.ts';
 import TableComponent from './TableComponent.tsx';
+import FormModal from "./FormModal.tsx";
 
 export interface CrudField<T> {
   name: keyof T & string;
@@ -24,19 +24,13 @@ const CrudManager = <T extends Record<string, any>>({
   fields,
 }: CrudManagerProps<T>) => {
   const [data, setData] = useState<T[]>([]);
-  const [form, setForm] = useState<Partial<T>>({});
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalData, setModalData] = useState<Partial<T>|false>(false);
 
   useEffect(() => {
     fetch(apiEndpoint)
       .then((res) => res.json())
       .then(setData);
   }, [apiEndpoint]);
-
-  const handleInputChange = (key: keyof T, value: string) => {
-    setForm((prev) => ({...prev, [key]: value}));
-  };
 
   const refreshData = () => {
     fetch(apiEndpoint)
@@ -54,21 +48,18 @@ const CrudManager = <T extends Record<string, any>>({
       method,
       body: body,
     });
-    setEditingId(null);
-    setForm({});
-    setModalOpen(false);
+    setModalData(false);
     return response.ok;
   };
 
-  const saveData = () => {
-    const method = editingId ? 'PUT' : 'POST';
-    const url = editingId ? `${apiEndpoint}/${editingId}` : apiEndpoint;
+  const saveData = async (form: Partial<T>) => {
+    const method = form.id ? 'PUT' : 'POST';
+    const url = form.id ? `${apiEndpoint}/${form.id}` : apiEndpoint;
 
-    return uploadData(url, method, JSON.stringify(form)).then((ok: boolean) => {
-      if (ok) {
-        refreshData();
-      }
-    });
+    const ok = await uploadData(url, method, JSON.stringify(form));
+    if (ok) {
+      refreshData();
+    }
   };
 
   const deleteData = (id: number) => {
@@ -87,9 +78,7 @@ const CrudManager = <T extends Record<string, any>>({
         data={data}
         onDelete={(id) => deleteData(id as number)}
         onCreate={() => {
-          setForm({});
-          setEditingId(null);
-          setModalOpen(true);
+          setModalData({});
         }}
         onEdit={async (changes) => {
           for (let i = 0; i < changes.length; i++) {
@@ -104,32 +93,16 @@ const CrudManager = <T extends Record<string, any>>({
         }}
       ></TableComponent>
 
-      {modalOpen && (
-        <Modal onClose={() => setModalOpen(false)}>
-          <h2>
-            {editingId ? 'Edit' : 'Create'} {title}
-          </h2>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              saveData();
-            }}
-          >
-            {fields.map((field) => (
-              <div key={field.name}>
-                <label>{field.label}</label>
-                <input
-                  type={field.type}
-                  value={(form[field.name] as string) || ''}
-                  onChange={(e) =>
-                    handleInputChange(field.name, e.target.value)
-                  }
-                />
-              </div>
-            ))}
-            <button type='submit'>Save</button>
-          </form>
-        </Modal>
+      {modalData && (
+        <FormModal
+          title={(modalData.id ? 'Edit ' : 'Create ') + title}
+          onClose={() => setModalData(false)}
+          fields={fields}
+          data={modalData}
+          onSave={(form)=>{
+            return saveData(form as Partial<T>);
+          }}
+        />
       )}
     </div>
   );

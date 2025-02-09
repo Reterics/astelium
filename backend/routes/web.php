@@ -71,9 +71,23 @@ Route::middleware([App\Http\Middleware\AdminMiddleware::class])->group(function 
     Route::get('/api/settings', [SettingsController::class, 'index']);
     Route::put('/api/settings', [SettingsController::class, 'update']);
 
-    Route::apiResource('storage', StorageController::class);
-    Route::apiResource('transactions', TransactionController::class);
-    Route::apiResource('notes', NoteController::class);
+    // Storage
+    Route::get('/api/storage', [StorageController::class, 'index']);
+    Route::post('/api/storage', [StorageController::class, 'store']);
+    Route::put('/api/storage/{storage}', [StorageController::class, 'update']);
+    Route::delete('/api/storage/{storage}', [StorageController::class, 'destroy']);
+
+    // Transactions
+    Route::get('/api/transactions', [TransactionController::class, 'index']);
+    Route::post('/api/transactions', [TransactionController::class, 'store']);
+    Route::put('/api/transactions/{transactions}', [TransactionController::class, 'update']);
+    Route::delete('/api/transactions/{transactions}', [TransactionController::class, 'destroy']);
+
+    // Notes
+    Route::get('/api/notes', [NoteController::class, 'index']);
+    Route::post('/api/notes', [NoteController::class, 'store']);
+    Route::put('/api/notes/{notes}', [NoteController::class, 'update']);
+    Route::delete('/api/notes/{notes}', [NoteController::class, 'destroy']);
 });
 
 
