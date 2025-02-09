@@ -1,11 +1,15 @@
 import {useEffect, useState} from 'react';
 import Modal from './Modal.tsx';
-import {getFetchOptions} from '../utils.ts';
+import {fieldsToColumns, getFetchOptions} from '../utils.ts';
+import TableComponent from './TableComponent.tsx';
 
-interface CrudField<T> {
+export interface CrudField<T> {
   name: keyof T & string;
   label: string;
   type: string;
+  editable?: boolean;
+  sortable?: boolean;
+  options?: string[];
 }
 
 interface CrudManagerProps<T extends Record<string, any>> {
@@ -34,24 +38,37 @@ const CrudManager = <T extends Record<string, any>>({
     setForm((prev) => ({...prev, [key]: value}));
   };
 
+  const refreshData = () => {
+    fetch(apiEndpoint)
+      .then((res) => res.json())
+      .then(setData);
+  };
+
+  const uploadData = async (
+    url: string,
+    method: 'PUT' | 'POST',
+    body: string
+  ): Promise<boolean> => {
+    const response = await fetch(url, {
+      ...getFetchOptions(),
+      method,
+      body: body,
+    });
+    setEditingId(null);
+    setForm({});
+    setModalOpen(false);
+    return response.ok;
+  };
+
   const saveData = () => {
     const method = editingId ? 'PUT' : 'POST';
     const url = editingId ? `${apiEndpoint}/${editingId}` : apiEndpoint;
 
-    fetch(url, {
-      ...getFetchOptions(),
-      method,
-      body: JSON.stringify(form),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setEditingId(null);
-        setForm({});
-        setModalOpen(false);
-        fetch(apiEndpoint)
-          .then((res) => res.json())
-          .then(setData);
-      });
+    return uploadData(url, method, JSON.stringify(form)).then((ok: boolean) => {
+      if (ok) {
+        refreshData();
+      }
+    });
   };
 
   const deleteData = (id: number) => {
@@ -65,49 +82,27 @@ const CrudManager = <T extends Record<string, any>>({
 
   return (
     <div>
-      <h1>{title}</h1>
-      <table>
-        <thead>
-          <tr>
-            {fields.map((field) => (
-              <th key={field.name as string}>{field.label}</th>
-            ))}
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item) => (
-            <tr key={item.id}>
-              {fields.map((field) => (
-                <td key={field.name as string}>
-                  {(item[field.name] as string) || '-'}
-                </td>
-              ))}
-              <td>
-                <button
-                  onClick={() => {
-                    setForm(item);
-                    setEditingId(item.id);
-                  }}
-                >
-                  Edit
-                </button>
-                <button onClick={() => deleteData(item.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <button
-        onClick={() => {
+      <TableComponent
+        columns={fieldsToColumns(fields)}
+        data={data}
+        onDelete={(id) => deleteData(id as number)}
+        onCreate={() => {
           setForm({});
           setEditingId(null);
           setModalOpen(true);
         }}
-      >
-        Create New
-      </button>
+        onEdit={async (changes) => {
+          for (let i = 0; i < changes.length; i++) {
+            const change = changes[i];
+            await uploadData(
+              `${apiEndpoint}/${change.id}`,
+              'PUT',
+              JSON.stringify(change)
+            );
+          }
+          refreshData();
+        }}
+      ></TableComponent>
 
       {modalOpen && (
         <Modal onClose={() => setModalOpen(false)}>

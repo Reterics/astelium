@@ -192,6 +192,7 @@ php artisan config:clear
 ```bash
 php artisan config:clear
 php artisan cache:clear
+php artisan route:clear
 ```
 
 ## License

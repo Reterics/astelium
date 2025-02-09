@@ -6,25 +6,25 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
         return response()->json(Project::with('client')->get());
     }
 
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:active,completed,on-hold',
-            'client_id' => 'required|exists:clients,id',
+            'client_id' => 'nullable|exists:clients,id',
         ]);
 
         $project = Project::create($validated);
         return response()->json($project, 201);
     }
 
-    public function update(Request $request, Project $project)
+    public function update(Request $request, Project $project): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validate([
             'name' => 'string|max:255',

@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
-import {FiTrash, FiRefreshCw, FiSearch, FiPlus} from 'react-icons/fi';
+import React, {useEffect, useState} from 'react';
+import {FiTrash, FiRefreshCw, FiSearch, FiPlus, FiSave} from 'react-icons/fi';
 import MultiSelectComponent from './MultiSelectComponent';
 import SelectComponent from './SelectComponent.tsx';
+import Pagination from './Pagination.tsx';
 
 export interface TableColumn {
   key: string;
@@ -19,8 +20,9 @@ export interface TableRow {
 interface TableProps {
   columns: TableColumn[];
   data: TableRow[];
-  onEdit?: (updatedData: TableRow[]) => void;
+  onEdit?: (updatedData: TableRow[]) => Promise<void> | void;
   onDelete?: (id: number | string) => void;
+  onCreate?: () => void;
 }
 
 const TableComponent: React.FC<TableProps> = ({
@@ -28,6 +30,7 @@ const TableComponent: React.FC<TableProps> = ({
   data,
   onEdit,
   onDelete,
+  onCreate,
 }) => {
   const [tableData, setTableData] = useState(data);
   const [sortConfig, setSortConfig] = useState<{
@@ -43,29 +46,41 @@ const TableComponent: React.FC<TableProps> = ({
     {}
   );
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 50;
+  const totalPages = Math.ceil(data.length / rowsPerPage);
+
   const handleFilterChange = (key: string, value: string | string[]) => {
     setFilters((prev) => ({...prev, [key]: value}));
   };
 
-  const filteredData = tableData.filter(
-    (row) =>
-      columns.every((col) => {
-        if (!filters[col.key]) return true;
-        if (col.type === 'multiselect') {
-          return (
-            Array.isArray(row[col.key]) &&
-            row[col.key].some((item: string) => filters[col.key].includes(item))
-          );
-        }
-        return row[col.key] === filters[col.key];
-      }) &&
-      columns.some((col) =>
-        row[col.key]
-          ?.toString()
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
-      )
-  );
+  useEffect(() => {
+    setTableData(data);
+  }, [data]);
+
+  const filteredData = tableData
+    .filter(
+      (row) =>
+        columns.every((col) => {
+          if (!filters[col.key]) return true;
+          if (col.type === 'multiselect') {
+            return (
+              Array.isArray(row[col.key]) &&
+              row[col.key].some((item: string) =>
+                filters[col.key].includes(item)
+              )
+            );
+          }
+          return row[col.key] === filters[col.key];
+        }) &&
+        columns.some((col) =>
+          row[col.key]
+            ?.toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        )
+    )
+    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   const handleSort = (key: string) => {
     setSortConfig((prev) => {
@@ -115,20 +130,29 @@ const TableComponent: React.FC<TableProps> = ({
     });
   };
 
-  const handleBulkUpdate = () => {
+  const handleBulkUpdate = async () => {
     const updatedData = tableData.map((row, index) => ({
       ...row,
       ...(changes[index] || {}),
     }));
+
+    if (onEdit) {
+      const updates = Object.keys(changes)
+        .map((index) => ({
+          id: tableData[Number(index)].id,
+          ...changes[Number(index)],
+        }))
+        .filter((d) => d.id) as TableRow[];
+      await onEdit(updates);
+    }
     setTableData(updatedData);
     setChanges({});
     setEditedRows({});
     setAllowSort(true);
-    if (onEdit) onEdit(updatedData);
   };
 
   return (
-    <div className='p-4 shadow-md bg-zinc-50 rounded-lg'>
+    <div className='p-4 pb-1 shadow-md bg-zinc-50 rounded-lg'>
       <div className='flex items-center mb-2 space-x-2'>
         <div className='flex items-center space-x-2 flex-1'>
           <FiSearch className='text-zinc-600' />
@@ -157,8 +181,19 @@ const TableComponent: React.FC<TableProps> = ({
             />
           ) : null
         )}
-        <button className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'>
-          <FiPlus className='mr-1' /> Add Entry
+        {Object.keys(changes).length > 0 && (
+          <button
+            className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
+            onClick={handleBulkUpdate}
+          >
+            <FiSave className='mr-1' /> Save
+          </button>
+        )}
+        <button
+          onClick={() => onCreate && onCreate()}
+          className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
+        >
+          <FiPlus className='mr-1' /> Add
         </button>
       </div>
       <table className='w-full border-collapse border border-zinc-300'>
@@ -244,14 +279,11 @@ const TableComponent: React.FC<TableProps> = ({
           ))}
         </tbody>
       </table>
-      {Object.keys(changes).length > 0 && (
-        <button
-          className='mt-4 p-2 bg-zinc-800 text-white rounded-xs hover:bg-zinc-700'
-          onClick={handleBulkUpdate}
-        >
-          Save Changes
-        </button>
-      )}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

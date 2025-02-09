@@ -1,3 +1,6 @@
+import {CrudField} from './components/CrudManager.tsx';
+import {TableColumn} from './components/TableComponent.tsx';
+
 export const getCSRFToken = () => {
   return document
     .querySelector('meta[name="csrf-token"]')
@@ -19,3 +22,14 @@ export const getFetchOptions = () =>
     },
     credentials: 'include',
   }) as RequestInit;
+
+export const fieldsToColumns = (fields: CrudField<any>[]) => {
+  return fields.map((field) => ({
+    key: field.name,
+    label: field.label,
+    sortable: !!field.sortable,
+    editable: !!field.editable,
+    type: field.type,
+    options: field.options || [],
+  })) as TableColumn[];
+};
