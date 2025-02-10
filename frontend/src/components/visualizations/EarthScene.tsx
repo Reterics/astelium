@@ -7,7 +7,6 @@ const EarthScene = () => {
   const svgRef = useRef(null);
 
   useEffect(() => {
-
     const svgElement = (svgRef.current! as HTMLElement);
     if (!svgElement || !svgElement.clientWidth || !svgElement.clientHeight) {
       return;
@@ -28,17 +27,19 @@ const EarthScene = () => {
       .data(worldData.features)
       .enter()
       .append("path")
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       .attr("d", path)
-      .attr("fill", "none")
-      .attr("stroke", "oklch(0.21 0.006 285.885)");
+      .attr("fill", "#2d2d2d")
+      .attr("stroke", "#888");
 
-    const rotationSpeed = 0.2;
+    const rotationSpeed = 0.02;
     let lambda = 0;
 
     const timer = d3.timer(() => {
       lambda += rotationSpeed;
       projection.rotate([lambda, 0]);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       globe.attr("d", path);
     });
