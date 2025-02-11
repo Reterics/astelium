@@ -14,6 +14,7 @@ import {
 import {useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import PageBreadcrumbs from './PageBreadcrumbs.tsx';
+import {getFetchOptions} from "../utils.ts";
 
 const menu = [
   {label: 'Dashboard', path: '/dashboard', icon: FiHome},
@@ -35,7 +36,7 @@ interface ContainerProps {
 const Container: React.FC<ContainerProps> = ({children}) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const logout = () => {
-    fetch('/admin/logout', {method: 'POST', credentials: 'include'}).then(() =>
+    fetch('/admin/logout', {...getFetchOptions(), method: 'POST'}).then(() =>
       window.location.reload()
     );
   };
