@@ -11,7 +11,7 @@ class TaskController extends Controller
         return response()->json(Task::with(['project', 'user'])->get());
     }
 
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',

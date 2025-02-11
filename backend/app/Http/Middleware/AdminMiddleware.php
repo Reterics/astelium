@@ -23,8 +23,6 @@ class AdminMiddleware
             return Redirect::route('login');
         }
 
-        Log::info('User found for session: ' . Auth::user());
-
         if (!Auth::user()->is_admin) {
             abort(403, 'Unauthorized.');
         }

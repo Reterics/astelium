@@ -4,7 +4,7 @@ const Storage = () => {
   return (
     <CrudManager
       title='Storage'
-      apiEndpoint='/api/storage'
+      apiEndpoint='storage'
       fields={[
         {name: 'sku', label: 'SKU', type: 'text'},
         {name: 'name', label: 'Name', type: 'text'},

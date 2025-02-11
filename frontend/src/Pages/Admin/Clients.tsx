@@ -4,7 +4,7 @@ const Clients = () => {
   return (
     <CrudManager
       title='Clients'
-      apiEndpoint='/api/clients'
+      apiEndpoint='clients'
       fields={[
         {name: 'name', label: 'Client Name', type: 'text', editable: true},
         {name: 'email', label: 'Email', type: 'email', editable: true},

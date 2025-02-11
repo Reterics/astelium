@@ -4,7 +4,7 @@ const Transactions = () => {
   return (
     <CrudManager
       title='Transactions'
-      apiEndpoint='/api/transactions'
+      apiEndpoint='transactions'
       fields={[
         {name: 'type', label: 'Type (Income/Outgoing)', type: 'text'},
         {name: 'amount', label: 'Amount', type: 'number'},

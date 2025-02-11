@@ -1,8 +1,9 @@
-import {useEffect, useState} from 'react';
-import {fieldsToColumns, getFetchOptions} from '../utils.ts';
+import {useState} from 'react';
+import {fieldsToColumns} from '../utils.ts';
 import TableComponent from './TableComponent.tsx';
 import FormModal from './FormModal.tsx';
 import {SelectOption, SelectOptions} from './SelectComponent.tsx';
+import {useApi} from "../hooks/useApi.ts";
 
 export interface CrudField<T> {
   name: keyof T & string;
@@ -24,60 +25,34 @@ const CrudManager = <T extends Record<string, any>>({
   apiEndpoint,
   fields,
 }: CrudManagerProps<T>) => {
-  const [data, setData] = useState<T[]>([]);
   const [modalData, setModalData] = useState<Partial<T> | false>(false);
 
-  useEffect(() => {
-    fetch(apiEndpoint)
-      .then((res) => res.json())
-      .then(setData);
-  }, [apiEndpoint]);
+  const { data, isLoading, createMutation, deleteMutation, updateMutation } = useApi(apiEndpoint);
 
-  const refreshData = () => {
-    fetch(apiEndpoint)
-      .then((res) => res.json())
-      .then(setData);
-  };
-
-  const uploadData = async (
-    url: string,
-    method: 'PUT' | 'POST',
-    body: string
+  const saveData = async (
+    body: Partial<T> & {id?: number}
   ): Promise<boolean> => {
-    const response = await fetch(url, {
-      ...getFetchOptions(),
-      method,
-      body: body,
-    });
-    setModalData(false);
-    return response.ok;
-  };
-
-  const saveData = async (form: Partial<T>) => {
-    const method = form.id ? 'PUT' : 'POST';
-    const url = form.id ? `${apiEndpoint}/${form.id}` : apiEndpoint;
-
-    const ok = await uploadData(url, method, JSON.stringify(form));
-    if (ok) {
-      refreshData();
+    if (body.id) {
+      await updateMutation.mutateAsync({
+        id: body.id,
+        data: body,
+      });
+    } else  {
+      await createMutation.mutateAsync(body);
     }
+
+    setModalData(false);
+    return true;
   };
 
-  const deleteData = (id: number) => {
-    fetch(`${apiEndpoint}/${id}`, {
-      ...getFetchOptions(),
-      method: 'DELETE',
-    }).then(() => {
-      setData((prev) => prev.filter((item) => item.id !== id));
-    });
-  };
+  if (isLoading) return <p>Loading...</p>;
 
   const idFilters = fields.filter(
     (field) => field.options?.filter((f) => f && typeof f !== 'string').length
   );
 
-  const processedData = idFilters.length
-    ? data.map((item) => {
+  const processedData: Partial<T>[] = idFilters.length
+    ? (data as Partial<T>[]).map((item) => {
         const out = {...item};
         idFilters.forEach((filter) => {
           const key = filter.name;
@@ -91,25 +66,23 @@ const CrudManager = <T extends Record<string, any>>({
       })
     : data;
 
+
   return (
     <div>
       <TableComponent
         columns={fieldsToColumns(fields)}
         data={processedData}
-        onDelete={(id) => deleteData(id as number)}
+        onDelete={(id) => deleteMutation.mutate(id as number)}
         onCreate={() => {
           setModalData({});
         }}
         onEdit={async (changes) => {
           for (let i = 0; i < changes.length; i++) {
-            const change = changes[i];
-            await uploadData(
-              `${apiEndpoint}/${change.id}`,
-              'PUT',
-              JSON.stringify(change)
+            const change = changes[i] as Partial<T>;
+            await saveData(
+              change
             );
           }
-          refreshData();
         }}
       ></TableComponent>
 

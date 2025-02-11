@@ -4,7 +4,7 @@ const Reports = () => {
   const [reports, setReports] = useState<any>({});
 
   useEffect(() => {
-    fetch('/api/reports')
+    fetch('reports')
       .then((res) => res.json())
       .then(setReports);
   }, []);

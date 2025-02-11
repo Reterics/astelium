@@ -1,29 +1,22 @@
 import CrudManager from '../../components/CrudManager';
-import {useEffect, useState} from 'react';
-import {SelectOptions} from '../../components/SelectComponent.tsx';
+import {useApi} from "../../hooks/useApi.ts";
 
 const Projects = () => {
-  const [clients, setClients] = useState<SelectOptions>([]);
+  const { data, isLoading } = useApi('clients');
 
-  useEffect(() => {
-    fetch('/api/clients')
-      .then((res) => res.json())
-      .then((data) =>
-        setClients(
-          data.map((d: {id: any; name: any}) => ({
-            value: d.id,
-            label: d.name,
-          }))
-        )
-      );
-  }, []);
+  if (isLoading) return <p>Loading...</p>;
 
-  if (!clients) return null;
+  const clients =  data.map((d: {id: any; name: any}) => ({
+    value: d.id,
+    label: d.name,
+  }))
+
+  if (!clients) return <p>Please create a client for using Projects</p>;
 
   return (
     <CrudManager
       title='Projects'
-      apiEndpoint='/api/projects'
+      apiEndpoint='projects'
       fields={[
         {name: 'name', label: 'Project Name', type: 'text', editable: true},
         {

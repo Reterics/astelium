@@ -4,7 +4,7 @@ const Notes = () => {
   return (
     <CrudManager
       title='Notes'
-      apiEndpoint='/api/notes'
+      apiEndpoint='notes'
       fields={[
         {name: 'title', label: 'Title', type: 'text'},
         {name: 'content', label: 'Content', type: 'text'},
