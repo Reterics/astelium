@@ -6,7 +6,12 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\ContractTemplateController;
+use App\Http\Controllers\DomainController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoiceUserController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
@@ -14,6 +19,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
@@ -46,48 +52,32 @@ Route::middleware([App\Http\Middleware\AdminMiddleware::class])->group(function 
 
 
 Route::middleware([App\Http\Middleware\AdminMiddleware::class])->group(function () {
-    // Projects
-    Route::get('/api/projects', [ProjectController::class, 'index']);
-    Route::post('/api/projects', [ProjectController::class, 'store']);
-    Route::put('/api/projects/{project}', [ProjectController::class, 'update']);
-    Route::delete('/api/projects/{project}', [ProjectController::class, 'destroy']);
+    Route::apiResource('/api/projects', ProjectController::class);
 
-    // Tasks
-    Route::get('/api/tasks', [TaskController::class, 'index']);
-    Route::post('/api/tasks', [TaskController::class, 'store']);
-    Route::put('/api/tasks/{task}', [TaskController::class, 'update']);
-    Route::delete('/api/tasks/{task}', [TaskController::class, 'destroy']);
+    Route::apiResource('/api/tasks', TaskController::class);
 
-    // Clients
-    Route::get('/api/clients', [ClientController::class, 'index']);
-    Route::post('/api/clients', [ClientController::class, 'store']);
-    Route::put('/api/clients/{client}', [ClientController::class, 'update']);
-    Route::delete('/api/clients/{client}', [ClientController::class, 'destroy']);
+    Route::apiResource('/api/clients', ClientController::class);
 
-    // Reports
     Route::get('/api/reports', [ReportController::class, 'index']);
 
-    // Settings
     Route::get('/api/settings', [SettingsController::class, 'index']);
     Route::put('/api/settings', [SettingsController::class, 'update']);
 
-    // Storage
-    Route::get('/api/storage', [StorageController::class, 'index']);
-    Route::post('/api/storage', [StorageController::class, 'store']);
-    Route::put('/api/storage/{storage}', [StorageController::class, 'update']);
-    Route::delete('/api/storage/{storage}', [StorageController::class, 'destroy']);
 
-    // Transactions
-    Route::get('/api/transactions', [TransactionController::class, 'index']);
-    Route::post('/api/transactions', [TransactionController::class, 'store']);
-    Route::put('/api/transactions/{transactions}', [TransactionController::class, 'update']);
-    Route::delete('/api/transactions/{transactions}', [TransactionController::class, 'destroy']);
+    Route::apiResource('/api/transactions', TransactionController::class);
 
-    // Notes
-    Route::get('/api/notes', [NoteController::class, 'index']);
-    Route::post('/api/notes', [NoteController::class, 'store']);
-    Route::put('/api/notes/{notes}', [NoteController::class, 'update']);
-    Route::delete('/api/notes/{notes}', [NoteController::class, 'destroy']);
+    Route::apiResource('/api/notes', NoteController::class);
+
+    // Inventory
+    Route::apiResource('/api/storage', StorageController::class);
+    Route::apiResource('/api/warehouses', WarehouseController::class);
+    Route::apiResource('/api/domains', DomainController::class);
+
+    // Management
+    Route::apiResource('/api/invoice-users', InvoiceUserController::class);
+    Route::apiResource('/api/invoices', InvoiceController::class);
+    Route::apiResource('/api/contract-templates', ContractTemplateController::class);
+    Route::apiResource('/api/contracts', ContractController::class);
 });
 
 

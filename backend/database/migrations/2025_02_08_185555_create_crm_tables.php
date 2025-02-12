@@ -9,11 +9,25 @@ return new class extends Migration {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('tax_number')->nullable();
+            $table->string('post_code')->nullable();
+            $table->string('town')->nullable();
+            $table->string('street_name')->nullable();
+            $table->string('street_category')->nullable();
+            $table->string('address')->nullable();
+            $table->string('country')->nullable();
+            $table->string('bank_account_number')->nullable();
+            $table->enum('type', ['PERSON', 'COMPANY_HU', 'COMPANY_EU', 'COMPANY'])->default('PERSON');
+            $table->enum('vat_status', ['PRIVATE_PERSON', 'DOMESTIC', 'OTHER'])->default('PRIVATE_PERSON');
+
+            // New fields
+            $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('company')->nullable();
+
             $table->timestamps();
         });
+
 
         Schema::create('projects', function (Blueprint $table) {
             $table->id();

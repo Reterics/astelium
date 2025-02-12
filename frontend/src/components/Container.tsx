@@ -1,32 +1,68 @@
 import Sidebar from './Sidebar.tsx';
 import Header from './Header.tsx';
-import {
-  FiCreditCard,
-  FiDatabase,
-  FiFileText,
-  FiFolder,
-  FiHome,
-  FiList,
-  FiSettings,
-  FiUser,
-  FiUsers,
-} from 'react-icons/fi';
+import { FiHome, FiUsers, FiFolder, FiList, FiUser, FiDatabase, FiCreditCard,
+  FiFileText, FiSettings, FiArchive, FiGlobe, FiFile, FiClipboard } from "react-icons/fi";
+
 import {useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import PageBreadcrumbs from './PageBreadcrumbs.tsx';
 import {getFetchOptions} from "../utils.ts";
 
 const menu = [
-  {label: 'Dashboard', path: '/dashboard', icon: FiHome},
-  {label: 'Users', path: '/users', icon: FiUsers},
-  {label: 'Projects', path: '/projects', icon: FiFolder},
-  {label: 'Tasks', path: '/tasks', icon: FiList},
-  {label: 'Clients', path: '/clients', icon: FiUser},
-  {label: 'Storage', path: '/storage', icon: FiDatabase},
-  {label: 'Transactions', path: '/transactions', icon: FiCreditCard},
-  {label: 'Notes', path: '/notes', icon: FiFileText},
-  {label: 'Reports', path: '/reports', icon: FiFileText},
-  {label: 'Settings', path: '/settings', icon: FiSettings},
+  { label: 'Dashboard', path: '/dashboard', icon: FiHome },
+
+  {
+    label: 'Projects',
+    icon: FiFolder,
+    path: '/projects',
+  },
+  {
+    label: 'Tasks',
+    icon: FiList,
+    path: '/tasks',
+  },
+  {
+    label: 'Notes',
+    icon: FiFileText,
+    path: '/notes',
+  },
+
+  {
+    label: 'Inventory',
+    icon: FiArchive,
+    submenu: [
+      { label: 'Warehouses', path: '/warehouses', icon: FiDatabase },
+      { label: 'Storage', path: '/storage', icon: FiDatabase },
+      { label: 'Domains', path: '/domains', icon: FiGlobe },
+    ],
+  },
+
+  {
+    label: 'Management',
+    icon: FiClipboard,
+    submenu: [
+      { label: 'Invoice Users', path: '/invoice-users', icon: FiUser },
+      { label: 'Invoices', path: '/invoices', icon: FiFile },
+      { label: 'Contract Templates', path: '/contract-templates', icon: FiFileText },
+      { label: 'Contracts', path: '/contracts', icon: FiFileText },
+      { label: 'Transactions', path: '/transactions', icon: FiCreditCard },
+    ],
+  },
+
+  {
+    label: 'Reports',
+    icon: FiFileText,
+    path: '/reports',
+  },
+
+  {
+    label: 'Admin',
+    icon: FiSettings,
+    submenu: [
+      { label: 'Users', path: '/users', icon: FiUsers },
+      { label: 'Settings', path: '/settings', icon: FiSettings },
+    ],
+  },
 ];
 
 interface ContainerProps {
