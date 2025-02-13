@@ -21,7 +21,7 @@ class StorageController extends Controller
             'threshold' => 'required|integer',
             'storage_amount' => 'required|integer',
             'value' => 'required|numeric',
-            'place' => 'required|string',
+            'warehouse_id' => 'nullable|exists:warehouses,id',
         ]);
 
         return response()->json(Storage::create($validated), 201);
@@ -36,7 +36,7 @@ class StorageController extends Controller
             'threshold' => 'required|integer',
             'storage_amount' => 'required|integer',
             'value' => 'required|numeric',
-            'place' => 'required|string',
+            'warehouse_id' => 'nullable|exists:warehouses,id',
         ]);
 
         $storage->update($validated);

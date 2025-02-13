@@ -11,6 +11,7 @@ export interface CrudField<T> {
   type: string;
   editable?: boolean;
   sortable?: boolean;
+  visible?: boolean;
   options?: SelectOptions;
 }
 

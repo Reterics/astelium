@@ -24,7 +24,7 @@ export const getFetchOptions = () =>
   }) as RequestInit;
 
 export const fieldsToColumns = (fields: CrudField<any>[]) => {
-  return fields.map((field) => ({
+  return fields.filter(field => field.visible !== false).map((field) => ({
     key: field.name,
     name: field.name,
     label: field.label,

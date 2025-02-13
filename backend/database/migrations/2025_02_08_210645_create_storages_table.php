@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
+        Schema::create('warehouses', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('location');
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
         Schema::create('storages', function (Blueprint $table) {
             $table->id();
             $table->string('sku')->unique();
@@ -15,7 +22,7 @@ return new class extends Migration {
             $table->integer('threshold');
             $table->integer('storage_amount');
             $table->decimal('value', 10, 2);
-            $table->string('place');
+            $table->foreignId('warehouse_id')->nullable()->constrained('warehouses')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -43,7 +50,7 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('storages');
+        Schema::dropIfExists('storage');
         Schema::dropIfExists('transactions');
         Schema::dropIfExists('notes');
     }

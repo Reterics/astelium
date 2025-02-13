@@ -19,13 +19,7 @@ return new class extends Migration
             $table->text('credentials')->nullable();
             $table->timestamps();
         });
-        Schema::create('warehouses', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('location');
-            $table->text('description')->nullable();
-            $table->timestamps();
-        });
+
         Schema::create('invoice_users', function (Blueprint $table) {
             $table->id();
             $table->string('supplier_name');
