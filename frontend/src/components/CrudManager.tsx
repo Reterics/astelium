@@ -49,7 +49,7 @@ const CrudManager = <T extends Record<string, any>>({
   if (isLoading) return <p>Loading...</p>;
 
   const idFilters = fields.filter(
-    (field) => field.options?.filter((f) => f && typeof f !== 'string').length
+    (field) => field.options?.filter((f) => f && typeof f === 'object').length
   );
 
   const processedData: Partial<T>[] = idFilters.length
@@ -57,15 +57,20 @@ const CrudManager = <T extends Record<string, any>>({
         const out = {...item};
         idFilters.forEach((filter) => {
           const key = filter.name;
-          if (item[key]) {
+          if (item[key] && !filter.editable) {
             out[key] = ((filter.options as SelectOption[]).find(
-              (f: SelectOption) => item[key] === f.value
+              (f: SelectOption) => String(item[key]) === String(f.value)
             )?.label || item[key]) as T[keyof T & string];
+          } else if (item[key] && filter.editable && filter.type === 'multiselect' && !Array.isArray(item[key])) {
+            out[key] = item[key].toString().split(', ');
+          } else if (Array.isArray(item[key]) && item[key].length) {
+            // TODO: Remove this temporary workaround
+            out[key] = item[key].map((f: {id: number}|string) => typeof f === 'object' ? f.id.toString() : f);
           }
         });
         return out;
       })
-    : data;
+    : data as Partial<T>[];
 
 
   return (

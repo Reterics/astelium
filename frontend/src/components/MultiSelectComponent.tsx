@@ -20,7 +20,6 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
   defaultLabel = 'All',
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
   return (
     <div key={column.key} className='relative min-w-28'>
       <button
@@ -28,7 +27,20 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
         onClick={() => setDropdownOpen(!dropdownOpen)}
       >
         {filters[column.key]?.length
-          ? filters[column.key].join(', ')
+          ? filters[column.key]
+              .map((value) => {
+                const option =  column.options?.find(
+                  (option) =>
+                    option === value ||
+                    (typeof option === 'object' && option.value === value)
+                );
+
+                if (typeof option === 'object') {
+                  return option.label;
+                }
+                return option || value;
+              })
+              .join(', ')
           : defaultLabel || column.label}
         <FiChevronDown className='ml-2 self-center' />
       </button>
@@ -36,19 +48,19 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
         <div className='absolute bg-zinc-50 border border-zinc-300 p-1 shadow-lg w-full z-20'>
           {column.options?.map((option) => (
             <label
-              key={typeof option === 'string' ? option : option.value}
+              key={typeof option !== 'object' ? option : option.value}
               className='flex items-center space-x-2'
             >
               <input
                 type='checkbox'
                 checked={
                   filters[column.key]?.includes(
-                    typeof option === 'string' ? option : option.value
+                    typeof option !== 'object' ? option : option.value
                   ) ?? false
                 }
                 onChange={(e) => {
                   const value =
-                    typeof option === 'string' ? option : option.value;
+                    typeof option !== 'object' ? option : option.value;
                   const selected = filters[column.key] || [];
                   handleFilterChange(
                     column.key,
@@ -58,7 +70,7 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
                   );
                 }}
               />
-              <span>{typeof option === 'string' ? option : option.label}</span>
+              <span>{typeof option !== 'object' ? option : option.label}</span>
             </label>
           ))}
         </div>

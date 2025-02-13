@@ -6,7 +6,7 @@ const Projects = () => {
 
   if (isLoading) return <p>Loading...</p>;
 
-  const clients =  data.map((d: {id: any; name: any}) => ({
+  const clients =  data.map((d) => ({
     value: d.id,
     label: d.name,
   }))

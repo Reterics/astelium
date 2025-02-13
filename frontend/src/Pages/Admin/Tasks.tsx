@@ -7,16 +7,15 @@ const Tasks = () => {
 
   if (projectsAreLoading || usersAreLoading) return <p>Loading...</p>;
 
-  const projects =  projectsRaw.map((d: {id: any; name: any}) => ({
-    value: d.id.toString(),
+  const projects =  projectsRaw.map((d) => ({
+    value: d.id,
     label: d.name,
   }))
 
-  const users =  usersRaw.map((d: {id: any; name: any}) => ({
-    value: d.id.toString(),
+  const users =  usersRaw.map((d) => ({
+    value: d.id,
     label: d.name,
   }))
-  console.log(users)
 
   if (!projects) return <p>Please create a project for using Tasks</p>;
 

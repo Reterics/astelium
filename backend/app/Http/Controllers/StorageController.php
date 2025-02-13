@@ -9,7 +9,7 @@ class StorageController extends Controller
 {
     public function index(): \Illuminate\Http\JsonResponse
     {
-        return response()->json(Storage::all());
+        return response()->json(Storage::with('warehouses')->get());
     }
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
@@ -21,10 +21,16 @@ class StorageController extends Controller
             'threshold' => 'required|integer',
             'storage_amount' => 'required|integer',
             'value' => 'required|numeric',
-            'warehouse_id' => 'nullable|exists:warehouses,id',
+            'warehouses' => 'nullable|array',
+            'warehouses.*' => 'exists:warehouses,id'
         ]);
 
-        return response()->json(Storage::create($validated), 201);
+        $storage = Storage::create($validated);
+
+        // Attach warehouses
+        $storage->warehouses()->sync($validated['warehouses']);
+
+        return response()->json($storage->load('warehouses'));
     }
 
     public function update(Request $request, Storage $storage): \Illuminate\Http\JsonResponse
@@ -36,11 +42,15 @@ class StorageController extends Controller
             'threshold' => 'required|integer',
             'storage_amount' => 'required|integer',
             'value' => 'required|numeric',
-            'warehouse_id' => 'nullable|exists:warehouses,id',
+            'warehouses' => 'nullable|array',
+            'warehouses.*' => 'exists:warehouses,id'
         ]);
 
         $storage->update($validated);
-        return response()->json($storage);
+
+        $storage->warehouses()->sync($validated['warehouses']);
+
+        return response()->json($storage->load('warehouses'));
     }
 
     public function destroy(Storage $storage): \Illuminate\Http\JsonResponse

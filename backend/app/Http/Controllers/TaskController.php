@@ -6,9 +6,10 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        return response()->json(Task::with(['project', 'assignedUser'])->get());
+        $perPage = $request->query('per_page', 10); // Default to 10 per page
+        return response()->json(Task::with(['project', 'assignedUser'])->paginate($perPage));
     }
 
     public function store(Request $request): \Illuminate\Http\JsonResponse

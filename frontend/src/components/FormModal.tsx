@@ -59,7 +59,7 @@ const FormModal: React.FC<FormModalProps> = ({
                     options: field.options,
                   }}
                   filters={{
-                    [field.name]: [form[field.name]] as string[],
+                    [field.name]: form[field.name] as string[],
                   }}
                   handleFilterChange={(_column, value) => {
                     handleInputChange(field.name, value);

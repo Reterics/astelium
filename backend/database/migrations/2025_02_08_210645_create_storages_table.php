@@ -22,7 +22,6 @@ return new class extends Migration {
             $table->integer('threshold');
             $table->integer('storage_amount');
             $table->decimal('value', 10, 2);
-            $table->foreignId('warehouse_id')->nullable()->constrained('warehouses')->onDelete('cascade');
             $table->timestamps();
         });
 

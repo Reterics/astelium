@@ -9,12 +9,10 @@ class Storage extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'sku', 'name', 'description', 'threshold', 'storage_amount', 'value', 'warehouse_id'
-    ];
+    protected $fillable = ['sku', 'name', 'description', 'threshold', 'storage_amount', 'value'];
 
-    public function storage(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Warehouse::class);
+
+    public function warehouses() {
+        return $this->belongsToMany(Warehouse::class, 'storage_warehouse');
     }
 }

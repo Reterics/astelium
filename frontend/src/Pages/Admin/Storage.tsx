@@ -1,13 +1,14 @@
 import CrudManager from '../../components/CrudManager';
 import {useApi} from "../../hooks/useApi.ts";
 
+
 const Storage = () => {
   const { data, isLoading } = useApi('warehouses');
 
   if (isLoading) return <p>Loading...</p>;
 
-  const warehouses =  data.map((d: {id: any; name: any}) => ({
-    value: d.id,
+  const warehouses =  data.map((d) => ({
+    value: d.id.toString(),
     label: d.name,
   }))
 
@@ -24,7 +25,7 @@ const Storage = () => {
         {name: 'threshold', label: 'Threshold', type: 'number'},
         {name: 'storage_amount', label: 'Storage Amount', type: 'number'},
         {name: 'value', label: 'Value', type: 'number'},
-        {name: 'storage_id', label: 'Store', type: 'select', options: warehouses},
+        {name: 'warehouses', label: 'Store', type: 'multiselect', options: warehouses, editable: true},
       ]}
     />
   );
