@@ -2,14 +2,21 @@ import CrudManager from '../../components/CrudManager';
 import {useApi} from "../../hooks/useApi.ts";
 
 const Tasks = () => {
-  const { data, isLoading } = useApi('projects');
+  const { data: projectsRaw, isLoading: projectsAreLoading } = useApi('projects');
+  const { data: usersRaw, isLoading: usersAreLoading } = useApi('users');
 
-  if (isLoading) return <p>Loading...</p>;
+  if (projectsAreLoading || usersAreLoading) return <p>Loading...</p>;
 
-  const projects =  data.map((d: {id: any; name: any}) => ({
-    value: d.id,
+  const projects =  projectsRaw.map((d: {id: any; name: any}) => ({
+    value: d.id.toString(),
     label: d.name,
   }))
+
+  const users =  usersRaw.map((d: {id: any; name: any}) => ({
+    value: d.id.toString(),
+    label: d.name,
+  }))
+  console.log(users)
 
   if (!projects) return <p>Please create a project for using Tasks</p>;
 
@@ -18,9 +25,15 @@ const Tasks = () => {
       title='Tasks'
       apiEndpoint='tasks'
       fields={[
-        {name: 'title', label: 'Task Title', type: 'text'},
-        {name: 'status', label: 'Status', type: 'select', options: ['pending','in-progress','completed']},
-        {name: 'project_id', label: 'Project ID', type: 'select', options: projects,},
+        { name: "title", label: "Title", type: "text", editable: true, sortable: true },
+        { name: "description", label: "Description", type: "textarea", editable: true },
+        { name: "status", label: "Status", type: "select", editable: true, options: ["open", "in-progress", "review", "completed", "closed"] },
+        { name: "project_id", label: "Project", type: "select", editable: true, options: projects },
+        { name: "assigned_to", label: "Assigned To", type: "select", editable: true, options: users },
+        { name: "start_time", label: "Start Time", type: "datetime-local", editable: true },
+        { name: "expected_time", label: "Expected Time (hours)", type: "number", editable: true },
+        { name: "priority", label: "Priority", type: "select", editable: true, options: ["low", "medium", "high"] },
+        { name: "story_points", label: "Story Points", type: "number", editable: true },
       ]}
     />
   );

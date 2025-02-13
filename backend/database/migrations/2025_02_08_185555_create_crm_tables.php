@@ -34,7 +34,7 @@ return new class extends Migration {
             $table->string('name');
             $table->text('description')->nullable();
             $table->enum('status', ['active', 'completed', 'on-hold'])->default('active');
-            $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
+            $table->foreignId('client_id')->nullable()->constrained('clients')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -42,9 +42,13 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('status', ['pending', 'in-progress', 'completed'])->default('pending');
-            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
+            $table->enum('status', ['open', 'in-progress', 'review', 'completed', 'closed'])->default('open');
+            $table->foreignId('project_id')->nullable()->constrained('projects')->onDelete('cascade');
             $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
+            $table->timestamp('start_time')->nullable();
+            $table->integer('expected_time')->nullable();
+            $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
+            $table->integer('story_points')->nullable();
             $table->timestamps();
         });
 

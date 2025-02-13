@@ -39,7 +39,7 @@ class ProjectController extends Controller
             'name' => 'string|max:255',
             'description' => 'nullable|string',
             'status' => 'in:active,completed,on-hold',
-            'client_id' => 'exists:clients,id',
+            'client_id' => 'nullable|exists:clients,id',
         ]);
 
         $project->update($validated);

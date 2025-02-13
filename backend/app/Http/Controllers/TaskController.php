@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        return response()->json(Task::with(['project', 'user'])->get());
+        return response()->json(Task::with(['project', 'assignedUser'])->get());
     }
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
@@ -16,32 +16,44 @@ class TaskController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'required|in:pending,in-progress,completed',
-            'project_id' => 'required|exists:projects,id',
+            'status' => 'required|in:open,in-progress,review,completed,closed',
+            'project_id' => 'nullable|exists:projects,id',
             'assigned_to' => 'nullable|exists:users,id',
+            'start_time' => 'nullable|date',
+            'expected_time' => 'nullable|integer',
+            'priority' => 'required|in:low,medium,high',
+            'story_points' => 'nullable|integer',
         ]);
 
-        $task = Task::create($validated);
-        return response()->json($task, 201);
+        return response()->json(Task::create($validated), 201);
     }
 
-    public function update(Request $request, Task $task)
+    public function show(Task $task): \Illuminate\Http\JsonResponse
+    {
+        return response()->json($task->load(['project', 'assignedUser']));
+    }
+
+    public function update(Request $request, Task $task): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validate([
-            'title' => 'string|max:255',
+            'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'in:pending,in-progress,completed',
-            'project_id' => 'exists:projects,id',
+            'status' => 'sometimes|in:open,in-progress,review,completed,closed',
+            'project_id' => 'nullable|exists:projects,id',
             'assigned_to' => 'nullable|exists:users,id',
+            'start_time' => 'nullable|date',
+            'expected_time' => 'nullable|integer',
+            'priority' => 'sometimes|in:low,medium,high',
+            'story_points' => 'nullable|integer',
         ]);
 
         $task->update($validated);
         return response()->json($task);
     }
 
-    public function destroy(Task $task)
+    public function destroy(Task $task): \Illuminate\Http\JsonResponse
     {
         $task->delete();
-        return response()->json(['message' => 'Task deleted']);
+        return response()->json(['message' => 'Task deleted successfully']);
     }
 }
