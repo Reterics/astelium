@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {FiChevronDown, FiChevronRight} from 'react-icons/fi';
 import {Link} from 'react-router-dom';
+import {useAuth} from "../hooks/useAuth.ts";
 
 interface MenuItem {
   label: string;
@@ -11,11 +12,11 @@ interface MenuItem {
 
 interface SidebarProps {
   menu: MenuItem[];
-  logout: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({menu, logout}) => {
+const Sidebar: React.FC<SidebarProps> = ({menu}) => {
   const [openSubmenus, setOpenSubmenus] = useState<Record<number, boolean>>({});
+  const {logout} = useAuth();
 
   const toggleSubmenu = (key: number) => {
     setOpenSubmenus((prev) => ({...prev, [key]: !prev[key]}));
@@ -69,10 +70,11 @@ const Sidebar: React.FC<SidebarProps> = ({menu, logout}) => {
         </div>
       ))}
       <button
-        onClick={logout}
-        className='w-full p-2 mt-4 text-left rounded-md hover:bg-zinc-800'
+        key={'logout'}
+        onClick={()=>logout()}
+        className='block w-full p-2 mt-4 text-left rounded-md hover:bg-zinc-800'
       >
-        Logout
+        <span>Logout</span>
       </button>
     </aside>
   );

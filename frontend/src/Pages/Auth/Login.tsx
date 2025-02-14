@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
-import {router} from '@inertiajs/react';
+import React, {useEffect, useState} from 'react';
 import EarthScene from "../../components/visualizations/EarthScene.tsx";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 const Login: React.FC = () => {
+  const { user, login } = useAuth();
+
   const [data, setData] = useState({email: '', password: '', remember: false});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,11 +15,21 @@ const Login: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    router.post('/login', data);
+    try {
+      await login(data.email, data.password);
+    } catch (error) {
+      console.log(error);
+      alert("Login failed");
+    }
   };
+
+  useEffect(() => {
+    if (user) {
+      window.location.href = "/admin/dashboard";
+    }
+  }, [user]);
 
   return (
     <div className="bg-zinc-100 text-zinc-700">

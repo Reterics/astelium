@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(): \Illuminate\Database\Eloquent\Collection
     {
-        return response()->json(Project::with('client')->get());
+        return Project::with('client')->get();
     }
 
     public function store(Request $request): \Illuminate\Http\JsonResponse

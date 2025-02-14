@@ -19,31 +19,34 @@ import InvoiceUsers from './InvoiceUsers';
 import Invoices from './Invoices';
 import ContractTemplates from './ContractTemplates';
 import Contracts from './Contracts';
+import PrivateRoute from "../../components/PrivateRoute.tsx";
 
 const AdminPanel = () => {
   return (
     <BrowserRouter basename='/admin/'>
       <Container>
         <Routes>
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/users' element={<Users />} />
-          <Route path='/projects' element={<Projects />} />
-          <Route path='/tasks' element={<Tasks />} />
-          <Route path='/clients' element={<Clients />} />
-          <Route path='/notes' element={<Notes />} />
-          <Route path='/reports' element={<Reports />} />
-          <Route path='/settings' element={<Settings />} />
-          <Route path='/example' element={<MainContent />} />
+          <Route element={<PrivateRoute />}>
+            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/users' element={<Users />} />
+            <Route path='/projects' element={<Projects />} />
+            <Route path='/tasks' element={<Tasks />} />
+            <Route path='/clients' element={<Clients />} />
+            <Route path='/notes' element={<Notes />} />
+            <Route path='/reports' element={<Reports />} />
+            <Route path='/settings' element={<Settings />} />
+            <Route path='/example' element={<MainContent />} />
 
-          <Route path='/warehouses' element={<Warehouses />} />
-          <Route path='/storage' element={<StoragePage />} />
-          <Route path='/domains' element={<Domains />} />
+            <Route path='/warehouses' element={<Warehouses />} />
+            <Route path='/storage' element={<StoragePage />} />
+            <Route path='/domains' element={<Domains />} />
 
-          <Route path='/invoice-users' element={<InvoiceUsers />} />
-          <Route path='/invoices' element={<Invoices />} />
-          <Route path='/contract-templates' element={<ContractTemplates />} />
-          <Route path='/contracts' element={<Contracts />} />
-          <Route path='/transactions' element={<Transactions />} />
+            <Route path='/invoice-users' element={<InvoiceUsers />} />
+            <Route path='/invoices' element={<Invoices />} />
+            <Route path='/contract-templates' element={<ContractTemplates />} />
+            <Route path='/contracts' element={<Contracts />} />
+            <Route path='/transactions' element={<Transactions />} />
+          </Route>
         </Routes>
       </Container>
     </BrowserRouter>

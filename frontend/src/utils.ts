@@ -16,9 +16,10 @@ export const getFetchOptions = () =>
   ({
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': getCSRFToken() || '',
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      /*'X-CSRF-TOKEN': getCSRFToken() || '',
       'X-XSRF-TOKEN': getXsrfToken() || '',
-      'X-Inertia': 'true',
+      'X-Inertia': 'true',*/
     },
     credentials: 'include',
   }) as RequestInit;

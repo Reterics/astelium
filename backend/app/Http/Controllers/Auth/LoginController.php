@@ -24,10 +24,6 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if(Auth::check()) {
-            Log::info('User found for email: ' . $request->input('email'));
-
-        }
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             Log::info('Login successful for user: ' . $request->input('email'));
 

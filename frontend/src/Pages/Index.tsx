@@ -6,7 +6,7 @@ const Index: React.FC = () => {
     <div>
       <h1>Welcome to Our Public Site</h1>
       <p>This is the landing page for everyone.</p>
-      <Link href='/login'>Login</Link>
+      <Link href='/login' only={['users']}>Login</Link>
     </div>
   );
 };
