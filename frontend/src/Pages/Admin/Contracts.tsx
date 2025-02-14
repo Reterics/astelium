@@ -7,7 +7,7 @@ const Contracts = () => {
 
   if (isLoadingTemplates) return <p>Loading...</p>;
 
-  const templateOptions = contractTemplates.map((t: {id: any; name: any}) => ({
+  const templateOptions = contractTemplates.map((t) => ({
     value: t.id,
     label: t.name,
   }));

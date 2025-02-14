@@ -8,14 +8,12 @@ const Invoices = () => {
 
   if (isLoadingUsers || isLoadingClients) return <p>Loading...</p>;
 
-  const invoiceUserOptions = invoiceUsers.map(
-    (u: {id: any; supplierName: any}) => ({
-      value: u.id,
-      label: u.supplierName,
-    })
-  );
+  const invoiceUserOptions = invoiceUsers.map((u) => ({
+    value: u.id,
+    label: u.supplierName,
+  }));
 
-  const clientOptions = clients.map((c: {id: any; customerName: any}) => ({
+  const clientOptions = clients.map((c) => ({
     value: c.id,
     label: c.customerName,
   }));

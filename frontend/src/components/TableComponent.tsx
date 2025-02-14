@@ -71,7 +71,7 @@ const TableComponent: React.FC<TableProps> = ({
               )
             );
           }
-          return row[col.key] === filters[col.key];
+          return String(row[col.key]) === String(filters[col.key]);
         }) &&
         columns.some((col) =>
           row[col.key]
