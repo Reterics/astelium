@@ -16,7 +16,7 @@ export const getFetchOptions = () =>
   ({
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
       /*'X-CSRF-TOKEN': getCSRFToken() || '',
       'X-XSRF-TOKEN': getXsrfToken() || '',
       'X-Inertia': 'true',*/
@@ -25,13 +25,15 @@ export const getFetchOptions = () =>
   }) as RequestInit;
 
 export const fieldsToColumns = (fields: CrudField<any>[]) => {
-  return fields.filter(field => field.visible !== false).map((field) => ({
-    key: field.name,
-    name: field.name,
-    label: field.label,
-    sortable: !!field.sortable,
-    editable: !!field.editable,
-    type: field.type,
-    options: field.options || [],
-  })) as TableColumn[];
+  return fields
+    .filter((field) => field.visible !== false)
+    .map((field) => ({
+      key: field.name,
+      name: field.name,
+      label: field.label,
+      sortable: !!field.sortable,
+      editable: !!field.editable,
+      type: field.type,
+      options: field.options || [],
+    })) as TableColumn[];
 };

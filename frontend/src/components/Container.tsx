@@ -1,14 +1,27 @@
 import Sidebar from './Sidebar.tsx';
 import Header from './Header.tsx';
-import { FiHome, FiUsers, FiFolder, FiList, FiUser, FiDatabase, FiCreditCard,
-  FiFileText, FiSettings, FiArchive, FiGlobe, FiFile, FiClipboard } from "react-icons/fi";
+import {
+  FiHome,
+  FiUsers,
+  FiFolder,
+  FiList,
+  FiUser,
+  FiDatabase,
+  FiCreditCard,
+  FiFileText,
+  FiSettings,
+  FiArchive,
+  FiGlobe,
+  FiFile,
+  FiClipboard,
+} from 'react-icons/fi';
 
 import {useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import PageBreadcrumbs from './PageBreadcrumbs.tsx';
 
 const menu = [
-  { label: 'Dashboard', path: '/dashboard', icon: FiHome },
+  {label: 'Dashboard', path: '/dashboard', icon: FiHome},
 
   {
     label: 'Projects',
@@ -30,9 +43,9 @@ const menu = [
     label: 'Inventory',
     icon: FiArchive,
     submenu: [
-      { label: 'Warehouses', path: '/warehouses', icon: FiDatabase },
-      { label: 'Storage', path: '/storage', icon: FiDatabase },
-      { label: 'Domains', path: '/domains', icon: FiGlobe },
+      {label: 'Warehouses', path: '/warehouses', icon: FiDatabase},
+      {label: 'Storage', path: '/storage', icon: FiDatabase},
+      {label: 'Domains', path: '/domains', icon: FiGlobe},
     ],
   },
 
@@ -40,11 +53,15 @@ const menu = [
     label: 'Management',
     icon: FiClipboard,
     submenu: [
-      { label: 'Invoice Users', path: '/invoice-users', icon: FiUser },
-      { label: 'Invoices', path: '/invoices', icon: FiFile },
-      { label: 'Contract Templates', path: '/contract-templates', icon: FiFileText },
-      { label: 'Contracts', path: '/contracts', icon: FiFileText },
-      { label: 'Transactions', path: '/transactions', icon: FiCreditCard },
+      {label: 'Invoice Users', path: '/invoice-users', icon: FiUser},
+      {label: 'Invoices', path: '/invoices', icon: FiFile},
+      {
+        label: 'Contract Templates',
+        path: '/contract-templates',
+        icon: FiFileText,
+      },
+      {label: 'Contracts', path: '/contracts', icon: FiFileText},
+      {label: 'Transactions', path: '/transactions', icon: FiCreditCard},
     ],
   },
 
@@ -58,8 +75,8 @@ const menu = [
     label: 'Admin',
     icon: FiSettings,
     submenu: [
-      { label: 'Users', path: '/users', icon: FiUsers },
-      { label: 'Settings', path: '/settings', icon: FiSettings },
+      {label: 'Users', path: '/users', icon: FiUsers},
+      {label: 'Settings', path: '/settings', icon: FiSettings},
     ],
   },
 ];

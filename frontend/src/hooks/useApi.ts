@@ -1,5 +1,9 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {getFetchOptions} from "../utils.ts";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import {getFetchOptions} from '../utils.ts';
 
 export interface UseApiProps {
   perPage: number;
@@ -8,7 +12,7 @@ export interface UseApiProps {
 export const useApi = (endpoint: string, options?: UseApiProps) => {
   const queryClient = useQueryClient();
 
-  const fetchData = async ({ pageParam = 1 }) => {
+  const fetchData = async ({pageParam = 1}) => {
     const perPage = options?.perPage ?? 10;
     const pageUrl = `/api/${endpoint}?page=${pageParam}&per_page=${perPage}`;
     const response = await fetch(pageUrl, {
@@ -34,12 +38,13 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     }
   };
 
-  const { data, error, isLoading, hasNextPage, hasPreviousPage } = useInfiniteQuery({
-    initialPageParam: 1,
-    queryKey: [endpoint],
-    queryFn: fetchData,
-    getNextPageParam: (lastPage) => lastPage.next_page_url ?? undefined,
-  });
+  const {data, error, isLoading, hasNextPage, hasPreviousPage} =
+    useInfiniteQuery({
+      initialPageParam: 1,
+      queryKey: [endpoint],
+      queryFn: fetchData,
+      getNextPageParam: (lastPage) => lastPage.next_page_url ?? undefined,
+    });
 
   const createMutation = useMutation({
     mutationFn: async (newData: any) => {
@@ -52,7 +57,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       return response.json();
     },
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [endpoint] });
+      return queryClient.invalidateQueries({queryKey: [endpoint]});
     },
   });
 
@@ -67,7 +72,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       return response.json();
     },
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [endpoint] });
+      return queryClient.invalidateQueries({queryKey: [endpoint]});
     },
   });
 
@@ -85,13 +90,17 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
   });
 
   return {
-    data: (data?.pages.flatMap(page => page.data ?? page) as Record<string, any>[]) || [],
+    data:
+      (data?.pages.flatMap((page) => page.data ?? page) as Record<
+        string,
+        any
+      >[]) || [],
     error,
     isLoading,
     createMutation,
     updateMutation,
     deleteMutation,
     hasNextPage,
-    hasPreviousPage
+    hasPreviousPage,
   };
 };

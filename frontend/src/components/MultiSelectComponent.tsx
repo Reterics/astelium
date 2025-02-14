@@ -29,7 +29,7 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
         {filters[column.key]?.length
           ? filters[column.key]
               .map((value) => {
-                const option =  column.options?.find(
+                const option = column.options?.find(
                   (option) =>
                     option === value ||
                     (typeof option === 'object' && option.value === value)

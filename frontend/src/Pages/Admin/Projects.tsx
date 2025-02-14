@@ -1,15 +1,15 @@
 import CrudManager from '../../components/CrudManager';
-import {useApi} from "../../hooks/useApi.ts";
+import {useApi} from '../../hooks/useApi.ts';
 
 const Projects = () => {
-  const { data, isLoading } = useApi('clients');
+  const {data, isLoading} = useApi('clients');
 
   if (isLoading) return <p>Loading...</p>;
 
-  const clients =  data.map((d) => ({
+  const clients = data.map((d) => ({
     value: d.id,
     label: d.name,
-  }))
+  }));
 
   if (!clients) return <p>Please create a client for using Projects</p>;
 

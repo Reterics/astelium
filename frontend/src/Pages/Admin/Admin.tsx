@@ -19,7 +19,7 @@ import InvoiceUsers from './InvoiceUsers';
 import Invoices from './Invoices';
 import ContractTemplates from './ContractTemplates';
 import Contracts from './Contracts';
-import PrivateRoute from "../../components/PrivateRoute.tsx";
+import PrivateRoute from '../../components/PrivateRoute.tsx';
 
 const AdminPanel = () => {
   return (

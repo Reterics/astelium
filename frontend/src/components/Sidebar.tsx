@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {FiChevronDown, FiChevronRight} from 'react-icons/fi';
 import {Link} from 'react-router-dom';
-import {useAuth} from "../hooks/useAuth.ts";
+import {useAuth} from '../hooks/useAuth.ts';
 
 interface MenuItem {
   label: string;
@@ -71,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({menu}) => {
       ))}
       <button
         key={'logout'}
-        onClick={()=>logout()}
+        onClick={() => logout()}
         className='block w-full p-2 mt-4 text-left rounded-md hover:bg-zinc-800'
       >
         <span>Logout</span>

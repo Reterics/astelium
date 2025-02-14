@@ -3,7 +3,7 @@ import {fieldsToColumns} from '../utils.ts';
 import TableComponent from './TableComponent.tsx';
 import FormModal from './FormModal.tsx';
 import {SelectOption, SelectOptions} from './SelectComponent.tsx';
-import {useApi} from "../hooks/useApi.ts";
+import {useApi} from '../hooks/useApi.ts';
 
 export interface CrudField<T> {
   name: keyof T & string;
@@ -28,7 +28,8 @@ const CrudManager = <T extends Record<string, any>>({
 }: CrudManagerProps<T>) => {
   const [modalData, setModalData] = useState<Partial<T> | false>(false);
 
-  const { data, isLoading, createMutation, deleteMutation, updateMutation } = useApi(apiEndpoint);
+  const {data, isLoading, createMutation, deleteMutation, updateMutation} =
+    useApi(apiEndpoint);
 
   const saveData = async (
     body: Partial<T> & {id?: number}
@@ -38,7 +39,7 @@ const CrudManager = <T extends Record<string, any>>({
         id: body.id,
         data: body,
       });
-    } else  {
+    } else {
       await createMutation.mutateAsync(body);
     }
 
@@ -61,17 +62,23 @@ const CrudManager = <T extends Record<string, any>>({
             out[key] = ((filter.options as SelectOption[]).find(
               (f: SelectOption) => String(item[key]) === String(f.value)
             )?.label || item[key]) as T[keyof T & string];
-          } else if (item[key] && filter.editable && filter.type === 'multiselect' && !Array.isArray(item[key])) {
+          } else if (
+            item[key] &&
+            filter.editable &&
+            filter.type === 'multiselect' &&
+            !Array.isArray(item[key])
+          ) {
             out[key] = item[key].toString().split(', ');
           } else if (Array.isArray(item[key]) && item[key].length) {
             // TODO: Remove this temporary workaround
-            out[key] = item[key].map((f: {id: number}|string) => typeof f === 'object' ? f.id.toString() : f);
+            out[key] = item[key].map((f: {id: number} | string) =>
+              typeof f === 'object' ? f.id.toString() : f
+            );
           }
         });
         return out;
       })
-    : data as Partial<T>[];
-
+    : (data as Partial<T>[]);
 
   return (
     <div>
@@ -85,9 +92,7 @@ const CrudManager = <T extends Record<string, any>>({
         onEdit={async (changes) => {
           for (let i = 0; i < changes.length; i++) {
             const change = changes[i] as Partial<T>;
-            await saveData(
-              change
-            );
+            await saveData(change);
           }
         }}
       ></TableComponent>
