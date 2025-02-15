@@ -161,7 +161,7 @@ const TableComponent: React.FC<TableProps> = ({
             placeholder='Search...'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className='p-1 border border-zinc-300 rounded-xs'
+            className='p-1 border border-zinc-300 rounded-sm bg-transparent text-zinc-900'
           />
         </div>
         {columns.map((col) =>
@@ -191,14 +191,15 @@ const TableComponent: React.FC<TableProps> = ({
         )}
         <button
           onClick={() => onCreate && onCreate()}
-          className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
+          className='flex items-center bg-zinc-800 text-white px-3 py-1 rounded-xs hover:bg-zinc-700'
         >
           <FiPlus className='mr-1' /> Add
         </button>
       </div>
-      <table className='w-full border-collapse border border-zinc-300'>
-        <thead>
-          <tr className='bg-zinc-200'>
+      <div className='overflow-auto rounded shadow-md mb-2'>
+        <table className='w-full border-collapse border border-zinc-300'>
+          <thead>
+          <tr className='bg-zinc-200 text-left text-sm font-medium text-zinc-900'>
             {columns.map((col) => (
               <th
                 key={col.key}
@@ -218,7 +219,7 @@ const TableComponent: React.FC<TableProps> = ({
               className={editedRows[rowIndex] ? 'bg-yellow-100' : ''}
             >
               {columns.map((col) => (
-                <td key={col.key} className='border border-zinc-300 p-2'>
+                <td key={col.key} className='p-2 border-b border-zinc-300'>
                   {col.editable ? (
                     col.type === 'select' ? (
                       <SelectComponent
@@ -253,7 +254,7 @@ const TableComponent: React.FC<TableProps> = ({
                         onChange={(e) =>
                           handleEdit(rowIndex, col.key, e.target.value)
                         }
-                        className='w-full bg-transparent border-b border-zinc-300 focus:outline-none'
+                        className='w-full bg-transparent hover:border-b hover:border-zinc-300 focus:outline-none'
                       />
                     )
                   ) : (
@@ -277,13 +278,10 @@ const TableComponent: React.FC<TableProps> = ({
               </td>
             </tr>
           ))}
-        </tbody>
-      </table>
-      <Pagination
-        totalPages={totalPages}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-      />
+          </tbody>
+        </table>
+      </div>
+      <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
     </div>
   );
 };

@@ -19,7 +19,7 @@ const Pagination: React.FC<PaginationProps> = ({
   const buttonClass =
     'p-1 border border-zinc-300 rounded-xs text-zinc-600 hover:bg-zinc-200 disabled:opacity-50 cursor-pointer';
   return (
-    <div className='flex items-center justify-center space-x-2 p-2 border-t border-zinc-300'>
+    <div className='flex items-center justify-center space-x-2 p-2'>
       <button
         className={buttonClass}
         onClick={() => handlePageChange(currentPage - 1)}
