@@ -8,7 +8,7 @@ services:
     container_name: laravel_backend
     restart: unless-stopped
     ports:
-      - "9000:9000"
+      - "8000:8000"
     volumes:
       - ./backend:/var/www
       - ./docker/.env.docker:/var/www/.env

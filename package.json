@@ -1,0 +1,19 @@
+{
+  "name": "astelium",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "node ./index.js --seed",
+    "start:frontend": "cd frontend && npm install && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Reterics/astelium"
+  },
+  "private": true,
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
