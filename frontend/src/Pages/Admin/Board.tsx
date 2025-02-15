@@ -1,5 +1,5 @@
 import {useApi} from '../../hooks/useApi.ts';
-import KanbanBoard from '../../components/KanbanBoard.tsx';
+import KanbanBoard, {Task} from '../../components/KanbanBoard.tsx';
 import {FiPlus, FiSearch} from 'react-icons/fi';
 import FormModal from '../../components/FormModal.tsx';
 import {useState} from 'react';
@@ -149,7 +149,7 @@ const Board = () => {
       </div>
 
       {!tasksAreLoading && (
-        <KanbanBoard tasks={tasksRaw} setTask={updateTask} />
+        <KanbanBoard tasks={tasksRaw as Task[]} setTask={updateTask} />
       )}
 
       {modalData && (
