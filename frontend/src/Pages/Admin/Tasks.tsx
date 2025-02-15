@@ -1,16 +1,9 @@
 import CrudManager from '../../components/CrudManager';
 import {useApi} from '../../hooks/useApi.ts';
-import KanbanBoard from '../../components/KanbanBoard.tsx';
 
 const Tasks = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
   const {data: usersRaw, isLoading: usersAreLoading} = useApi('users');
-  const {
-    data: tasksRaw,
-    isLoading: tasksAreLoading,
-    updateMutation,
-    createMutation,
-  } = useApi('tasks');
 
   if (projectsAreLoading || usersAreLoading) return <p>Loading...</p>;
 
@@ -25,16 +18,6 @@ const Tasks = () => {
   }));
 
   if (!projects) return <p>Please create a project for using Tasks</p>;
-
-  const updateTask = async (body: Record<string, any>) => {
-    if (body.id) {
-      await updateMutation.mutateAsync(
-        body as Record<string, any> & {id: number}
-      );
-    } else {
-      await createMutation.mutateAsync(body);
-    }
-  };
 
   return (
     <div>
@@ -61,6 +44,13 @@ const Tasks = () => {
             type: 'select',
             editable: true,
             options: ['open', 'in-progress', 'review', 'completed', 'closed'],
+          },
+          {
+            name: 'type',
+            label: 'Type',
+            type: 'select',
+            editable: true,
+            options: ['feature', 'task', 'issue'],
           },
           {
             name: 'project_id',
@@ -103,9 +93,6 @@ const Tasks = () => {
           },
         ]}
       />
-      {!tasksAreLoading && (
-        <KanbanBoard tasks={tasksRaw} setTask={updateTask} />
-      )}
     </div>
   );
 };

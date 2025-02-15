@@ -42,6 +42,7 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
+            $table->enum('type', ['feature', 'task', 'issue'])->default('task');
             $table->enum('status', ['open', 'in-progress', 'review', 'completed', 'closed'])->default('open');
             $table->foreignId('project_id')->nullable()->constrained('projects')->onDelete('cascade');
             $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');

@@ -14,6 +14,7 @@ import {
   FiGlobe,
   FiFile,
   FiClipboard,
+  FiColumns,
 } from 'react-icons/fi';
 
 import {useState} from 'react';
@@ -31,7 +32,10 @@ const menu = [
   {
     label: 'Tasks',
     icon: FiList,
-    path: '/tasks',
+    submenu: [
+      {label: 'List', path: '/tasks', icon: FiList},
+      {label: 'Board', path: '/board', icon: FiColumns},
+    ],
   },
   {
     label: 'Notes',
@@ -89,7 +93,11 @@ const Container: React.FC<ContainerProps> = ({children}) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const location = useLocation();
 
-  const selectedMenu = menu.find((m) => m.path === location.pathname);
+  const selectedMenu =
+    menu.find((m) => m.path === location.pathname) ||
+    menu
+      .flatMap((m) => m.submenu || [])
+      .find((s) => s.path === location.pathname);
 
   return (
     <div className='flex h-screen overflow-hidden bg-zinc-200 text-zinc-700'>

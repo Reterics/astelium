@@ -18,6 +18,7 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:open,in-progress,review,completed,closed',
+            'type' => 'nullable|string|in:feature,task,issue',
             'project_id' => 'nullable|exists:projects,id',
             'assigned_to' => 'nullable|exists:users,id',
             'start_time' => 'nullable|date',
@@ -25,6 +26,8 @@ class TaskController extends Controller
             'priority' => 'required|in:low,medium,high',
             'story_points' => 'nullable|integer',
         ]);
+
+        $validated['type'] = $validated['type'] ?? 'task';
 
         return response()->json(Task::create($validated), 201);
     }
@@ -40,6 +43,7 @@ class TaskController extends Controller
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'status' => 'sometimes|in:open,in-progress,review,completed,closed',
+            'type' => 'nullable|string|in:feature,task,issue',
             'project_id' => 'nullable|exists:projects,id',
             'assigned_to' => 'nullable|exists:users,id',
             'start_time' => 'nullable|date',
@@ -47,6 +51,8 @@ class TaskController extends Controller
             'priority' => 'sometimes|in:low,medium,high',
             'story_points' => 'nullable|integer',
         ]);
+
+        $validated['type'] = $validated['type'] ?? 'task';
 
         $task->update($validated);
         return response()->json($task);

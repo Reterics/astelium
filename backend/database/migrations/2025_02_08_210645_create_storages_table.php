@@ -45,12 +45,25 @@ return new class extends Migration {
             $table->foreignId('related_client_id')->nullable()->constrained('clients')->onDelete('cascade');
             $table->timestamps();
         });
+        Schema::create('personal_access_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->morphs('tokenable');
+            $table->string('name');
+            $table->string('token', 64)->unique();
+            $table->text('abilities')->nullable();
+            $table->timestamp('last_used_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->timestamps();
+        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('storage');
+        Schema::dropIfExists('storage_warehouse');
+        Schema::dropIfExists('storages');
+        Schema::dropIfExists('warehouses');
         Schema::dropIfExists('transactions');
         Schema::dropIfExists('notes');
+        Schema::dropIfExists('personal_access_tokens');
     }
 };

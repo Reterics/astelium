@@ -20,6 +20,7 @@ import Invoices from './Invoices';
 import ContractTemplates from './ContractTemplates';
 import Contracts from './Contracts';
 import PrivateRoute from '../../components/PrivateRoute.tsx';
+import Board from './Board.tsx';
 
 const AdminPanel = () => {
   return (
@@ -31,6 +32,7 @@ const AdminPanel = () => {
             <Route path='/users' element={<Users />} />
             <Route path='/projects' element={<Projects />} />
             <Route path='/tasks' element={<Tasks />} />
+            <Route path='/board' element={<Board />} />
             <Route path='/clients' element={<Clients />} />
             <Route path='/notes' element={<Notes />} />
             <Route path='/reports' element={<Reports />} />

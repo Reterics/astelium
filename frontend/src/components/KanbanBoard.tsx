@@ -6,12 +6,18 @@ import {
 import invariant from 'tiny-invariant';
 
 const statuses = [
-  {id: 'open', title: 'Open', color: 'bg-blue-500'},
-  {id: 'in-progress', title: 'In Progress', color: 'bg-yellow-600'},
-  {id: 'review', title: 'Review', color: 'bg-purple-500'},
-  {id: 'completed', title: 'Completed', color: 'bg-green-500'},
-  {id: 'closed', title: 'Closed', color: 'bg-gray-500'},
+  {id: 'open', title: 'Open', color: 'bg-zinc-400'},
+  {id: 'in-progress', title: 'In Progress', color: 'bg-zinc-400'},
+  {id: 'review', title: 'Review', color: 'bg-zinc-400'},
+  {id: 'completed', title: 'Completed', color: 'bg-zinc-400'},
+  {id: 'closed', title: 'Closed', color: 'bg-zinc-400'},
 ];
+
+const taskTypes = {
+  feature: 'bg-blue-200',
+  task: 'bg-green-200',
+  issue: 'bg-red-200',
+};
 
 export interface Task {
   id: number;
@@ -113,12 +119,12 @@ const KanbanBoard = ({
       {statuses.map((status) => (
         <div key={status.id} className='w-1/5 min-w-[200px]'>
           <h2
-            className={`p-2 rounded-t ${status.color} text-center font-semibold text-zinc-100`}
+            className={`p-2 rounded-t-sm ${status.color} text-center font-semibold text-zinc-100`}
           >
             {status.title}
           </h2>
           <div
-            className='bg-zinc-100 p-2 rounded-b min-h-[400px] space-y-2'
+            className='bg-zinc-100 p-1 rounded-b-sm min-h-[400px] space-y-2'
             data-column-id={status.id}
             ref={(element) => {
               if (element) columnRefs.current[status.id] = element;
@@ -129,7 +135,7 @@ const KanbanBoard = ({
               .map((task) => (
                 <div
                   key={task.id}
-                  className='bg-white text-black p-3 rounded shadow border border-gray-300'
+                  className={`bg-white text-black p-3 rounded-sm shadow border border-gray-300 ${taskTypes[task.type as 'task'] || ''}`}
                   data-task-id={task.id}
                   data-instance-id={instanceId.current.toString()}
                   ref={(element) => {

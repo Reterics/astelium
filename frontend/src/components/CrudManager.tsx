@@ -19,12 +19,16 @@ interface CrudManagerProps<T extends Record<string, any>> {
   title: string;
   apiEndpoint: string;
   fields: CrudField<T>[];
+  children?: React.ReactNode;
+  childOnly?: boolean;
 }
 
 const CrudManager = <T extends Record<string, any>>({
   title,
   apiEndpoint,
   fields,
+  children,
+  childOnly,
 }: CrudManagerProps<T>) => {
   const [modalData, setModalData] = useState<Partial<T> | false>(false);
 
@@ -35,10 +39,7 @@ const CrudManager = <T extends Record<string, any>>({
     body: Partial<T> & {id?: number}
   ): Promise<boolean> => {
     if (body.id) {
-      await updateMutation.mutateAsync({
-        id: body.id,
-        data: body,
-      });
+      await updateMutation.mutateAsync(body as Partial<T> & {id: number});
     } else {
       await createMutation.mutateAsync(body);
     }
@@ -82,20 +83,24 @@ const CrudManager = <T extends Record<string, any>>({
 
   return (
     <div>
-      <TableComponent
-        columns={fieldsToColumns(fields)}
-        data={processedData}
-        onDelete={(id) => deleteMutation.mutate(id as number)}
-        onCreate={() => {
-          setModalData({});
-        }}
-        onEdit={async (changes) => {
-          for (let i = 0; i < changes.length; i++) {
-            const change = changes[i] as Partial<T>;
-            await saveData(change);
-          }
-        }}
-      ></TableComponent>
+      {!childOnly && (
+        <TableComponent
+          columns={fieldsToColumns(fields)}
+          data={processedData}
+          onDelete={(id) => deleteMutation.mutate(id as number)}
+          onCreate={() => {
+            setModalData({});
+          }}
+          onEdit={async (changes) => {
+            for (let i = 0; i < changes.length; i++) {
+              const change = changes[i] as Partial<T>;
+              await saveData(change);
+            }
+          }}
+        ></TableComponent>
+      )}
+
+      {children}
 
       {modalData && (
         <FormModal
