@@ -1,0 +1,27 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Task;
+use App\Models\Project;
+
+class TaskFactory extends Factory
+{
+    protected $model = Task::class;
+
+    public function definition(): array
+    {
+        return [
+            'project_id' => Project::factory(),
+            'title' => $this->faker->sentence(4),
+            'description' => $this->faker->paragraph,
+            'status' => $this->faker->randomElement(['open', 'in-progress', 'review', 'completed', 'closed']),
+            'priority' => $this->faker->randomElement(['low', 'medium', 'high']),
+            'assigned_to' => User::factory(),
+            'start_time' => $this->faker->dateTime,
+            'expected_time' => $this->faker->numberBetween(1, 48),
+        ];
+    }
+}

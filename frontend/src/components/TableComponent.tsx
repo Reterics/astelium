@@ -199,89 +199,95 @@ const TableComponent: React.FC<TableProps> = ({
       <div className='overflow-auto rounded shadow-md mb-2'>
         <table className='w-full border-collapse border border-zinc-300'>
           <thead>
-          <tr className='bg-zinc-200 text-left text-sm font-medium text-zinc-900'>
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                className='border border-zinc-300 p-2 cursor-pointer'
-                onClick={() => col.sortable && allowSort && handleSort(col.key)}
-              >
-                {col.label} {col.sortable && allowSort ? '⇅' : ''}
-              </th>
-            ))}
-            <th className='border border-zinc-300 p-2 w-0'> </th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredData.map((row, rowIndex) => (
-            <tr
-              key={rowIndex}
-              className={editedRows[rowIndex] ? 'bg-yellow-100' : ''}
-            >
+            <tr className='bg-zinc-200 text-left text-sm font-medium text-zinc-900'>
               {columns.map((col) => (
-                <td key={col.key} className='p-2 border-b border-zinc-300'>
-                  {col.editable ? (
-                    col.type === 'select' ? (
-                      <SelectComponent
-                        defaultLabel={`Select option`}
-                        column={col}
-                        filters={
-                          changes[rowIndex]?.[col.key]
-                            ? changes[rowIndex]
-                            : (row as {[key: string]: string})
-                        }
-                        handleFilterChange={(column, value) =>
-                          handleEdit(rowIndex, column, value)
-                        }
-                      />
-                    ) : col.type === 'multiselect' ? (
-                      <MultiSelectComponent
-                        defaultLabel={`Select option`}
-                        column={col}
-                        filters={
-                          changes[rowIndex]?.[col.key]
-                            ? changes[rowIndex]
-                            : (row as {[key: string]: string[]})
-                        }
-                        handleFilterChange={(column, value) =>
-                          handleEdit(rowIndex, column, value)
-                        }
-                      />
-                    ) : (
-                      <input
-                        type={col.type || 'text'}
-                        value={changes[rowIndex]?.[col.key] ?? row[col.key]}
-                        onChange={(e) =>
-                          handleEdit(rowIndex, col.key, e.target.value)
-                        }
-                        className='w-full bg-transparent hover:border-b hover:border-zinc-300 focus:outline-none'
-                      />
-                    )
-                  ) : (
-                    row[col.key]
-                  )}
-                </td>
+                <th
+                  key={col.key}
+                  className='border border-zinc-300 p-2 cursor-pointer'
+                  onClick={() =>
+                    col.sortable && allowSort && handleSort(col.key)
+                  }
+                >
+                  {col.label} {col.sortable && allowSort ? '⇅' : ''}
+                </th>
               ))}
-              <td className='p-4 flex items-end w-fit space-x-2 h-fit border-b border-zinc-300'>
-                <button
-                  className='text-blue-500 cursor-pointer'
-                  onClick={() => handleReset(rowIndex)}
-                >
-                  <FiRefreshCw />
-                </button>
-                <button
-                  className='text-red-500 cursor-pointer'
-                  onClick={() => onDelete && onDelete(row.id)}
-                >
-                  <FiTrash />
-                </button>
-              </td>
+              <th className='border border-zinc-300 p-2 w-0'> </th>
             </tr>
-          ))}
+          </thead>
+          <tbody>
+            {filteredData.map((row, rowIndex) => (
+              <tr
+                key={rowIndex}
+                className={editedRows[rowIndex] ? 'bg-yellow-100' : ''}
+              >
+                {columns.map((col) => (
+                  <td key={col.key} className='p-2 border-b border-zinc-300'>
+                    {col.editable ? (
+                      col.type === 'select' ? (
+                        <SelectComponent
+                          defaultLabel={`Select option`}
+                          column={col}
+                          filters={
+                            changes[rowIndex]?.[col.key]
+                              ? changes[rowIndex]
+                              : (row as {[key: string]: string})
+                          }
+                          handleFilterChange={(column, value) =>
+                            handleEdit(rowIndex, column, value)
+                          }
+                        />
+                      ) : col.type === 'multiselect' ? (
+                        <MultiSelectComponent
+                          defaultLabel={`Select option`}
+                          column={col}
+                          filters={
+                            changes[rowIndex]?.[col.key]
+                              ? changes[rowIndex]
+                              : (row as {[key: string]: string[]})
+                          }
+                          handleFilterChange={(column, value) =>
+                            handleEdit(rowIndex, column, value)
+                          }
+                        />
+                      ) : (
+                        <input
+                          type={col.type || 'text'}
+                          value={changes[rowIndex]?.[col.key] ?? row[col.key]}
+                          onChange={(e) =>
+                            handleEdit(rowIndex, col.key, e.target.value)
+                          }
+                          className='w-full bg-transparent hover:border-b hover:border-zinc-300 focus:outline-none'
+                        />
+                      )
+                    ) : (
+                      row[col.key]
+                    )}
+                  </td>
+                ))}
+                <td className='p-4 flex items-end w-fit space-x-2 h-fit border-b border-zinc-300'>
+                  <button
+                    className='text-blue-500 cursor-pointer'
+                    onClick={() => handleReset(rowIndex)}
+                  >
+                    <FiRefreshCw />
+                  </button>
+                  <button
+                    className='text-red-500 cursor-pointer'
+                    onClick={() => onDelete && onDelete(row.id)}
+                  >
+                    <FiTrash />
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
-      <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

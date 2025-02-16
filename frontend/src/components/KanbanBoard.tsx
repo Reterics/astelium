@@ -38,15 +38,15 @@ const getProjectColor = (name: string) => {
 };
 
 const priorityIcons = {
-  low: <FiArrowDownCircle className='text-green-500 text-lg' />, // Green for Low Priority
-  medium: <FiAlertTriangle className='text-yellow-500 text-lg' />, // Yellow for Medium Priority
-  high: <FiZap className='text-red-500 text-lg' />, // Red for High Priority
+  low: <FiArrowDownCircle className='text-green-500 text-base' />, // Green for Low Priority
+  medium: <FiAlertTriangle className='text-yellow-500 text-base' />, // Yellow for Medium Priority
+  high: <FiZap className='text-red-500 text-base' />, // Red for High Priority
 };
 
 const typeIcons = {
-  feature: <FiStar className='text-yellow-500 text-lg' />, // Yellow for Features
-  task: <FiCheckCircle className='text-green-500 text-lg' />, // Green for Tasks
-  issue: <FiAlertCircle className='text-red-500 text-lg' />, // Red for Issues
+  feature: <FiStar className='text-yellow-500 text-base' />, // Yellow for Features
+  task: <FiCheckCircle className='text-green-500 text-base' />, // Green for Tasks
+  issue: <FiAlertCircle className='text-red-500 text-base' />, // Red for Issues
 };
 
 export interface Task {
@@ -172,9 +172,9 @@ const KanbanBoard = ({
                     if (element) taskRefs.current[task.id] = element;
                   }}
                 >
-                  <div className='flex items-center space-x-1 mb-1 cursor-pointer'>
+                  <div className='flex items-center space-x-1 mb-1 cursor-pointer text-base'>
                     {typeIcons[task.type]}
-                    <h3 className='font-semibold'>{task.title}</h3>
+                    <h4 className='font-semibold'>{task.title}</h4>
                   </div>
 
                   {task.project && (
