@@ -149,7 +149,14 @@ const Board = () => {
       </div>
 
       {!tasksAreLoading && (
-        <KanbanBoard tasks={tasksRaw as Task[]} setTask={updateTask} />
+        <KanbanBoard
+          tasks={
+            tasksRaw.sort(
+              (a, b) => (a.order_index || 0) - (b.order_index || 0)
+            ) as Task[]
+          }
+          setTask={updateTask}
+        />
       )}
 
       {modalData && (

@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -50,10 +51,14 @@ return new class extends Migration {
             $table->integer('expected_time')->nullable();
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
             $table->integer('story_points')->nullable();
+            $table->integer('order_index')->default(0)->after('id');
+
             $table->timestamps();
         });
-
-
+        $tasks = DB::table('tasks')->orderBy('id')->get();
+        foreach ($tasks as $index => $task) {
+            DB::table('tasks')->where('id', $task->id)->update(['order_index' => $index + 1]);
+        }
     }
 
     public function down(): void

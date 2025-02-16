@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -28,6 +29,7 @@ class TaskController extends Controller
         ]);
 
         $validated['type'] = $validated['type'] ?? 'task';
+        $validated['order_index'] = Task::max('order_index') + 1;
 
         return response()->json(Task::create($validated), 201);
     }
@@ -63,4 +65,31 @@ class TaskController extends Controller
         $task->delete();
         return response()->json(['message' => 'Task deleted successfully']);
     }
+
+    public function moveBefore(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'before_task_id' => 'nullable|exists:tasks,id',
+        ]);
+
+        DB::transaction(function () use ($task, $validated) {
+            if ($validated['before_task_id']) {
+                $beforeTask = Task::find($validated['before_task_id']);
+                $newOrderIndex = $beforeTask->order_index;
+
+                // Shift tasks down to make space
+                Task::where('order_index', '>=', $newOrderIndex)
+                    ->increment('order_index');
+
+                // Set new order index
+                $task->update(['order_index' => $newOrderIndex]);
+            } else {
+                // Move to the end
+                $task->update(['order_index' => Task::max('order_index') + 1]);
+            }
+        });
+
+        return response()->json(['success' => true, 'task' => $task]);
+    }
+
 }

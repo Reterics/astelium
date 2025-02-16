@@ -20,6 +20,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('projects', ProjectController::class);
 
     Route::apiResource('tasks', TaskController::class);
+    Route::post('/tasks/{task}/move-before', [TaskController::class, 'moveBefore']);
+
 
     Route::apiResource('clients', ClientController::class);
 

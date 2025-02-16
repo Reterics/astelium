@@ -10,7 +10,7 @@ class Task extends Model
 
     protected $fillable = [
         'title', 'description', 'status', 'type', 'project_id', 'assigned_to',
-        'start_time', 'expected_time', 'priority', 'story_points'
+        'start_time', 'expected_time', 'priority', 'story_points', 'order_index'
     ];
 
     public function project(): \Illuminate\Database\Eloquent\Relations\BelongsTo
