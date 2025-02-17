@@ -57,7 +57,7 @@ const menu = [
     label: 'Management',
     icon: FiClipboard,
     submenu: [
-      {label: 'Invoice Users', path: '/invoice-users', icon: FiUser},
+      {label: 'Clients', path: '/clients', icon: FiUser},
       {label: 'Invoices', path: '/invoices', icon: FiFile},
       {
         label: 'Contract Templates',
@@ -80,6 +80,7 @@ const menu = [
     icon: FiSettings,
     submenu: [
       {label: 'Users', path: '/users', icon: FiUsers},
+      {label: 'Invoice Users', path: '/invoice-users', icon: FiUser},
       {label: 'Settings', path: '/settings', icon: FiSettings},
     ],
   },

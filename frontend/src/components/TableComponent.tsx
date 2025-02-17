@@ -22,7 +22,10 @@ interface TableProps {
   data: TableRow[];
   onEdit?: (updatedData: TableRow[]) => Promise<void> | void;
   onDelete?: (id: number | string) => void;
-  onCreate?: () => void;
+  onCreate?: (itemToAdd?: TableRow) => void;
+  noSearch?: boolean;
+  addPerLine?: boolean;
+  pagination?: boolean;
 }
 
 const TableComponent: React.FC<TableProps> = ({
@@ -31,6 +34,9 @@ const TableComponent: React.FC<TableProps> = ({
   onEdit,
   onDelete,
   onCreate,
+  noSearch,
+  addPerLine,
+  pagination,
 }) => {
   const [tableData, setTableData] = useState(data);
   const [sortConfig, setSortConfig] = useState<{
@@ -50,6 +56,7 @@ const TableComponent: React.FC<TableProps> = ({
   const rowsPerPage = 50;
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
+  const [itemToAdd, setItemToAdd] = useState<TableRow>({});
   const handleFilterChange = (key: string, value: string | string[]) => {
     setFilters((prev) => ({...prev, [key]: value}));
   };
@@ -153,49 +160,53 @@ const TableComponent: React.FC<TableProps> = ({
 
   return (
     <div className='p-4 pb-1 shadow-md bg-zinc-50 rounded-lg'>
-      <div className='flex items-center mb-2 space-x-2'>
-        <div className='flex items-center space-x-2 flex-1'>
-          <FiSearch className='text-zinc-600' />
-          <input
-            type='text'
-            placeholder='Search...'
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className='p-1 border border-zinc-300 rounded-sm bg-transparent text-zinc-900'
-          />
+      {(!noSearch || (onCreate && !addPerLine)) && (
+        <div className='flex items-center mb-2 space-x-2'>
+          <div className='flex items-center space-x-2 flex-1'>
+            <FiSearch className='text-zinc-600' />
+            <input
+              type='text'
+              placeholder='Search...'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className='p-1 border border-zinc-300 rounded-sm bg-transparent text-zinc-900'
+            />
+          </div>
+          {columns.map((col) =>
+            col.type === 'multiselect' ? (
+              <MultiSelectComponent
+                defaultLabel={`All`}
+                column={col}
+                filters={filters as {[key: string]: string[]}}
+                handleFilterChange={handleFilterChange}
+              />
+            ) : col.type === 'select' ? (
+              <SelectComponent
+                defaultLabel={`All`}
+                column={col}
+                filters={filters as {[key: string]: string}}
+                handleFilterChange={handleFilterChange}
+              />
+            ) : null
+          )}
+          {Object.keys(changes).length > 0 && (
+            <button
+              className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
+              onClick={handleBulkUpdate}
+            >
+              <FiSave className='mr-1' /> Save
+            </button>
+          )}
+          {onCreate && !addPerLine && (
+            <button
+              onClick={() => onCreate()}
+              className='flex items-center bg-zinc-800 text-white px-3 py-1 rounded-xs hover:bg-zinc-700'
+            >
+              <FiPlus className='mr-1' /> Add
+            </button>
+          )}
         </div>
-        {columns.map((col) =>
-          col.type === 'multiselect' ? (
-            <MultiSelectComponent
-              defaultLabel={`All`}
-              column={col}
-              filters={filters as {[key: string]: string[]}}
-              handleFilterChange={handleFilterChange}
-            />
-          ) : col.type === 'select' ? (
-            <SelectComponent
-              defaultLabel={`All`}
-              column={col}
-              filters={filters as {[key: string]: string}}
-              handleFilterChange={handleFilterChange}
-            />
-          ) : null
-        )}
-        {Object.keys(changes).length > 0 && (
-          <button
-            className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
-            onClick={handleBulkUpdate}
-          >
-            <FiSave className='mr-1' /> Save
-          </button>
-        )}
-        <button
-          onClick={() => onCreate && onCreate()}
-          className='flex items-center bg-zinc-800 text-white px-3 py-1 rounded-xs hover:bg-zinc-700'
-        >
-          <FiPlus className='mr-1' /> Add
-        </button>
-      </div>
+      )}
       <div className='overflow-auto rounded shadow-md mb-2'>
         <table className='w-full border-collapse border border-zinc-300'>
           <thead>
@@ -280,14 +291,68 @@ const TableComponent: React.FC<TableProps> = ({
                 </td>
               </tr>
             ))}
+
+            {addPerLine && (
+              <tr key={'addRow'}>
+                {columns.map((col) => (
+                  <td key={col.key} className='p-2 border-b border-zinc-300'>
+                    {col.type === 'select' ? (
+                      <SelectComponent
+                        defaultLabel={`Select option`}
+                        column={col}
+                        filters={itemToAdd}
+                        handleFilterChange={(_column, value) =>
+                          setItemToAdd({...itemToAdd, [col.key]: value})
+                        }
+                      />
+                    ) : col.type === 'multiselect' ? (
+                      <MultiSelectComponent
+                        defaultLabel={`Select option`}
+                        column={col}
+                        filters={itemToAdd}
+                        handleFilterChange={(_column, value) =>
+                          setItemToAdd({...itemToAdd, [col.key]: value})
+                        }
+                      />
+                    ) : (
+                      <input
+                        type={col.type || 'text'}
+                        value={itemToAdd[col.key] || ''}
+                        onChange={(e) =>
+                          setItemToAdd({
+                            ...itemToAdd,
+                            [col.key]: e.target.value,
+                          })
+                        }
+                        className='w-full bg-transparent hover:border-b hover:border-zinc-300 focus:outline-none'
+                      />
+                    )}
+                  </td>
+                ))}
+                <td className='p-2 flex items-end w-fit space-x-2 h-fit border-b border-zinc-300'>
+                  <button
+                    className='flex items-center bg-zinc-800 text-white px-3 py-1 rounded-xs hover:bg-zinc-700'
+                    onClick={() => {
+                      if (onCreate && onCreate(itemToAdd)) {
+                        setItemToAdd({});
+                      }
+                    }}
+                  >
+                    <FiPlus className='mr-1' /> Add
+                  </button>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
-      <Pagination
-        totalPages={totalPages}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-      />
+      {!!totalPages && pagination !== false && (
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </div>
   );
 };

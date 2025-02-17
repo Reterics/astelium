@@ -1,75 +1,76 @@
-import CrudManager from '../../components/CrudManager';
-import {useApi} from '../../hooks/useApi.ts';
+import {useState} from 'react';
+import {useApi} from '../../hooks/useApi';
+import TableComponent from '../../components/TableComponent';
+import InvoiceModal from '../../components/InvoiceModal';
 
-const Invoices = () => {
-  const {data: invoiceUsers, isLoading: isLoadingUsers} =
-    useApi('invoice-users');
-  const {data: clients, isLoading: isLoadingClients} = useApi('clients');
+interface Invoice {
+  id?: number;
+  number: string;
+  issue_date: string;
+  due_date: string;
+  client: string;
+  items: any[];
+}
 
-  if (isLoadingUsers || isLoadingClients) return <p>Loading...</p>;
+const InvoicesPage = () => {
+  const {
+    data: invoices,
+    createMutation,
+    updateMutation,
+    deleteMutation,
+  } = useApi('invoices');
+  const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
 
-  const invoiceUserOptions = invoiceUsers.map((u) => ({
-    value: u.id,
-    label: u.supplierName,
-  }));
+  const handleSave = async (invoice: Invoice) => {
+    if (invoice.id) {
+      await updateMutation.mutateAsync(
+        invoice as Record<string, any> & {id: number}
+      );
+    } else {
+      await createMutation.mutateAsync(invoice);
+    }
+    setCurrentInvoice(null);
+  };
 
-  const clientOptions = clients.map((c) => ({
-    value: c.id,
-    label: c.customerName,
-  }));
+  const handleDelete = async (id: number) => {
+    await deleteMutation.mutateAsync(id);
+  };
 
   return (
-    <CrudManager
-      title='Invoices'
-      apiEndpoint='invoices'
-      fields={[
-        {
-          name: 'supplier_id',
-          label: 'Supplier',
-          type: 'select',
-          options: invoiceUserOptions,
-        },
-        {
-          name: 'customer_id',
-          label: 'Customer',
-          type: 'select',
-          options: clientOptions,
-        },
-        {
-          name: 'invoiceNumber',
-          label: 'Invoice Number',
-          type: 'text',
-          editable: true,
-        },
-        {
-          name: 'invoiceCategory',
-          label: 'Category',
-          type: 'select',
-          options: ['SIMPLIFIED', 'NORMAL', 'AGGREGATE'],
-          editable: true,
-        },
-        {
-          name: 'invoiceIssueDate',
-          label: 'Issue Date',
-          type: 'date',
-          editable: true,
-        },
-        {
-          name: 'invoicePaymentMethod',
-          label: 'Payment Method',
-          type: 'select',
-          options: ['CASH', 'TRANSFER', 'CARD', 'VOUCHER'],
-          editable: true,
-        },
-        {
-          name: 'invoiceGrossAmount',
-          label: 'Total Amount',
-          type: 'number',
-          editable: true,
-        },
-      ]}
-    />
+    <div className=''>
+      <TableComponent
+        columns={[
+          {key: 'number', label: 'Invoice Number', sortable: true},
+          {key: 'issue_date', label: 'Issue Date', sortable: true},
+          {key: 'due_date', label: 'Due Date', sortable: true},
+          {key: 'client', label: 'Client', sortable: true},
+        ]}
+        data={invoices || []}
+        onEdit={() => {
+          //setCurrentInvoice(invoice);
+        }}
+        onDelete={(id) => handleDelete(id as number)}
+        onCreate={() => {
+          setCurrentInvoice({
+            number: '',
+            issue_date: '',
+            due_date: '',
+            client: '',
+            items: [],
+          });
+        }}
+      />
+
+      {currentInvoice && (
+        <InvoiceModal
+          onClose={() => setCurrentInvoice(null)}
+          invoice={currentInvoice!}
+          setInvoice={setCurrentInvoice}
+          onSave={() => handleSave(currentInvoice!)}
+        />
+      )}
+    </div>
   );
 };
 
-export default Invoices;
+export default InvoicesPage;

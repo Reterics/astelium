@@ -11,6 +11,8 @@ export interface FormModalProps {
   fields: CrudField<any>[];
   data: Record<string, unknown>;
   onSave: (form: Record<string, unknown>) => void;
+  children?: React.ReactNode;
+  cols?: 2 | 4;
 }
 
 const FormModal: React.FC<FormModalProps> = ({
@@ -19,6 +21,8 @@ const FormModal: React.FC<FormModalProps> = ({
   fields,
   data,
   onSave,
+  children,
+  cols,
 }) => {
   const [form, setForm] = useState<Record<string, unknown>>(data);
 
@@ -29,7 +33,11 @@ const FormModal: React.FC<FormModalProps> = ({
   return (
     <Modal title={title} onClose={onClose}>
       <div className='space-y-3'>
-        <div className='grid grid-cols-2 gap-4'>
+        <div
+          className={
+            cols === 4 ? 'grid grid-cols-4 gap-4' : 'grid grid-cols-2 gap-4'
+          }
+        >
           {fields.map((field) => (
             <div key={field.name} className='flex flex-col'>
               <label className='text-sm font-medium text-zinc-700'>
@@ -78,6 +86,7 @@ const FormModal: React.FC<FormModalProps> = ({
             </div>
           ))}
         </div>
+        {children}
         <button
           type='button'
           onClick={() => {
