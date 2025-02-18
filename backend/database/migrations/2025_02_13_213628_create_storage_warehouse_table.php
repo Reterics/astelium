@@ -17,6 +17,17 @@ return new class extends Migration
             $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
+        Schema::create('appointments', function (Blueprint $table) {
+            $table->id();
+            $table->date('day');
+            $table->time('time');
+            $table->integer('length'); // 30, 60, 90 minutes
+            $table->string('name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->text('comments')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -25,5 +36,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('storage_warehouse');
+        Schema::dropIfExists('appointments');
     }
 };

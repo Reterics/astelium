@@ -21,6 +21,7 @@ import ContractTemplates from './ContractTemplates';
 import Contracts from './Contracts';
 import PrivateRoute from '../../components/PrivateRoute.tsx';
 import Board from './Board.tsx';
+import Appointments from "../Appointments.tsx";
 
 const AdminPanel = () => {
   return (
@@ -48,6 +49,8 @@ const AdminPanel = () => {
             <Route path='/contract-templates' element={<ContractTemplates />} />
             <Route path='/contracts' element={<Contracts />} />
             <Route path='/transactions' element={<Transactions />} />
+
+            <Route path='/appointments' element={<Appointments />} />
           </Route>
         </Routes>
       </Container>

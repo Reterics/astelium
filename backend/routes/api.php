@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ContractTemplateController;
@@ -46,6 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('contract-templates', ContractTemplateController::class);
     Route::apiResource('contracts', ContractController::class);
 });
+
+Route::apiResource('appointments', AppointmentController::class);
+
 
 Route::post('/login', [ApiLoginController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [ApiLoginController::class, 'logout']);
