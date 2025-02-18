@@ -64,40 +64,40 @@ const InvoiceModal = ({
       cols={4}
       fields={[
         {
-          name: 'invoice_user_id',
+          key: 'invoice_user_id',
           label: 'Invoice User',
           type: 'select',
           editable: true,
           options: invoiceUsers,
         },
         {
-          name: 'client_id',
+          key: 'client_id',
           label: 'Client',
           type: 'select',
           editable: true,
           options: clients,
         },
-        {name: 'number', label: 'Invoice Number', type: 'text', editable: true},
+        {key: 'number', label: 'Invoice Number', type: 'text', editable: true},
         {
-          name: 'invoice_issue_date',
+          key: 'invoice_issue_date',
           label: 'Issue Date',
           type: 'date',
           editable: true,
         },
         {
-          name: 'invoice_delivery_date',
+          key: 'invoice_delivery_date',
           label: 'Delivery Date',
           type: 'date',
           editable: true,
         },
         {
-          name: 'invoice_payment_date',
+          key: 'invoice_payment_date',
           label: 'Payment Date',
           type: 'date',
           editable: true,
         },
         {
-          name: 'invoice_category',
+          key: 'invoice_category',
           label: 'Category',
           type: 'select',
           editable: true,
@@ -107,14 +107,14 @@ const InvoiceModal = ({
           })),
         },
         {
-          name: 'invoice_currency',
+          key: 'invoice_currency',
           label: 'Currency',
           type: 'select',
           editable: true,
           options: ['HUF'].map((d) => ({value: d, label: d})),
         },
         {
-          name: 'invoice_payment_method',
+          key: 'invoice_payment_method',
           label: 'Payment Method',
           type: 'select',
           editable: true,
@@ -123,7 +123,7 @@ const InvoiceModal = ({
           ),
         },
         {
-          name: 'invoice_appearance',
+          key: 'invoice_appearance',
           label: 'Appearance',
           type: 'select',
           editable: true,
@@ -133,7 +133,7 @@ const InvoiceModal = ({
           })),
         },
         {
-          name: 'invoice_exchange_rate',
+          key: 'invoice_exchange_rate',
           label: 'Exchange Rate',
           type: 'number',
           editable: true,

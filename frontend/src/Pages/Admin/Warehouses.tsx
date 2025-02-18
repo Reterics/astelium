@@ -6,10 +6,10 @@ const Warehouses = () => {
       title='Warehouses'
       apiEndpoint='warehouses'
       fields={[
-        {name: 'name', label: 'Warehouse Name', type: 'text', editable: true},
-        {name: 'location', label: 'Location', type: 'text', editable: true},
+        {key: 'name', label: 'Warehouse Name', type: 'text', editable: true},
+        {key: 'location', label: 'Location', type: 'text', editable: true},
         {
-          name: 'description',
+          key: 'description',
           label: 'Description',
           type: 'text',
           editable: true,

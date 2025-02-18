@@ -3,6 +3,7 @@ import KanbanBoard, {Task} from '../../components/KanbanBoard.tsx';
 import {FiPlus, FiSearch} from 'react-icons/fi';
 import FormModal from '../../components/FormModal.tsx';
 import {useState} from 'react';
+import {CrudField} from '../../components/CrudManager.tsx';
 
 const Board = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -57,69 +58,69 @@ const Board = () => {
     return true;
   };
 
-  const fields = [
+  const fields: CrudField[] = [
     {
-      name: 'title',
+      key: 'title',
       label: 'Title',
       type: 'text',
       editable: true,
       sortable: true,
     },
     {
-      name: 'description',
+      key: 'description',
       label: 'Description',
-      type: 'textarea',
+      type: 'text',
       editable: true,
     },
     {
-      name: 'status',
+      key: 'status',
       label: 'Status',
       type: 'select',
       editable: true,
       options: ['open', 'in-progress', 'review', 'completed', 'closed'],
     },
     {
-      name: 'type',
+      key: 'type',
       label: 'Type',
       type: 'select',
       editable: true,
       options: ['feature', 'task', 'issue'],
     },
     {
-      name: 'project_id',
+      key: 'project_id',
       label: 'Project',
       type: 'select',
       editable: true,
       options: projects,
     },
     {
-      name: 'assigned_to',
+      key: 'assigned_to',
       label: 'Assigned To',
       type: 'select',
       editable: true,
       options: users,
     },
     {
-      name: 'start_time',
+      key: 'start_time',
       label: 'Start Time',
       type: 'datetime-local',
       editable: true,
     },
     {
-      name: 'expected_time',
+      key: 'expected_time',
       label: 'Expected Time (hours)',
       type: 'number',
       editable: true,
     },
     {
-      name: 'priority',
+      key: 'priority',
       label: 'Priority',
       type: 'select',
       editable: true,
       options: ['low', 'medium', 'high'],
     },
     {
-      name: 'story_points',
+      key: 'story_points',
       label: 'Story Points',
       type: 'number',
       editable: true,

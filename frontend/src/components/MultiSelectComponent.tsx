@@ -1,13 +1,9 @@
 import React, {useState} from 'react';
 import {FiChevronDown} from 'react-icons/fi';
-import {SelectOptions} from './SelectComponent.tsx';
+import {CrudField} from './CrudManager.tsx';
 
 interface MultiSelectProps {
-  column: {
-    key: string;
-    label: string;
-    options?: SelectOptions;
-  };
+  column: CrudField;
   filters: {[key: string]: string[]};
   handleFilterChange: (key: string, value: string[]) => void;
   defaultLabel?: string;

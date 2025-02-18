@@ -17,18 +17,18 @@ const Contracts = () => {
       title='Contracts'
       apiEndpoint='contracts'
       fields={[
-        {name: 'name', label: 'Contract Name', type: 'text', editable: true},
-        {name: 'created', label: 'Created Date', type: 'date', editable: true},
+        {key: 'name', label: 'Contract Name', type: 'text', editable: true},
+        {key: 'created', label: 'Created Date', type: 'date', editable: true},
         {
-          name: 'template_id',
+          key: 'template_id',
           label: 'Template',
           type: 'select',
           options: templateOptions,
         },
         {
-          name: 'data',
+          key: 'data',
           label: 'Contract Data',
-          type: 'textarea',
+          type: 'text',
           editable: true,
         },
       ]}

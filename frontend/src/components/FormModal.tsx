@@ -8,7 +8,7 @@ export interface FormModalProps {
   title: string;
   onClose: () => void;
   editingId?: string;
-  fields: CrudField<any>[];
+  fields: CrudField[];
   data: Record<string, unknown>;
   onSave: (form: Record<string, unknown>) => void;
   children?: React.ReactNode;
@@ -39,47 +39,37 @@ const FormModal: React.FC<FormModalProps> = ({
           }
         >
           {fields.map((field) => (
-            <div key={field.name} className='flex flex-col'>
+            <div key={field.key} className='flex flex-col'>
               <label className='text-sm font-medium text-zinc-700'>
                 {field.label}
               </label>
               {field.type === 'select' ? (
                 <SelectComponent
                   defaultLabel={`Select option`}
-                  column={{
-                    key: field.name,
-                    label: field.label,
-                    options: field.options,
-                  }}
+                  column={field}
                   filters={{
-                    [field.name]: form[field.name] as string,
+                    [field.key]: form[field.key] as string,
                   }}
                   handleFilterChange={(_column, value) => {
-                    handleInputChange(field.name, value);
+                    handleInputChange(field.key, value);
                   }}
                 />
               ) : field.type === 'multiselect' ? (
                 <MultiSelectComponent
                   defaultLabel={`Select option`}
-                  column={{
-                    key: field.name,
-                    label: field.label,
-                    options: field.options,
-                  }}
+                  column={field}
                   filters={{
-                    [field.name]: form[field.name] as string[],
+                    [field.key]: form[field.key] as string[],
                   }}
                   handleFilterChange={(_column, value) => {
-                    handleInputChange(field.name, value);
+                    handleInputChange(field.key, value);
                   }}
                 />
               ) : (
                 <input
                   type={field.type}
-                  value={(form[field.name] as string) || ''}
-                  onChange={(e) =>
-                    handleInputChange(field.name, e.target.value)
-                  }
+                  value={(form[field.key] as string) || ''}
+                  onChange={(e) => handleInputChange(field.key, e.target.value)}
                   className='mt-1 p-1 border border-zinc-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
                 />
               )}

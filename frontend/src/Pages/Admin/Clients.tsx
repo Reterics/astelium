@@ -6,10 +6,10 @@ const Clients = () => {
       title='Clients'
       apiEndpoint='clients'
       fields={[
-        {name: 'name', label: 'Client Name', type: 'text', editable: true},
-        {name: 'email', label: 'Email', type: 'email', editable: true},
-        {name: 'phone', label: 'Phone', type: 'text', editable: true},
-        {name: 'company', label: 'Company', type: 'text', editable: true},
+        {key: 'name', label: 'Client Name', type: 'text', editable: true},
+        {key: 'email', label: 'Email', type: 'text', editable: true},
+        {key: 'phone', label: 'Phone', type: 'text', editable: true},
+        {key: 'company', label: 'Company', type: 'text', editable: true},
       ]}
     />
   );

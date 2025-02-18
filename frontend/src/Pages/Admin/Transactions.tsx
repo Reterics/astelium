@@ -6,12 +6,12 @@ const Transactions = () => {
       title='Transactions'
       apiEndpoint='transactions'
       fields={[
-        {name: 'type', label: 'Type (Income/Outgoing)', type: 'text'},
-        {name: 'amount', label: 'Amount', type: 'number'},
-        {name: 'date', label: 'Date', type: 'date'},
-        {name: 'description', label: 'Description', type: 'text'},
-        {name: 'related_project_id', label: 'Project ID', type: 'number'},
-        {name: 'related_client_id', label: 'Client ID', type: 'number'},
+        {key: 'type', label: 'Type (Income/Outgoing)', type: 'text'},
+        {key: 'amount', label: 'Amount', type: 'number'},
+        {key: 'date', label: 'Date', type: 'date'},
+        {key: 'description', label: 'Description', type: 'text'},
+        {key: 'related_project_id', label: 'Project ID', type: 'number'},
+        {key: 'related_client_id', label: 'Client ID', type: 'number'},
       ]}
     />
   );

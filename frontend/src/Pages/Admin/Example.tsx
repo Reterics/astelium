@@ -1,11 +1,9 @@
-import TableComponent, {
-  TableColumn,
-  TableRow,
-} from '../../components/TableComponent.tsx';
+import TableComponent, {TableRow} from '../../components/TableComponent.tsx';
 import {useState} from 'react';
+import {CrudField} from '../../components/CrudManager.tsx';
 
-const columns: TableColumn[] = [
-  {key: 'id', label: 'ID', sortable: true},
+const columns: CrudField[] = [
+  {key: 'id', label: 'ID', sortable: true, type: 'number'},
   {key: 'name', label: 'Name', sortable: true, editable: true, type: 'text'},
   {
     key: 'status',

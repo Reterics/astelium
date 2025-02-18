@@ -1,24 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {FiTrash, FiRefreshCw, FiSearch, FiPlus, FiSave} from 'react-icons/fi';
 import MultiSelectComponent from './MultiSelectComponent';
-import SelectComponent, {SelectOptions} from './SelectComponent.tsx';
+import SelectComponent from './SelectComponent.tsx';
 import Pagination from './Pagination.tsx';
-
-export interface TableColumn {
-  key: string;
-  label: string;
-  sortable?: boolean;
-  editable?: boolean;
-  type?: 'text' | 'number' | 'select' | 'multiselect';
-  options?: SelectOptions;
-}
+import {CrudField} from './CrudManager.tsx';
 
 export interface TableRow {
   [key: string]: any;
 }
 
 interface TableProps {
-  columns: TableColumn[];
+  columns: CrudField[];
   data: TableRow[];
   onEdit?: (updatedData: TableRow[]) => Promise<void> | void;
   onDelete?: (id: number | string) => void;
@@ -77,6 +69,15 @@ const TableComponent: React.FC<TableProps> = ({
                 filters[col.key].includes(item)
               )
             );
+          }
+          if (col.type === 'select' && !col.editable && col.key.endsWith('_id')) {
+            const shortKey = col.key.substring(0, col.key.length - 3);
+            if (
+              row[shortKey] &&
+              String(row[shortKey].id) === String(filters[col.key])
+            ) {
+              return true;
+            }
           }
           return String(row[col.key]) === String(filters[col.key]);
         }) &&
@@ -157,7 +158,7 @@ const TableComponent: React.FC<TableProps> = ({
     setEditedRows({});
     setAllowSort(true);
   };
-
+  console.error(columns, filteredData);
   return (
     <div className='p-4 pb-1 shadow-md bg-zinc-50 rounded-lg'>
       {(!noSearch || (onCreate && !addPerLine)) && (

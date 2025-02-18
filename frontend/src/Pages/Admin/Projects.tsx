@@ -18,22 +18,22 @@ const Projects = () => {
       title='Projects'
       apiEndpoint='projects'
       fields={[
-        {name: 'name', label: 'Project Name', type: 'text', editable: true},
+        {key: 'name', label: 'Project Name', type: 'text', editable: true},
         {
-          name: 'description',
+          key: 'description',
           label: 'Description',
           type: 'text',
           editable: true,
         },
         {
-          name: 'status',
+          key: 'status',
           label: 'Status',
           type: 'select',
           options: ['active', 'completed', 'on-hold'],
           editable: true,
         },
         {
-          name: 'client_id',
+          key: 'client_id',
           label: 'Client',
           type: 'select',
           options: clients,

@@ -7,31 +7,31 @@ const InvoiceUsers = () => {
       apiEndpoint='invoice-users'
       fields={[
         {
-          name: 'supplierName',
+          key: 'supplierName',
           label: 'Supplier Name',
           type: 'text',
           editable: true,
         },
         {
-          name: 'supplierTaxNumber',
+          key: 'supplierTaxNumber',
           label: 'Tax Number',
           type: 'text',
           editable: true,
         },
         {
-          name: 'supplierAddress',
+          key: 'supplierAddress',
           label: 'Address',
           type: 'text',
           editable: true,
         },
         {
-          name: 'supplierCountry',
+          key: 'supplierCountry',
           label: 'Country',
           type: 'text',
           editable: true,
         },
         {
-          name: 'supplierBankAccountNumber',
+          key: 'supplierBankAccountNumber',
           label: 'Bank Account',
           type: 'text',
           editable: true,

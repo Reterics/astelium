@@ -18,24 +18,24 @@ const Storage = () => {
       title='Storage'
       apiEndpoint='storage'
       fields={[
-        {name: 'sku', label: 'SKU', type: 'text'},
-        {name: 'name', label: 'Name', type: 'text', editable: true},
+        {key: 'sku', label: 'SKU', type: 'text'},
+        {key: 'name', label: 'Name', type: 'text', editable: true},
         {
-          name: 'description',
+          key: 'description',
           label: 'Description',
           type: 'text',
           editable: true,
         },
-        {name: 'threshold', label: 'Threshold', type: 'number', visible: false},
+        {key: 'threshold', label: 'Threshold', type: 'number', visible: false},
         {
-          name: 'storage_amount',
+          key: 'storage_amount',
           label: 'Storage Amount',
           type: 'number',
           editable: true,
         },
-        {name: 'value', label: 'Value (HUF)', type: 'number', editable: true},
+        {key: 'value', label: 'Value (HUF)', type: 'number', editable: true},
         {
-          name: 'warehouses',
+          key: 'warehouses',
           label: 'Store',
           type: 'multiselect',
           options: warehouses,

@@ -40,10 +40,20 @@ const InvoicesPage = () => {
     <div className=''>
       <TableComponent
         columns={[
-          {key: 'number', label: 'Invoice Number', sortable: true},
-          {key: 'issue_date', label: 'Issue Date', sortable: true},
-          {key: 'due_date', label: 'Due Date', sortable: true},
-          {key: 'client', label: 'Client', sortable: true},
+          {
+            key: 'number',
+            label: 'Invoice Number',
+            sortable: true,
+            type: 'number',
+          },
+          {
+            key: 'issue_date',
+            label: 'Issue Date',
+            sortable: true,
+            type: 'date',
+          },
+          {key: 'due_date', label: 'Due Date', sortable: true, type: 'date'},
+          {key: 'client', label: 'Client', sortable: true, type: 'number'},
         ]}
         data={invoices || []}
         onEdit={() => {

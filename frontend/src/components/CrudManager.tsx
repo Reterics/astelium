@@ -1,24 +1,32 @@
 import {useState} from 'react';
-import {fieldsToColumns} from '../utils.ts';
 import TableComponent from './TableComponent.tsx';
 import FormModal from './FormModal.tsx';
 import {SelectOption, SelectOptions} from './SelectComponent.tsx';
 import {useApi} from '../hooks/useApi.ts';
 
-export interface CrudField<T> {
-  name: keyof T & string;
+export type FieldType =
+  | 'text'
+  | 'number'
+  | 'select'
+  | 'multiselect'
+  | 'date'
+  | 'password'
+  | 'datetime-local';
+
+export interface CrudField {
+  key: string;
   label: string;
-  type: string;
+  type: FieldType;
   editable?: boolean;
   sortable?: boolean;
   visible?: boolean;
   options?: SelectOptions;
 }
 
-interface CrudManagerProps<T extends Record<string, any>> {
+interface CrudManagerProps {
   title: string;
   apiEndpoint: string;
-  fields: CrudField<T>[];
+  fields: CrudField[];
   children?: React.ReactNode;
   childOnly?: boolean;
 }
@@ -29,7 +37,7 @@ const CrudManager = <T extends Record<string, any>>({
   fields,
   children,
   childOnly,
-}: CrudManagerProps<T>) => {
+}: CrudManagerProps) => {
   const [modalData, setModalData] = useState<Partial<T> | false>(false);
 
   const {data, isLoading, createMutation, deleteMutation, updateMutation} =
@@ -55,10 +63,10 @@ const CrudManager = <T extends Record<string, any>>({
   );
 
   const processedData: Partial<T>[] = idFilters.length
-    ? (data as Partial<T>[]).map((item) => {
+    ? data.map((item: Record<string, any>) => {
         const out = {...item};
         idFilters.forEach((filter) => {
-          const key = filter.name;
+          const key = filter.key;
           if (item[key] && !filter.editable) {
             out[key] = ((filter.options as SelectOption[]).find(
               (f: SelectOption) => String(item[key]) === String(f.value)
@@ -77,15 +85,16 @@ const CrudManager = <T extends Record<string, any>>({
             );
           }
         });
-        return out;
+        return out as Partial<T>;
       })
     : (data as Partial<T>[]);
 
+  console.error(processedData, fields);
   return (
     <div>
       {!childOnly && (
         <TableComponent
-          columns={fieldsToColumns(fields)}
+          columns={fields.filter((f) => f.visible !== false)}
           data={processedData}
           onDelete={(id) => deleteMutation.mutate(id as number)}
           onCreate={() => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import {CrudField} from './CrudManager.tsx';
 
 export type SelectOptions = (string | SelectOption)[];
 
@@ -8,11 +9,7 @@ export interface SelectOption {
 }
 
 interface SelectProps {
-  column: {
-    key: string;
-    label: string;
-    options?: SelectOptions;
-  };
+  column: CrudField;
   filters: {[key: string]: string};
   handleFilterChange: (key: string, value: string) => void;
   defaultLabel?: string;

@@ -6,16 +6,16 @@ const Domains = () => {
       title='Domains'
       apiEndpoint='domains'
       fields={[
-        {name: 'url', label: 'Domain URL', type: 'text', editable: true},
+        {key: 'url', label: 'Domain URL', type: 'text', editable: true},
         {
-          name: 'description',
+          key: 'description',
           label: 'Description',
           type: 'text',
           editable: true,
         },
-        {name: 'admin_url', label: 'Admin URL', type: 'text', editable: true},
+        {key: 'admin_url', label: 'Admin URL', type: 'text', editable: true},
         {
-          name: 'credentials',
+          key: 'credentials',
           label: 'Credentials',
           type: 'password',
           editable: true,

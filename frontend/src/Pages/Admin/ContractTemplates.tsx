@@ -6,11 +6,11 @@ const ContractTemplates = () => {
       title='Contract Templates'
       apiEndpoint='contract-templates'
       fields={[
-        {name: 'name', label: 'Template Name', type: 'text', editable: true},
+        {key: 'name', label: 'Template Name', type: 'text', editable: true},
         {
-          name: 'templateContent',
+          key: 'templateContent',
           label: 'Template Content',
-          type: 'textarea',
+          type: 'text',
           editable: true,
         },
       ]}
