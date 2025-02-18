@@ -144,9 +144,8 @@ const InvoiceModal = ({
       <TableComponent
         columns={[
           {
-            key: 'invoice_nature',
+            key: 'lineNatureIndicator',
             label: 'Type',
-            editable: true,
             type: 'select',
             options: ['SERVICE', 'PRODUCT', 'OTHER'].map((d) => ({
               value: d,
@@ -156,7 +155,6 @@ const InvoiceModal = ({
           {
             key: 'product_code_category',
             label: 'TESZOR',
-            editable: true,
             type: 'select',
             options: [
               'OWN',
@@ -174,20 +172,17 @@ const InvoiceModal = ({
           {
             key: 'product_code_value',
             label: 'Code',
-            editable: true,
             type: 'text',
           },
           {
-            key: 'description',
+            key: 'line_description',
             label: 'Description',
-            editable: true,
             type: 'text',
           },
-          {key: 'quantity', label: 'Quantity', editable: true, type: 'number'},
+          {key: 'quantity', label: 'Quantity', type: 'number'},
           {
             key: 'unit_of_measure',
             label: 'Unit',
-            editable: true,
             type: 'select',
             options: [
               'PIECE',
@@ -212,25 +207,21 @@ const InvoiceModal = ({
           {
             key: 'unit_price',
             label: 'Unit Price',
-            editable: true,
             type: 'number',
           },
           {
             key: 'line_net_amount',
             label: 'Net Amount',
-            editable: true,
             type: 'number',
           },
           {
             key: 'line_vat_rate',
             label: 'Vat(%)',
-            editable: true,
             type: 'number',
           },
           {
             key: 'line_vat_amount',
             label: 'Vat(HUF)',
-            editable: true,
             type: 'number',
           },
           {key: 'line_gross_amount', label: 'Gross', type: 'number'},

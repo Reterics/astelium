@@ -9,6 +9,10 @@ export interface TableRow {
   [key: string]: any;
 }
 
+export interface FilteredTableRow extends TableRow {
+  rowIndex: number;
+}
+
 interface TableProps {
   columns: CrudField[];
   data: TableRow[];
@@ -58,8 +62,8 @@ const TableComponent: React.FC<TableProps> = ({
   }, [data]);
 
   const filteredData = tableData
-    .filter(
-      (row) =>
+    .reduce((rows, row, index) => {
+      if (
         columns.every((col) => {
           if (!filters[col.key]) return true;
           if (col.type === 'multiselect') {
@@ -70,7 +74,11 @@ const TableComponent: React.FC<TableProps> = ({
               )
             );
           }
-          if (col.type === 'select' && !col.editable && col.key.endsWith('_id')) {
+          if (
+            col.type === 'select' &&
+            !col.editable &&
+            col.key.endsWith('_id')
+          ) {
             const shortKey = col.key.substring(0, col.key.length - 3);
             if (
               row[shortKey] &&
@@ -87,8 +95,18 @@ const TableComponent: React.FC<TableProps> = ({
             .toLowerCase()
             .includes(searchQuery.toLowerCase())
         )
-    )
-    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+      ) {
+        rows.push({
+          ...row,
+          rowIndex: index,
+        } as FilteredTableRow);
+      }
+      return rows;
+    }, [])
+    .slice(
+      (currentPage - 1) * rowsPerPage,
+      currentPage * rowsPerPage
+    ) as FilteredTableRow[];
 
   const handleSort = (key: string) => {
     setSortConfig((prev) => {
@@ -158,7 +176,9 @@ const TableComponent: React.FC<TableProps> = ({
     setEditedRows({});
     setAllowSort(true);
   };
-  console.error(columns, filteredData);
+
+  const isResetEnabled = !!columns.filter((col) => col.editable).length;
+
   return (
     <div className='p-4 pb-1 shadow-md bg-zinc-50 rounded-lg'>
       {(!noSearch || (onCreate && !addPerLine)) && (
@@ -244,9 +264,12 @@ const TableComponent: React.FC<TableProps> = ({
                               ? changes[rowIndex]
                               : (row as {[key: string]: string})
                           }
-                          handleFilterChange={(column, value) =>
-                            handleEdit(rowIndex, column, value)
-                          }
+                          handleFilterChange={(column, value) => {
+                            handleEdit(row.rowIndex, column, value);
+                            if (col.props?.onChange) {
+                              col.props?.onChange(value, row);
+                            }
+                          }}
                         />
                       ) : col.type === 'multiselect' ? (
                         <MultiSelectComponent
@@ -257,17 +280,23 @@ const TableComponent: React.FC<TableProps> = ({
                               ? changes[rowIndex]
                               : (row as {[key: string]: string[]})
                           }
-                          handleFilterChange={(column, value) =>
-                            handleEdit(rowIndex, column, value)
-                          }
+                          handleFilterChange={(column, value) => {
+                            handleEdit(row.rowIndex, column, value);
+                            if (col.props?.onChange) {
+                              col.props?.onChange(value, row);
+                            }
+                          }}
                         />
                       ) : (
                         <input
                           type={col.type || 'text'}
                           value={changes[rowIndex]?.[col.key] ?? row[col.key]}
-                          onChange={(e) =>
-                            handleEdit(rowIndex, col.key, e.target.value)
-                          }
+                          onChange={(e) => {
+                            handleEdit(row.rowIndex, col.key, e.target.value);
+                            if (col.props?.onChange) {
+                              col.props?.onChange(e, row);
+                            }
+                          }}
                           className='w-full bg-transparent hover:border-b hover:border-zinc-300 focus:outline-none'
                         />
                       )
@@ -277,12 +306,14 @@ const TableComponent: React.FC<TableProps> = ({
                   </td>
                 ))}
                 <td className='p-4 flex items-end w-fit space-x-2 h-fit border-b border-zinc-300'>
-                  <button
-                    className='text-blue-500 cursor-pointer'
-                    onClick={() => handleReset(rowIndex)}
-                  >
-                    <FiRefreshCw />
-                  </button>
+                  {isResetEnabled && (
+                    <button
+                      className='text-blue-500 cursor-pointer'
+                      onClick={() => handleReset(rowIndex)}
+                    >
+                      <FiRefreshCw />
+                    </button>
+                  )}
                   <button
                     className='text-red-500 cursor-pointer'
                     onClick={() => onDelete && onDelete(row.id)}
@@ -302,30 +333,72 @@ const TableComponent: React.FC<TableProps> = ({
                         defaultLabel={`Select option`}
                         column={col}
                         filters={itemToAdd}
-                        handleFilterChange={(_column, value) =>
-                          setItemToAdd({...itemToAdd, [col.key]: value})
-                        }
+                        handleFilterChange={(_column, value) => {
+                          if (col.props?.onChange) {
+                            const updatedItem = col.props?.onChange(
+                              value,
+                              itemToAdd
+                            );
+                            if (updatedItem) {
+                              return setItemToAdd({
+                                ...itemToAdd,
+                                [col.key]: value,
+                              });
+                            } else if (updatedItem === false) {
+                              return;
+                            }
+                          }
+                          setItemToAdd({...itemToAdd, [col.key]: value});
+                        }}
                       />
                     ) : col.type === 'multiselect' ? (
                       <MultiSelectComponent
                         defaultLabel={`Select option`}
                         column={col}
                         filters={itemToAdd}
-                        handleFilterChange={(_column, value) =>
-                          setItemToAdd({...itemToAdd, [col.key]: value})
-                        }
+                        handleFilterChange={(_column, value) => {
+                          if (col.props?.onChange) {
+                            const updatedItem = col.props?.onChange(
+                              value,
+                              itemToAdd
+                            );
+                            if (updatedItem) {
+                              return setItemToAdd({
+                                ...itemToAdd,
+                                [col.key]: value,
+                              });
+                            } else if (updatedItem === false) {
+                              return;
+                            }
+                          }
+                          setItemToAdd({...itemToAdd, [col.key]: value});
+                        }}
                       />
                     ) : (
                       <input
                         type={col.type || 'text'}
                         value={itemToAdd[col.key] || ''}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          if (col.props?.onChange) {
+                            const updatedItem = col.props?.onChange(
+                              e.target.value,
+                              itemToAdd
+                            );
+                            if (updatedItem) {
+                              return setItemToAdd({
+                                ...itemToAdd,
+                                [col.key]: e.target.value,
+                              });
+                            } else if (updatedItem === false) {
+                              return;
+                            }
+                          }
                           setItemToAdd({
                             ...itemToAdd,
                             [col.key]: e.target.value,
-                          })
-                        }
-                        className='w-full bg-transparent hover:border-b hover:border-zinc-300 focus:outline-none'
+                          });
+                        }}
+                        className='w-full bg-transparent border border-zinc-300 focus:outline-none p-1'
                       />
                     )}
                   </td>

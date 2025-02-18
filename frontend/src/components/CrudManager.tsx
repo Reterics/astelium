@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import TableComponent from './TableComponent.tsx';
+import TableComponent, {TableRow} from './TableComponent.tsx';
 import FormModal from './FormModal.tsx';
 import {SelectOption, SelectOptions} from './SelectComponent.tsx';
 import {useApi} from '../hooks/useApi.ts';
@@ -21,6 +21,9 @@ export interface CrudField {
   sortable?: boolean;
   visible?: boolean;
   options?: SelectOptions;
+  props?: {
+    onChange?: (value: unknown, row: TableRow) => any;
+  };
 }
 
 interface CrudManagerProps {
