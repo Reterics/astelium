@@ -21,7 +21,7 @@ import ContractTemplates from './ContractTemplates';
 import Contracts from './Contracts';
 import PrivateRoute from '../../components/PrivateRoute.tsx';
 import Board from './Board.tsx';
-import Appointments from "../Appointments.tsx";
+import Appointments from '../Appointments.tsx';
 
 const AdminPanel = () => {
   return (

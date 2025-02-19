@@ -14,7 +14,7 @@ import {
   FiGlobe,
   FiFile,
   FiClipboard,
-  FiColumns,
+  FiColumns, FiCalendar,
 } from 'react-icons/fi';
 
 import {useState} from 'react';
@@ -59,6 +59,7 @@ const menu = [
     submenu: [
       {label: 'Clients', path: '/clients', icon: FiUser},
       {label: 'Invoices', path: '/invoices', icon: FiFile},
+      {label: 'Appointments', path: '/appointments', icon: FiCalendar},
       {
         label: 'Contract Templates',
         path: '/contract-templates',
