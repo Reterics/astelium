@@ -13,6 +13,7 @@ export interface FormModalProps {
   onSave: (form: Record<string, unknown>) => void;
   children?: React.ReactNode;
   cols?: 2 | 4;
+  onInputChange?: (key: string, form: Record<string, unknown>) => void;
 }
 
 const FormModal: React.FC<FormModalProps> = ({
@@ -23,11 +24,18 @@ const FormModal: React.FC<FormModalProps> = ({
   onSave,
   children,
   cols,
+  onInputChange,
 }) => {
   const [form, setForm] = useState<Record<string, unknown>>(data);
 
   const handleInputChange = (key: string, value: string | string[]) => {
-    setForm((prev) => ({...prev, [key]: value}));
+    setForm((prev) => {
+      const data = {...prev, [key]: value};
+      if (onInputChange) {
+        onInputChange(key, data);
+      }
+      return data;
+    });
   };
 
   return (

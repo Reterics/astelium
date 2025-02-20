@@ -8,10 +8,10 @@ use App\Http\Resources\AppointmentResource;
 
 class AppointmentController extends Controller
 {
-    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index(Request $request)
     {
         $appointments = Appointment::all();
-        return AppointmentResource::collection($appointments);
+        return AppointmentResource::collection($appointments)->toArray($request);
     }
 
     public function store(Request $request): AppointmentResource

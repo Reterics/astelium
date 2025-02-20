@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import {getFetchOptions} from '../utils.ts';
+import {getFetchOptions} from '../utils/utils.ts';
 
 export interface UseApiProps {
   perPage: number;

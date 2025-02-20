@@ -92,7 +92,6 @@ const CrudManager = <T extends Record<string, any>>({
       })
     : (data as Partial<T>[]);
 
-  console.error(processedData, fields);
   return (
     <div>
       {!childOnly && (

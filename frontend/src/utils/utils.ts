@@ -1,4 +1,4 @@
-import {TransactionChartData} from './components/visualizations/TransactionChartCard.tsx';
+import {TransactionChartData} from '../components/visualizations/TransactionChartCard.tsx';
 
 export const getCSRFToken = () => {
   const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);

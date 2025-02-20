@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import * as d3 from 'd3';
-import {transformTransactionData} from '../../utils.ts';
+import {transformTransactionData} from '../../utils/utils.ts';
 
 export interface TransactionChartData {
   time: string;

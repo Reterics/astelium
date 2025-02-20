@@ -14,7 +14,8 @@ import {
   FiGlobe,
   FiFile,
   FiClipboard,
-  FiColumns, FiCalendar,
+  FiColumns,
+  FiCalendar,
 } from 'react-icons/fi';
 
 import {useState} from 'react';

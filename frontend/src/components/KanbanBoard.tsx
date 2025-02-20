@@ -12,7 +12,7 @@ import {
   FiCheckCircle,
   FiAlertCircle,
 } from 'react-icons/fi';
-import {getFetchOptions} from '../utils.ts';
+import {getFetchOptions} from '../utils/utils.ts';
 import {useQueryClient} from '@tanstack/react-query';
 import {
   BaseEventPayload,
