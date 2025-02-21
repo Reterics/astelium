@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import * as d3 from 'd3';
 import {transformTransactionData} from '../../utils/utils.ts';
+import {useTranslation} from 'react-i18next';
 
 export interface TransactionChartData {
   time: string;
@@ -13,6 +14,7 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
   const chartData = transformTransactionData(data);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [dimensions, setDimensions] = useState({width: 0, height: 0});
+  const {t} = useTranslation();
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -184,7 +186,9 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
 
   return (
     <div className='bg-white shadow-md p-2 rounded-md w-full h-full flex flex-col'>
-      <h2 className='text-lg font-semibold mb-2'>Transaction Overview</h2>
+      <h2 className='text-lg font-semibold mb-2'>
+        {t('dashboard.line_chart_title')}
+      </h2>
       <svg ref={svgRef} width='100%' height='100%'></svg>
     </div>
   );

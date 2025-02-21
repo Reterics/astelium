@@ -1,7 +1,10 @@
-import { defineConfig } from 'vite'
+import { defineConfig, normalizePath } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import tailwindcss from '@tailwindcss/vite'
 import laravel from 'laravel-vite-plugin';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+import * as path from "node:path";
+
 
 const backendPath = process.env.BACKEND_PATH || '../backend/';
 
@@ -15,13 +18,27 @@ export default defineConfig({
     }),
     react(),
     tailwindcss(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: normalizePath(path.resolve(__dirname, 'src/i18n/locales')),
+          dest: normalizePath(path.resolve(__dirname, '../backend/public')),
+        },
+      ],
+    }),
   ],
   server: {
     host: '0.0.0.0',
     hmr: {
       host: '127.0.0.1',
     },
-    allowedHosts: true
+    allowedHosts: true,
+    proxy: {
+      '/locales': {
+        target: 'http://localhost:8000', // Laravel server
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     manifest: true,

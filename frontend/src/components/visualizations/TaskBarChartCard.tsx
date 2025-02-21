@@ -1,9 +1,11 @@
 import * as d3 from 'd3';
 import {useEffect, useRef, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 
 const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [dimensions, setDimensions] = useState({width: 0, height: 0});
+  const {t} = useTranslation();
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -73,7 +75,7 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
   return (
     <div className='bg-white shadow-md p-2 rounded-md w-full h-full flex flex-col'>
       <h2 className='text-xl font-semibold text-zinc-900 mb-3'>
-        Task Status Breakdown
+        {t('dashboard.bar_chart_title')}
       </h2>
       <svg ref={svgRef} width='100%' height='100%'></svg>
     </div>

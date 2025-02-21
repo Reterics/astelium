@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import {resolvePageComponent} from 'laravel-vite-plugin/inertia-helpers';
 import './index.css';
+import './i18n/i18n';
 
 createInertiaApp({
   resolve: (name) =>

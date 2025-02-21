@@ -2,6 +2,7 @@ import {FiUsers, FiClipboard, FiBarChart, FiTrendingUp} from 'react-icons/fi';
 import {useApi} from '../../hooks/useApi.ts';
 import TransactionChartCard from '../../components/visualizations/TransactionChartCard.tsx';
 import TaskBarChartCard from '../../components/visualizations/TaskBarChartCard.tsx';
+import {useTranslation} from 'react-i18next';
 
 const statusIcons = {
   open: 'border-l-4 border-blue-500',
@@ -14,6 +15,7 @@ const Dashboard = () => {
   const {data: projects} = useApi('projects');
   const {data: tasks} = useApi('tasks');
   const {data: transactions} = useApi('transactions');
+  const {t} = useTranslation();
 
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4'>
@@ -23,7 +25,7 @@ const Dashboard = () => {
           <p className='text-xl font-semibold text-zinc-900'>
             {users?.length || 0}
           </p>
-          <p className='text-zinc-600'>Total Users</p>
+          <p className='text-zinc-600'>{t('dashboard.total_users')}</p>
         </div>
       </div>
       <div className='bg-white p-4 rounded-lg shadow flex items-center space-x-4'>
@@ -32,7 +34,7 @@ const Dashboard = () => {
           <p className='text-xl font-semibold text-zinc-900'>
             {projects?.length || 0}
           </p>
-          <p className='text-zinc-600'>Total Projects</p>
+          <p className='text-zinc-600'>{t('dashboard.total_projects')}</p>
         </div>
       </div>
       <div className='bg-white p-4 rounded-lg shadow flex items-center space-x-4'>
@@ -41,7 +43,7 @@ const Dashboard = () => {
           <p className='text-xl font-semibold text-zinc-900'>
             {transactions?.length || 0}
           </p>
-          <p className='text-zinc-600'>Total Transactions</p>
+          <p className='text-zinc-600'>{t('dashboard.total_transactions')}</p>
         </div>
       </div>
       <div className='bg-white p-4 rounded-lg shadow flex items-center space-x-4'>
@@ -50,7 +52,7 @@ const Dashboard = () => {
           <p className='text-xl font-semibold text-zinc-900'>
             {tasks?.length || 0}
           </p>
-          <p className='text-zinc-600'>Total Tasks</p>
+          <p className='text-zinc-600'>{t('dashboard.total_tasks')}</p>
         </div>
       </div>
 
@@ -61,7 +63,7 @@ const Dashboard = () => {
 
         <div className='bg-white p-2 rounded-lg shadow w-1/2'>
           <h2 className='text-xl font-semibold text-zinc-900 mb-3'>
-            Your Open & In Progress Tasks
+            {t('dashboard.task_list_title')}
           </h2>
           <div className='divide-y divide-zinc-300'>
             {tasks
@@ -75,12 +77,12 @@ const Dashboard = () => {
                     {task.title}
                   </p>
                   <button className='px-2 py-1 text-xs font-medium text-white bg-zinc-700 rounded hover:bg-zinc-800 transition'>
-                    View
+                    {t('dashboard.view')}
                   </button>
                 </div>
               )) || (
               <p className='text-zinc-600'>
-                No open or in-progress tasks assigned to you.
+                {t('dashboard.no_open_tasks_available')}
               </p>
             )}
           </div>

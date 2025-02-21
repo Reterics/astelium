@@ -4,6 +4,9 @@ import {FiPlus, FiSearch} from 'react-icons/fi';
 import FormModal from '../../components/FormModal.tsx';
 import {useState} from 'react';
 import {CrudField} from '../../components/CrudManager.tsx';
+import {OPTIONS} from '../../constants.ts';
+import {getTranslatedList} from '../../i18n/utils.ts';
+import {useTranslation} from 'react-i18next';
 
 const Board = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -18,6 +21,8 @@ const Board = () => {
     (Record<string, any> & {id?: number}) | false
   >(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const {t} = useTranslation();
+  const translationPrefix = 'task.';
 
   if (projectsAreLoading || usersAreLoading) return <p>Loading...</p>;
 
@@ -61,67 +66,67 @@ const Board = () => {
   const fields: CrudField[] = [
     {
       key: 'title',
-      label: 'Title',
+      label: t('title'),
       type: 'text',
       editable: true,
       sortable: true,
     },
     {
       key: 'description',
-      label: 'Description',
+      label: t('description'),
       type: 'text',
       editable: true,
     },
     {
       key: 'status',
-      label: 'Status',
+      label: t('status'),
       type: 'select',
       editable: true,
-      options: ['open', 'in-progress', 'review', 'completed', 'closed'],
+      options: getTranslatedList(OPTIONS.task.status, t, translationPrefix),
     },
     {
       key: 'type',
-      label: 'Type',
+      label: t('type'),
       type: 'select',
       editable: true,
-      options: ['feature', 'task', 'issue'],
+      options: getTranslatedList(OPTIONS.task.type, t, translationPrefix),
     },
     {
       key: 'project_id',
-      label: 'Project',
+      label: t('project'),
       type: 'select',
       editable: true,
       options: projects,
     },
     {
       key: 'assigned_to',
-      label: 'Assigned To',
+      label: t('assigned_to'),
       type: 'select',
       editable: true,
       options: users,
     },
     {
       key: 'start_time',
-      label: 'Start Time',
+      label: t('start_time'),
       type: 'datetime-local',
       editable: true,
     },
     {
       key: 'expected_time',
-      label: 'Expected Time (hours)',
+      label: t('expected_time'),
       type: 'number',
       editable: true,
     },
     {
       key: 'priority',
-      label: 'Priority',
+      label: t('priority'),
       type: 'select',
       editable: true,
-      options: ['low', 'medium', 'high'],
+      options: getTranslatedList(OPTIONS.priorities, t, translationPrefix),
     },
     {
       key: 'story_points',
-      label: 'Story Points',
+      label: t('story_points'),
       type: 'number',
       editable: true,
     },

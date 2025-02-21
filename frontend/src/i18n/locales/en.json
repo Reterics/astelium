@@ -1,0 +1,42 @@
+{
+  "login.title": "Login",
+  "email": "Email",
+  "password": "Password",
+  "sign_in": "Sign In",
+  "remember_me": "Remember me",
+  "dashboard": {
+    "title": "Dashboard",
+    "total_users": "Total Users",
+    "total_projects": "Total Users",
+    "total_transactions": "Total Users",
+    "total_tasks": "Total Users",
+    "bar_chart_title": "Task Status Breakdown",
+    "line_chart_title": "Transaction Overview",
+    "task_list_title": "Your Tasks",
+    "view": "View",
+    "no_open_tasks_available": "No open or in-progress tasks assigned to you."
+  },
+  "task": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "feature": "Feature",
+    "task": "Task",
+    "issue": "Issue",
+    "open": "Open",
+    "in-progress": "In Progress",
+    "review": "Review",
+    "completed": "Completed",
+    "closed": "Closed"
+  },
+  "title": "Title",
+  "description": "Description",
+  "status": "Status",
+  "type": "Type",
+  "project": "Project",
+  "assigned_to": "Assigned To",
+  "start_time": "Start Time",
+  "expected_time": "Expected Time",
+  "priority": "Priority",
+  "story_points": "Story Points"
+}
