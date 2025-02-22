@@ -14,7 +14,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
 
   const fetchData = async ({pageParam = 1}) => {
     const perPage = options?.perPage ?? 10;
-    const pageUrl = `/api/${endpoint}?page=${pageParam}&per_page=${perPage}`;
+    const pageUrl = `/api/${endpoint}${endpoint.includes('?') ? '&' : '?'}page=${pageParam}&per_page=${perPage}`;
     const response = await fetch(pageUrl, {
       ...getFetchOptions(),
     });

@@ -59,19 +59,26 @@ export interface Task {
   id: number;
   title: string;
   status: string;
+  description: string;
   type: 'feature' | 'task' | 'issue';
   project_id?: number;
   project: {name: string};
   priority?: 'low' | 'medium' | 'high';
   order_index?: number;
+  assigned_to?: string;
+  start_time?: string;
+  expected_time?: string;
+  story_points?: string;
 }
 
 const KanbanBoard = ({
   tasks,
   setTask,
+  onTaskClick,
 }: {
   tasks: Task[];
   setTask: (task: Task) => void;
+  onTaskClick: (task: Task) => void;
 }) => {
   const instanceId = useRef(Symbol('kanban-instance'));
   const columnRefs = useRef<{[key: string]: HTMLDivElement | null}>({});
@@ -243,6 +250,7 @@ const KanbanBoard = ({
                     taskRefs.current[task.id] = el;
                     return;
                   }}
+                  onClick={() => onTaskClick(task)}
                 >
                   {highlightedIndex === task.id && (
                     <div className='absolute top-0 left-0 right-0 h-1 bg-blue-500'></div>

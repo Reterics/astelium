@@ -7,6 +7,7 @@ import {CrudField} from '../../components/CrudManager.tsx';
 import {OPTIONS} from '../../constants.ts';
 import {getTranslatedList} from '../../i18n/utils.ts';
 import {useTranslation} from 'react-i18next';
+import TaskModal from '../../components/TaskModal.tsx';
 
 const Board = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -21,6 +22,7 @@ const Board = () => {
     (Record<string, any> & {id?: number}) | false
   >(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const {t} = useTranslation();
   const translationPrefix = 'task.';
 
@@ -162,6 +164,7 @@ const Board = () => {
             ) as Task[]
           }
           setTask={updateTask}
+          onTaskClick={setSelectedTask}
         />
       )}
 
@@ -174,6 +177,14 @@ const Board = () => {
           onSave={(form) => {
             return saveData(form as Record<string, any>);
           }}
+        />
+      )}
+
+      {selectedTask && (
+        <TaskModal
+          task={selectedTask}
+          onClose={() => setSelectedTask(null)}
+          onSave={updateTask}
         />
       )}
     </div>
