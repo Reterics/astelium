@@ -14,7 +14,7 @@ class AppointmentController extends Controller
         return AppointmentResource::collection($appointments)->toArray($request);
     }
 
-    public function store(Request $request): AppointmentResource
+    public function store(Request $request): array
     {
         $validated = $request->validate([
             'day' => 'required|string',
@@ -27,7 +27,7 @@ class AppointmentController extends Controller
         ]);
 
         $appointment = Appointment::create($validated);
-        return new AppointmentResource($appointment);
+        return (new AppointmentResource($appointment))->toArray($request);
     }
 
     public function show(Appointment $appointment): AppointmentResource

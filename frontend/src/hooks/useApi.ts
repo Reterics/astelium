@@ -38,7 +38,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     }
   };
 
-  const {data, error, isLoading, hasNextPage, hasPreviousPage} =
+  const {data, error, isLoading, hasNextPage, hasPreviousPage, fetchNextPage} =
     useInfiniteQuery({
       initialPageParam: 1,
       queryKey: [endpoint],
@@ -102,5 +102,6 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     deleteMutation,
     hasNextPage,
     hasPreviousPage,
+    fetchNextPage,
   };
 };

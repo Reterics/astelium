@@ -9,7 +9,9 @@ class AppointmentResource extends JsonResource
 {
     public function toArray($request): array
     {
-        if (Auth::check()) {
+        $user = Auth::guard('sanctum')->user();
+
+        if ($user) {
             return [
                 'id' => $this->id,
                 'name' => $this->name,
