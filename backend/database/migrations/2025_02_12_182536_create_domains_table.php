@@ -75,20 +75,8 @@ return new class extends Migration
             $table->string('line_description')->nullable();
             $table->timestamps();
         });
-        Schema::create('contract_templates', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('template_content');
-            $table->timestamps();
-        });
-        Schema::create('contracts', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->date('created');
-            $table->foreignId('template_id')->constrained('contract_templates')->onDelete('cascade');
-            $table->json('data')->nullable();
-            $table->timestamps();
-        });
+
+
     }
 
     /**
@@ -101,7 +89,5 @@ return new class extends Migration
         Schema::dropIfExists('invoice_users');
         Schema::dropIfExists('invoices');
         Schema::dropIfExists('invoice_items');
-        Schema::dropIfExists('contract_templates');
-        Schema::dropIfExists('contracts');
     }
 };

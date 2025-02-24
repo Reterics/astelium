@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {ChangeEvent, useState} from 'react';
 import Modal from '../Modal.tsx';
 import FileComponent from '../FileComponent.tsx';
 import RichTextEditor from './RichTextEditor.tsx';
@@ -10,38 +10,36 @@ export interface TemplateRaw {
 }
 
 export interface Template {
-  id: string;
+  id?: number;
   name?: string;
   path?: string;
   content?: string;
 }
 
 export interface TemplateModalProps {
-  onClose?: (templateRaw: false | TemplateRaw) => void;
+  onClose?: () => void;
+  onSave?: (template: TemplateRaw) => void;
   selected?: null | Template;
+
+  template: Template;
+  setTemplate: (template: Template) => void;
 }
 
-const TemplateModal = ({onClose, selected}: TemplateModalProps) => {
-  const [template, setTemplate] = useState<Template>(selected || {id: ''});
+const TemplateModal = ({onClose, onSave, template, setTemplate}: TemplateModalProps) => {
   const [file, setFile] = useState<File | null>(null);
 
   const setText = (text: string) => {
     setTemplate({...template, content: text});
   };
 
-  const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+  const changeType = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     const value = e.target.value;
-    setTemplate((currentTemplate: any) => {
-      const obj = {...currentTemplate};
-      obj[key] = value;
-      return obj;
-    });
+    const obj = {...template} as Record<string, any>;
+    obj[key as keyof Template] = value;
+    setTemplate(obj)
   };
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const uploadAndClose = () => {
+  const onClickSaveBtn = () => {
     if (!file && !template.path && !template.content) {
       alert('You need to upload a file for creating a template');
       return;
@@ -60,45 +58,52 @@ const TemplateModal = ({onClose, selected}: TemplateModalProps) => {
           : template.path,
       },
     };
-    if (typeof onClose === 'function') {
-      onClose(rawDocument);
+    if (typeof onSave === 'function') {
+      onSave(rawDocument);
     }
   };
 
   const close = () => {
     if (typeof onClose === 'function') {
-      onClose(false);
+      onClose();
     }
   };
 
   return (
     <Modal title={'Template Modal'} onClose={close}>
-      <div
-        className='w-full max-w-screen-lg p-6 bg-white border border-gray-200 rounded-lg shadow
-                        dark:bg-gray-800 dark:border-gray-700 mr-1 pt-9 pb-2'
-      >
-        <div className='grid gap-6 mb-6 md:grid-cols-2'>
-          <div className='mt-4'>
+        <div className="grid gap-4 mb-4 md:grid-cols-2">
+          <div className="relative z-0 w-full group">
+            <label htmlFor="name" className="block mb-1 text-sm font-medium text-zinc-700">
+              Template Name
+            </label>
             <input
-              type='text'
-              name='name'
+              id="name"
+              type="text"
+              name="name"
               value={template.name}
-              onChange={(e) => changeType(e, 'name')}
+              onChange={(e) => changeType(e, "name")}
+              className="w-full p-2 border border-zinc-300 bg-zinc-50 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500"
             />
           </div>
+
           <FileComponent
-            name='model'
+            name="model"
             label={
-              'Model ' +
-              (template.path
-                ? '(' + template.path.replace('files/', '') + ')'
-                : '')
+              "Model " + (template.path ? `(${template.path.replace("files/", "")})` : "")
             }
             onChange={(file: File) => setFile(file)}
           />
         </div>
-        <RichTextEditor text={template.content || ''} setText={setText} />
-      </div>
+
+        <RichTextEditor text={template.content || ""} setText={setText} >
+          <button
+            type="button"
+            onClick={onClickSaveBtn}
+            className="px-4 py-2 bg-zinc-800 text-white rounded-md hover:bg-zinc-700 transition"
+          >
+            Save
+          </button>
+        </RichTextEditor>
     </Modal>
   );
 };
