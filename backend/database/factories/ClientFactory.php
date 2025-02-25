@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Client;
 
@@ -12,6 +13,7 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         return [
+            'account_id' => Account::inRandomOrder()->first()->id ?? Account::factory(), // Ensure account is set
             'name' => $this->faker->company,
             'tax_number' => $this->faker->numerify('########-#-##'),
             'post_code' => $this->faker->postcode,

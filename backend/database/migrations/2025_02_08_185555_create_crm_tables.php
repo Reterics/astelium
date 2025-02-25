@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('company')->nullable();
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
 
             $table->timestamps();
         });
@@ -36,6 +37,8 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->enum('status', ['active', 'completed', 'on-hold'])->default('active');
             $table->foreignId('client_id')->nullable()->constrained('clients')->onDelete('cascade');
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
 
@@ -52,6 +55,7 @@ return new class extends Migration {
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
             $table->integer('story_points')->nullable();
             $table->integer('order_index')->default(0)->after('id');
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
 
             $table->timestamps();
         });

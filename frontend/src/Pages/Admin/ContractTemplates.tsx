@@ -1,7 +1,9 @@
-import {useApi} from "../../hooks/useApi.ts";
-import {useState} from "react";
-import TemplateModal, {Template} from "../../components/contracts/TemplateModal.tsx";
-import TableComponent from "../../components/TableComponent.tsx";
+import {useApi} from '../../hooks/useApi.ts';
+import {useState} from 'react';
+import TemplateModal, {
+  Template,
+} from '../../components/contracts/TemplateModal.tsx';
+import TableComponent from '../../components/TableComponent.tsx';
 
 const ContractTemplates = () => {
   const {
@@ -11,7 +13,6 @@ const ContractTemplates = () => {
     deleteMutation,
   } = useApi('contract-templates');
   const [currentTemplate, setCurrentTemplate] = useState<Template | null>(null);
-
 
   const handleSave = async (template: Template) => {
     if (template.id) {

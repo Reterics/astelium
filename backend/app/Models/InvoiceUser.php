@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Models\Scopes\AccountScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,8 +24,12 @@ class InvoiceUser extends Model
         'sign_key',
         'exchange_key',
         'created_by',
-        'modified_by'
-    ];
+        'modified_by', 'account_id'];
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 
     protected $hidden = [
         'password',
@@ -36,4 +41,14 @@ class InvoiceUser extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($invoice) {
+            if (auth()->check()) {
+                $invoice->account_id = auth()->user()->account_id;
+            }
+        });
+        static::addGlobalScope(new AccountScope);
+    }
 }

@@ -17,9 +17,11 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Api\ApiLoginController;
+use App\Http\Middleware\EnsureAccountAccess;
+use App\Http\Middleware\EnsureUserRole;
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', EnsureAccountAccess::class])->group(function () {
     Route::apiResource('projects', ProjectController::class);
 
     Route::apiResource('tasks', TaskController::class);
@@ -29,9 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('clients', ClientController::class);
 
     Route::get('reports', [ReportController::class, 'index']);
-
-    Route::get('settings', [SettingsController::class, 'index']);
-    Route::put('settings', [SettingsController::class, 'update']);
 
 
     Route::apiResource('transactions', TransactionController::class);
@@ -55,8 +54,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 });
 
+Route::middleware(['auth:sanctum', EnsureAccountAccess::class, EnsureUserRole::class . ':admin'])->group(function () {
+    Route::get('settings', [SettingsController::class, 'index']);
+    Route::put('settings', [SettingsController::class, 'update']);
+});
+
 Route::apiResource('appointments', AppointmentController::class);
 
 
 Route::post('/login', [ApiLoginController::class, 'login']);
-Route::middleware('auth:sanctum')->post('/logout', [ApiLoginController::class, 'logout']);
+Route::middleware(['auth:sanctum', EnsureAccountAccess::class])->post('/logout', [ApiLoginController::class, 'logout']);

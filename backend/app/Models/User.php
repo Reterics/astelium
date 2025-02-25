@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Scopes\AccountScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,7 +25,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'is_admin',
+        'account_id',
+        'role',
     ];
 
     /**
@@ -47,6 +49,39 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => 'string',
         ];
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isOwner()
+    {
+        return $this->id === $this->account->admin_user_id;
+    }
+
+    public function setRoleAttribute($value)
+    {
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            $this->attributes['role'] = $value;
+        }
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($invoice) {
+            if (auth()->check()) {
+                $invoice->account_id = auth()->user()->account_id;
+            }
+        });
+        static::addGlobalScope(new AccountScope);
     }
 }

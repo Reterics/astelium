@@ -5,7 +5,7 @@ import {Editor as TinyMCEEditor} from 'tinymce';
 const RichTextEditor = ({
   text,
   setText,
-  children
+  children,
 }: {
   text?: string;
   setText?: (text: string) => void;
@@ -53,8 +53,6 @@ const RichTextEditor = ({
         >
           Finalize
         </button>
-
-
       </div>
     </div>
   );

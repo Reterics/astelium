@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\InvoiceUser;
@@ -17,6 +18,7 @@ class InvoiceUserFactory extends Factory
     public function definition()
     {
         return [
+            'account_id' => Account::inRandomOrder()->first()->id ?? Account::factory(), // Ensure account is set
             'supplier_name' => $this->faker->company,
             'supplier_tax_number' => $this->faker->numerify('########-#-##'),
             'supplier_post_code' => $this->faker->postcode,

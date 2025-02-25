@@ -6,6 +6,10 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
+    protected $routeMiddleware = [
+        'account_access' => \App\Http\Middleware\EnsureAccountAccess::class,
+        'role' => \App\Http\Middleware\EnsureUserRole::class,
+    ];
     public function __construct()
     {
         $this->middleware = array_values(array_filter([

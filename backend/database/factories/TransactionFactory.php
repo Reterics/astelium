@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Transaction;
 use App\Models\Client;
@@ -14,6 +15,7 @@ class TransactionFactory extends Factory
     public function definition()
     {
         return [
+            'account_id' => Account::inRandomOrder()->first()->id ?? Account::factory(), // Ensure account is set
             'type' => $this->faker->randomElement(['income', 'outgoing']), // ✅ Matches validation rules
             'amount' => $this->faker->randomFloat(2, 10, 5000),
             'date' => $this->faker->dateTime, // ✅ Matches controller field

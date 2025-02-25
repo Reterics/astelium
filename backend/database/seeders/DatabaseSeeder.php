@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Models\Account;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,13 +14,38 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrInsert(
-            ['email' => 'admin@example.com'], // Check if this email exists
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin User',
                 'password' => Hash::make('securepassword'),
-                'is_admin' => true,
+                'role' => 'admin',
             ]
         );
+
+        $account = Account::updateOrCreate(
+            ['name' => 'Default Company'], // Ensure the account exists
+            [
+                'admin_user_id' => $admin->id, // Now we can assign the admin ID
+                'subscription_plan' => 'premium',
+                'subscription_status' => 'active',
+                'billing_cycle' => 'monthly',
+                'trial_ends_at' => now()->addDays(14),
+            ]
+        );
+
+        $admin->update(['account_id' => $account->id]);
+
+        User::updateOrInsert(
+            ['email' => 'member@example.com'],
+            [
+                'name' => 'Member User',
+                'password' => Hash::make('securepassword'),
+                'account_id' => $account->id,
+                'role' => 'member',
+            ]
+        );
+
+        $this->command->info('Database seeded successfully.');
     }
 }

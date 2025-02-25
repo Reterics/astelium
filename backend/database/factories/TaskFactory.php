@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Task;
@@ -14,6 +15,7 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
+            'account_id' => Account::inRandomOrder()->first()->id ?? Account::factory(), // Ensure account is set
             'project_id' => Project::factory(),
             'title' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph,

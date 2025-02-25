@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('path')->nullable()->after('name'); // Stores file path
             $table->text('content')->nullable()->after('path');
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
         Schema::create('contracts', function (Blueprint $table) {
@@ -24,6 +26,8 @@ return new class extends Migration
             $table->date('created');
             $table->foreignId('template_id')->constrained('contract_templates')->onDelete('cascade');
             $table->json('data')->nullable();
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

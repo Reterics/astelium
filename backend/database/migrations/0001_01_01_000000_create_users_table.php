@@ -11,12 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('accounts', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->foreignId('admin_user_id')->constrained('users')->onDelete('cascade'); // Admin of the account
+            $table->string('subscription_plan')->default('free'); // Free, Pro, Enterprise
+            $table->string('subscription_status')->default('inactive'); // active, canceled, expired
+            $table->string('billing_cycle')->default('monthly'); // monthly, yearly
+            $table->timestamp('trial_ends_at')->nullable(); // If using trials
+            $table->timestamp('subscription_expires_at')->nullable(); // When the subscription ends
+            $table->timestamps();
+        });
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('role')->default('member');
+            $table->foreignId('account_id')->nullable()->constrained('accounts')->onDelete('cascade');
+
             $table->rememberToken();
             $table->timestamps();
         });
@@ -42,7 +56,13 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['account_id']);
+            $table->dropColumn('account_id');
+        });
         Schema::dropIfExists('users');
+        Schema::dropIfExists('accounts');
+
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }

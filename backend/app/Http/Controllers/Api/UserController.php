@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -28,26 +29,35 @@ class UserController extends Controller
     {
         Log::debug('Register attempt with data:', $request->all());
 
-        $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'is_admin' => 'sometimes|boolean',
-        ]);
+        $user = auth()->user();
 
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            $data['is_admin'] = false;
+        // Only allow the admin to create users
+        if (!$user->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $user = new User();
-        $user->password = Hash::make($data['password']);
-        $user->email = $data['email'];
-        $user->name = $data['name'];
-        $user->is_admin = $data['is_admin'];
-        $user->save();
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:admin,member,viewer', // Allow only specific roles
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $newUser = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request['password']),
+            'account_id' => $user->account_id,
+            'role' => $request->role,
+        ]);
+
         Log::debug('User created');
 
-        return response()->json($user, 201);
+        return response()->json($newUser, 201);
     }
 
     /**
@@ -60,7 +70,7 @@ class UserController extends Controller
             'name'     => 'sometimes|required|string|max:255',
             'email'    => "sometimes|required|email|max:255|unique:users,email,{$user->id}",
             'password' => 'sometimes|nullable|string|min:8',
-            'is_admin' => 'sometimes|boolean',
+            'role' => 'required|in:admin,member,viewer', // Allow only specific roles
         ]);
 
         if (isset($data['password'])) {

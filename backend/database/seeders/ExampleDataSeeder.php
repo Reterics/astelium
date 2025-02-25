@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use App\Models\Account;
 use App\Models\Client;
 use App\Models\Project;
 use App\Models\Task;
@@ -10,6 +10,7 @@ use App\Models\Warehouse;
 use App\Models\Storage;
 use App\Models\Domain;
 use App\Models\Transaction;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class ExampleDataSeeder extends Seeder
@@ -20,46 +21,70 @@ class ExampleDataSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
-            // Create Clients
-            $clients = Client::factory(10)->create();
+            // Get the first account
+            $account = Account::first();
 
-            // Create Projects for each Client
+            if (!$account) {
+                $this->command->error("No account found! Run `php artisan db:seed` first.");
+                return;
+            }
+
+            // ✅ Explicitly pass `account_id` when creating Clients
+            $clients = Client::factory(10)->make()->each(function ($client) use ($account) {
+                $client->account_id = $account->id;
+                $client->save();
+            });
+
+            // ✅ Ensure `account_id` is set for Projects
             $projects = collect();
-            $clients->each(function ($client) use ($projects) {
+            $clients->each(function ($client) use ($projects, $account) {
                 $projects->push(...Project::factory(rand(1, 5))->create([
                     'client_id' => $client->id,
+                    'account_id' => $account->id,
                 ]));
             });
 
-            // Create Tasks
-            Task::factory(50)->create([
-                'project_id' => $projects->random()->id, // Ensure valid project_id
-                'assigned_to' => null,
+            if ($projects->isEmpty()) {
+                $this->command->warn("No projects were created, skipping task creation.");
+            } else {
+                // ✅ Ensure `account_id` is set for Tasks
+                Task::factory(50)->create([
+                    'project_id' => $projects->random()->id,
+                    'account_id' => $account->id,
+                    'assigned_to' => null,
+                ]);
+            }
+
+            // ✅ Ensure `account_id` is set for Warehouses
+            $warehouses = Warehouse::factory(5)->create([
+                'account_id' => $account->id,
             ]);
 
-            // Create Warehouses
-            $warehouses = Warehouse::factory(5)->create();
-
-            // Create Storages
-            $storages = Storage::factory(10)->create();
+            // ✅ Ensure `account_id` is set for Storages
+            $storages = Storage::factory(10)->create([
+                'account_id' => $account->id,
+            ]);
 
             // Attach Storages to Warehouses via Pivot Table
             $warehouses->each(function ($warehouse) use ($storages) {
                 $warehouse->storages()->attach(
-                    $storages->random(rand(1, 5))->pluck('id')->toArray() // Randomly attach storages
+                    $storages->random(rand(1, 5))->pluck('id')->toArray()
                 );
             });
 
-            // Create Domains
-            $domains = Domain::factory(10)->create();
+            // ✅ Ensure `account_id` is set for Domains
+            $domains = Domain::factory(10)->create([
+                'account_id' => $account->id,
+            ]);
 
-            // Create Transactions linked to Clients and Domains
-            $clients->each(function ($client) use ($domains) {
-                Transaction::factory(50)->create();
+            // ✅ Ensure `account_id` is set for Transactions
+            $clients->each(function ($client) use ($domains, $account) {
+                Transaction::factory(50)->create([
+                    'account_id' => $account->id,
+                ]);
             });
         });
 
-
-        $this->command->info('Example data has been seeded!');
+        $this->command->info('Example data has been seeded successfully!');
     }
 }

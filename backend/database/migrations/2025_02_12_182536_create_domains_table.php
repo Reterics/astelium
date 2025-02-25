@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('admin_url')->nullable();
             $table->text('credentials')->nullable();
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
 
@@ -41,6 +43,8 @@ return new class extends Migration
             // Tracking Fields
             $table->string('created_by')->nullable();
             $table->string('modified_by')->nullable();
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps(); // Includes created_at & updated_at
         });
         Schema::create('invoices', function (Blueprint $table) {
@@ -58,6 +62,8 @@ return new class extends Migration
             $table->enum('invoice_appearance', ['ELECTRONIC', 'PAPER', 'EDI', 'UNKNOWN']);
             $table->decimal('invoice_gross_amount', 15, 2);
             $table->string('transaction_id')->nullable();
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
         Schema::create('invoice_items', function (Blueprint $table) {
@@ -73,6 +79,8 @@ return new class extends Migration
             $table->decimal('line_vat_amount', 15, 2);
             $table->decimal('line_gross_amount', 15, 2);
             $table->string('line_description')->nullable();
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
 

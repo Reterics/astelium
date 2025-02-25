@@ -12,6 +12,8 @@ return new class extends Migration {
             $table->string('name');
             $table->string('location');
             $table->text('description')->nullable();
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
         Schema::create('storages', function (Blueprint $table) {
@@ -22,6 +24,8 @@ return new class extends Migration {
             $table->integer('threshold');
             $table->integer('storage_amount');
             $table->decimal('value', 10, 2);
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
 
@@ -33,6 +37,8 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->foreignId('related_project_id')->nullable()->constrained('projects')->onDelete('cascade');
             $table->foreignId('related_client_id')->nullable()->constrained('clients')->onDelete('cascade');
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
 
@@ -43,6 +49,8 @@ return new class extends Migration {
             $table->foreignId('related_project_id')->nullable()->constrained('projects')->onDelete('cascade');
             $table->foreignId('related_task_id')->nullable()->constrained('tasks')->onDelete('cascade');
             $table->foreignId('related_client_id')->nullable()->constrained('clients')->onDelete('cascade');
+            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+
             $table->timestamps();
         });
         Schema::create('personal_access_tokens', function (Blueprint $table) {
