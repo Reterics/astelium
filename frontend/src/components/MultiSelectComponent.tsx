@@ -19,7 +19,7 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
   return (
     <div key={column.key} className='relative min-w-28'>
       <button
-        className='w-full border border-zinc-300 p-1 rounded-xs focus:outline-none flex justify-between'
+        className='max-w-full border border-zinc-300 p-1 rounded-xs focus:outline-none flex justify-between truncate'
         onClick={() => setDropdownOpen(!dropdownOpen)}
       >
         {filters[column.key]?.length

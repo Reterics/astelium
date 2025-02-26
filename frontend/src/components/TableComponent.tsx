@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {debounce} from 'throttle-debounce';
 import {FiTrash, FiRefreshCw, FiSearch, FiPlus, FiSave} from 'react-icons/fi';
 import MultiSelectComponent from './MultiSelectComponent';
 import SelectComponent from './SelectComponent.tsx';
@@ -52,8 +53,23 @@ const TableComponent: React.FC<TableProps> = ({
   const rowsPerPage = 50;
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
+  const debounceInterval = 500;
+  const searchRef = useRef<HTMLInputElement>(null);
+
   const [itemToAdd, setItemToAdd] = useState<TableRow>({});
   const handleFilterChange = (key: string, value: string | string[]) => {
+    const column = columns.find((col) => col.key === key);
+    if (Array.isArray(value)) {
+      if (
+        !value.length ||
+        (column && column.options && column.options.length === value.length)
+      ) {
+        return setFilters((prev) => {
+          delete prev[key];
+          return {...prev};
+        });
+      }
+    }
     setFilters((prev) => ({...prev, [key]: value}));
   };
 
@@ -177,6 +193,28 @@ const TableComponent: React.FC<TableProps> = ({
     setAllowSort(true);
   };
 
+  const debounceFunc = debounce(
+    debounceInterval || 500,
+    (value: string) => {
+      setSearchQuery(searchRef.current ? searchRef.current.value : value);
+    },
+    {atBegin: false}
+  );
+
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!e.target) {
+        return;
+      }
+      if (e.key === 'Enter') {
+        setSearchQuery((e.target as HTMLInputElement).value as string);
+      } else {
+        debounceFunc((e.target as HTMLInputElement).value as string);
+      }
+    },
+    [debounceFunc]
+  );
+
   const isResetEnabled = !!columns.filter((col) => col.editable).length;
 
   return (
@@ -186,10 +224,10 @@ const TableComponent: React.FC<TableProps> = ({
           <div className='flex items-center space-x-2 flex-1'>
             <FiSearch className='text-zinc-600' />
             <input
+              ref={searchRef}
+              onKeyDown={handleKeyPress}
               type='text'
               placeholder='Search...'
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
               className='p-1 border border-zinc-300 rounded-sm bg-transparent text-zinc-900'
             />
           </div>
@@ -253,7 +291,10 @@ const TableComponent: React.FC<TableProps> = ({
                 className={editedRows[rowIndex] ? 'bg-yellow-100' : ''}
               >
                 {columns.map((col) => (
-                  <td key={col.key} className='p-2 border-b border-zinc-300'>
+                  <td
+                    key={col.key}
+                    className='p-2 border-b border-zinc-300 max-w-[150px] sm:max-w-[200px] md:max-w-[250px]'
+                  >
                     {col.editable ? (
                       col.type === 'select' ? (
                         <SelectComponent
@@ -289,6 +330,7 @@ const TableComponent: React.FC<TableProps> = ({
                         />
                       ) : (
                         <input
+                          title={changes[rowIndex]?.[col.key] ?? row[col.key]}
                           type={col.type || 'text'}
                           value={changes[rowIndex]?.[col.key] ?? row[col.key]}
                           onChange={(e) => {

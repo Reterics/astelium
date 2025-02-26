@@ -23,3 +23,7 @@ input:-webkit-autofill:focus {
   -webkit-text-fill-color: #374151 !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+td > select {
+  width: 100%;
+}

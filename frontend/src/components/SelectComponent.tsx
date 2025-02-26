@@ -26,7 +26,7 @@ const SelectComponent: React.FC<SelectProps> = ({
       key={column.key}
       value={filters[column.key] || ''}
       onChange={(e) => handleFilterChange(column.key, e.target.value)}
-      className='p-1 border border-zinc-300 rounded-xs'
+      className='p-1 border border-zinc-300 rounded-xs truncate max-w-full'
     >
       {defaultLabel && <option value=''>{defaultLabel}</option>}
       {column.options?.map((option) =>
