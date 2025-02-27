@@ -182,6 +182,7 @@ const Board = () => {
 
       {selectedTask && (
         <TaskModal
+          users={users}
           task={selectedTask}
           onClose={() => setSelectedTask(null)}
           onSave={updateTask}
