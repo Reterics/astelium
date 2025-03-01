@@ -2,23 +2,25 @@ import {
   FiCheckCircle
 } from 'react-icons/fi';
 import { motion } from 'framer-motion';
+import HomeLineChart from "../components/visualizations/home/HomeLineChart.tsx";
+import ModernTable from "../components/visualizations/home/ModernTable.tsx";
+import ContractCard from "../components/visualizations/home/ContractCard.tsx";
+import BusinessD3BarChart from "../components/visualizations/home/BusinessD3BarChart.tsx";
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen text-black relative overflow-hidden">
       <div
-
-        className="min-h-screen bg-gradient-to-br from-white to-zinc-100 text-black relative overflow-hidden flex items-center justify-center">
+        className="min-h-screen bg-gradient-to-t from-[#eaf6fe] to-white text-black relative overflow-hidden flex items-center justify-center">
         <div
           style={{
-            background:'url(background.webp)',
             opacity: '0.3',
             backgroundPositionX: 'right',
             backgroundPositionY: 'center',
 
           }}
           className="absolute top-0 left-0 w-full h-full overflow-hidden">
-
+        <HomeLineChart />
         </div>
         <div className="absolute bottom-0 left-0 w-full">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 480" className="w-full h-auto">
@@ -31,79 +33,20 @@ const LandingPage = () => {
             </defs>
           </svg>
         </div>
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-          <motion.div
-            className="absolute top-16 left-10 w-40 h-20 bg-blue-200 bg-opacity-50 rounded-lg shadow"
-            animate={{ y: [-10, 10, -10] }}
-            transition={{ repeat: Infinity, duration: 4 }}
-          >
-            {/* Line Chart */}
-            <svg viewBox="0 0 100 50" className="w-full h-full">
-              <path d="M5 45 L20 30 L40 35 L60 15 L80 25 L95 5" stroke="black" strokeWidth="2" fill="none" />
-            </svg>
-          </motion.div>
+        <div className="absolute container mx-auto p-6 top-1/12 md:flex md:items-center">
+          <div className="md:w-1/2 text-center md:text-left">
+            <ContractCard />
 
-          <motion.div
-            className="absolute top-24 right-10 w-32 h-24 bg-green-200 bg-opacity-50 rounded-lg shadow"
-            animate={{ y: [10, -10, 10] }}
-            transition={{ repeat: Infinity, duration: 4 }}
-          >
-            {/* Bar Chart */}
-            <svg viewBox="0 0 100 50" className="w-full h-full">
-              <rect x="10" y="20" width="15" height="30" fill="black" />
-              <rect x="35" y="10" width="15" height="40" fill="black" />
-              <rect x="60" y="25" width="15" height="25" fill="black" />
-            </svg>
-          </motion.div>
+            <ModernTable />
+          </div>
 
-          <motion.div
-            className="absolute bottom-20 left-10 w-36 h-20 bg-red-200 bg-opacity-50 rounded-lg shadow"
-            animate={{ y: [-8, 8, -8] }}
-            transition={{ repeat: Infinity, duration: 4 }}
-          >
-            {/* Area Chart */}
-            <svg viewBox="0 0 100 50" className="w-full h-full">
-              <polygon points="0,50 20,30 40,35 60,15 80,25 100,5 100,50" fill="black" stroke="black" strokeWidth="2" />
-            </svg>
-          </motion.div>
+        </div>
 
-          <motion.div
-            className="absolute bottom-16 right-16 w-24 h-24 bg-yellow-200 bg-opacity-50 rounded-full shadow"
-            animate={{ y: [8, -8, 8] }}
-            transition={{ repeat: Infinity, duration: 4 }}
-          >
-            {/* Pie Chart */}
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              <circle cx="50" cy="50" r="45" stroke="black" strokeWidth="2" fill="none" />
-              <path d="M50 50 L50 5 A45 45 0 0 1 90 50 Z" fill="black" stroke="black" strokeWidth="2" />
-            </svg>
-          </motion.div>
+        <div className="absolute container bottom-1/12 md:flex text-left px-12">
+          <div className="w-1/6">
+            <BusinessD3BarChart />
+          </div>
 
-          <motion.div
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2 w-28 h-28 bg-purple-200 bg-opacity-50 rounded-full shadow"
-            animate={{ y: [-8, 8, -8] }}
-            transition={{ repeat: Infinity, duration: 4 }}
-          >
-            {/* Globe (Earth) */}
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              <circle cx="50" cy="50" r="45" stroke="black" strokeWidth="2" fill="none" />
-              <path d="M20 50 Q40 20, 80 50 T80 90" stroke="black" strokeWidth="2" fill="none" />
-            </svg>
-          </motion.div>
-
-          <motion.div
-            className="absolute top-10 right-1/2 transform translate-x-1/2 w-36 h-20 bg-gray-200 bg-opacity-50 rounded-lg shadow"
-            animate={{ y: [8, -8, 8] }}
-            transition={{ repeat: Infinity, duration: 4 }}
-          >
-            {/* Table */}
-            <svg viewBox="0 0 100 50" className="w-full h-full">
-              <rect x="5" y="5" width="90" height="40" stroke="black" strokeWidth="2" fill="none" />
-              <line x1="5" y1="20" x2="95" y2="20" stroke="black" strokeWidth="2" />
-              <line x1="35" y1="5" x2="35" y2="45" stroke="black" strokeWidth="2" />
-              <line x1="65" y1="5" x2="65" y2="45" stroke="black" strokeWidth="2" />
-            </svg>
-          </motion.div>
         </div>
 
         <div className="absolute container mx-auto px-6 md:flex md:items-center">
@@ -130,10 +73,10 @@ const LandingPage = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              <button className="px-5 py-2 bg-zinc-200 hover:bg-zinc-300 rounded text-black font-semibold cursor-pointer">
-                Try Demo
+              <button className="px-5 py-2 bg-[#cfe8ff] hover:bg-zinc-300 rounded text-black font-semibold cursor-pointer">
+                Book a Demo
               </button>
-              <button className="px-5 py-2 bg-zinc-300 hover:bg-zinc-400 rounded font-semibold cursor-pointer">
+              <button className="px-5 py-2 bg-[#cfe8ff] hover:bg-zinc-300 rounded font-semibold cursor-pointer">
                 View Pricing
               </button>
             </motion.div>
@@ -145,6 +88,7 @@ const LandingPage = () => {
             </motion.div>
           </div>
         </div>
+
 
       </div>
 
