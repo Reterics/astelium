@@ -1,21 +1,24 @@
-import {FiSearch, FiBell, FiSun, FiMoon} from 'react-icons/fi';
+import {FiBell, FiSun, FiMoon} from 'react-icons/fi';
+import PageBreadcrumbs from "./PageBreadcrumbs.tsx";
+import {MenuItem} from "./Sidebar.tsx";
 
 interface HeaderProps {
   username: string;
   theme: 'light' | 'dark';
   toggleTheme: () => void;
+  selectedMenu?: MenuItem
 }
 
-const Header: React.FC<HeaderProps> = ({username, theme, toggleTheme}) => {
+const Header: React.FC<HeaderProps> = ({username, theme, toggleTheme, selectedMenu}) => {
   return (
-    <header className='w-full bg-white shadow-md p-3 flex items-center justify-between'>
+    <header className='w-full bg-zinc-200 shadow-md py-1 px-3 flex items-center justify-between border-b border-zinc-300'>
       <div className='flex items-center space-x-2 w-1/3'>
-        <FiSearch className='w-5 h-5 text-zinc-600' />
-        <input
-          type='text'
-          placeholder='Search...'
-          className='w-full bg-transparent focus:outline-none text-zinc-900 text-base'
-        />
+        {selectedMenu && (
+          <PageBreadcrumbs
+            title={selectedMenu.label}
+            breadcrumbs={['Dashboard', selectedMenu.label]}
+          />
+        )}
       </div>
       <div className='flex items-center space-x-4'>
         <button

@@ -18,7 +18,7 @@ const Dashboard = () => {
   const {t} = useTranslation();
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4'>
+    <div className='mt-1 p-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4'>
       <div className='bg-white p-4 rounded-lg shadow flex items-center space-x-4'>
         <FiUsers className='text-zinc-600 w-10 h-10' />
         <div>

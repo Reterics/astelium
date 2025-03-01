@@ -135,8 +135,8 @@ const Board = () => {
   ];
 
   return (
-    <div className='pb-1 shadow-md bg-zinc-50 rounded-lg'>
-      <div className='p-4 pb-0 flex items-center space-x-2'>
+    <div className='pb-1 shadow-md bg-zinc-50'>
+      <div className='p-2 pb-0 flex items-center space-x-2'>
         <div className='flex items-center space-x-2 flex-1'>
           <FiSearch className='text-zinc-600' />
           <input

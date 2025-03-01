@@ -218,7 +218,7 @@ const TableComponent: React.FC<TableProps> = ({
   const isResetEnabled = !!columns.filter((col) => col.editable).length;
 
   return (
-    <div className='p-4 pb-1 shadow-md bg-zinc-50 rounded-lg'>
+    <div className='p-2 bg-zinc-50 rounded'>
       {(!noSearch || (onCreate && !addPerLine)) && (
         <div className='flex items-center mb-2 space-x-2'>
           <div className='flex items-center space-x-2 flex-1'>
@@ -234,14 +234,14 @@ const TableComponent: React.FC<TableProps> = ({
           {columns.map((col) =>
             col.type === 'multiselect' ? (
               <MultiSelectComponent
-                defaultLabel={`All`}
+                defaultLabel={col.label || `All`}
                 column={col}
                 filters={filters as {[key: string]: string[]}}
                 handleFilterChange={handleFilterChange}
               />
             ) : col.type === 'select' ? (
               <SelectComponent
-                defaultLabel={`All`}
+                defaultLabel={col.label || `All`}
                 column={col}
                 filters={filters as {[key: string]: string}}
                 handleFilterChange={handleFilterChange}

@@ -1,4 +1,4 @@
-import Sidebar from './Sidebar.tsx';
+import Sidebar, {MenuItem} from './Sidebar.tsx';
 import Header from './Header.tsx';
 import {
   FiHome,
@@ -20,9 +20,8 @@ import {
 
 import {useState} from 'react';
 import {useLocation} from 'react-router-dom';
-import PageBreadcrumbs from './PageBreadcrumbs.tsx';
 
-const menu = [
+const menu: MenuItem[] = [
   {label: 'Dashboard', path: '/dashboard', icon: FiHome},
 
   {
@@ -103,23 +102,17 @@ const Container: React.FC<ContainerProps> = ({children}) => {
       .find((s) => s.path === location.pathname);
 
   return (
-    <div className='flex h-screen overflow-hidden bg-zinc-200 text-zinc-700'>
+    <div className='flex h-screen overflow-hidden bg-zinc-100 text-zinc-700'>
       <Sidebar menu={menu} />
       <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto relative'>
         <Header
           theme={theme || 'light'}
           toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           username={'Test'}
+          selectedMenu={selectedMenu}
         ></Header>
 
-        {selectedMenu && (
-          <PageBreadcrumbs
-            title={selectedMenu.label}
-            breadcrumbs={['Dashboard', selectedMenu.label]}
-          />
-        )}
-
-        <div className='py-1 px-4 flex flex-col space-y-6'>{children}</div>
+        <div className='flex flex-col space-y-6'>{children}</div>
       </div>
     </div>
   );

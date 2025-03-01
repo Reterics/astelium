@@ -28,11 +28,10 @@ const statuses = [
 ];
 
 const pastelColors = [
-  'bg-blue-200',
-  'bg-green-200',
-  'bg-purple-200',
-  'bg-red-200',
-  'bg-yellow-200',
+  'bg-blue-500',
+  'bg-green-500',
+  'bg-purple-500',
+  'bg-red-500'
 ];
 
 const getProjectColor = (name: string) => {
@@ -50,9 +49,9 @@ const priorityIcons = {
 };
 
 const typeIcons = {
-  feature: <FiStar className='text-yellow-500 text-base' />,
-  task: <FiCheckCircle className='text-green-500 text-base' />,
-  issue: <FiAlertCircle className='text-red-500 text-base' />,
+  feature: <FiStar className='text-yellow-500 text-base me-1' />,
+  task: <FiCheckCircle className='text-green-500 text-base me-1' />,
+  issue: <FiAlertCircle className='text-red-500 text-base me-1' />,
 };
 
 export interface Task {
@@ -223,16 +222,16 @@ const KanbanBoard = ({
   }, [tasks]);
 
   return (
-    <div className='flex gap-4 overflow-x-auto p-4'>
+    <div className='flex gap-4 overflow-x-auto p-2'>
       {statuses.map((status) => (
-        <div key={status.id} className='w-1/5 min-w-[200px]'>
+        <div key={status.id} className='w-1/5 min-w-[200px] border border-zinc-300 rounded'>
           <h2
-            className={`p-2 rounded-t-sm ${status.color} text-center font-semibold text-zinc-800`}
+            className={`p-2  ${status.color} text-left text-sm font-bold text-zinc-900`}
           >
             {status.title}
           </h2>
           <div
-            className='bg-zinc-100 p-1 rounded-b-sm min-h-[400px] space-y-2'
+            className='bg-zinc-100 p-1 rounded-b-sm min-h-[400px] space-y-1'
             data-column-id={status.id}
             ref={(el) => {
               columnRefs.current[status.id] = el;
@@ -244,7 +243,7 @@ const KanbanBoard = ({
               .map((task) => (
                 <div
                   key={task.id}
-                  className='relative bg-white text-black p-2 rounded-sm shadow flex flex-col'
+                  className='relative bg-white text-zinc-900 border border-white p-2 rounded-sm shadow flex flex-col space-y-2 hover:bg-zinc-50 hover:border-zinc-400 cursor-pointer'
                   data-task-id={task.id}
                   ref={(el) => {
                     taskRefs.current[task.id] = el;
@@ -255,24 +254,29 @@ const KanbanBoard = ({
                   {highlightedIndex === task.id && (
                     <div className='absolute top-0 left-0 right-0 h-1 bg-blue-500'></div>
                   )}
-                  <div className='flex items-center space-x-1 mb-1 cursor-pointer text-base'>
-                    {typeIcons[task.type]}
+                  <div className='flex items-center space-x-1 text-sm'>
                     <h4 className='font-semibold'>{task.title}</h4>
                   </div>
 
                   {task.project && (
                     <div
-                      className={`text-zinc-900 text-xs font-semibold px-1 py-0.5 rounded-md mt-1 w-max ${getProjectColor(task.project.name)}`}
+                      className={`text-zinc-100 text-xs font-semibold px-1 py-0.5 rounded-xs w-max ${getProjectColor(task.project.name)}`}
                     >
                       {task.project.name}
                     </div>
                   )}
 
-                  {task.priority && (
-                    <div className='absolute bottom-2 right-2'>
-                      {priorityIcons[task.priority]}
-                    </div>
-                  )}
+                  <div>
+                    <div className='text-xs flex flex-row font-semibold'> {typeIcons[task.type]} {`${task.type.charAt(0).toUpperCase()}-${task.id}`}</div>
+
+                    {task.priority && (
+                      <div className='absolute bottom-2 right-2'>
+                        {priorityIcons[task.priority]}
+                      </div>
+                    )}
+                  </div>
+
+
                 </div>
               ))}
           </div>

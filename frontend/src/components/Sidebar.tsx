@@ -3,7 +3,7 @@ import {FiChevronDown, FiChevronRight} from 'react-icons/fi';
 import {Link} from 'react-router-dom';
 import {useAuth} from '../hooks/useAuth.ts';
 
-interface MenuItem {
+export interface MenuItem {
   label: string;
   icon?: React.ElementType;
   path?: string;
@@ -23,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({menu}) => {
   };
 
   return (
-    <aside className='w-64 h-screen bg-zinc-900 text-white p-2 space-y-2'>
+    <aside className='w-44 h-screen bg-zinc-900 text-white p-1 space-y-0'>
       {menu.map((item, index) => (
         <div key={index} className='flex flex-col'>
           {item.path ? (
@@ -54,14 +54,13 @@ const Sidebar: React.FC<SidebarProps> = ({menu}) => {
             </button>
           )}
           {item.submenu && openSubmenus[index] && (
-            <div className='ml-5 space-y-1 border-l border-zinc-700 pl-2'>
+            <div className='bg-zinc-800 border-y-2 border-zinc-700 space-y-1'>
               {item.submenu.map((sub, subIndex) => (
                 <Link
                   key={subIndex}
                   to={sub.path ?? '#'}
-                  className='flex items-center space-x-2 w-full p-2 rounded-md hover:bg-zinc-800'
+                  className='flex items-center space-x-2 w-full p-2 hover:bg-zinc-700'
                 >
-                  {sub.icon && <sub.icon className='w-4 h-4' />}
                   <span>{sub.label}</span>
                 </Link>
               ))}
