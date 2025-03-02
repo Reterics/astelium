@@ -1,0 +1,69 @@
+import TableComponent, {TableRow} from "./TableComponent.tsx";
+import {CrudField} from "./CrudManager.tsx";
+import {useTranslation} from "react-i18next";
+import {SelectOption} from "./SelectComponent.tsx";
+
+interface GroupedTableComponentProps {
+  columns: CrudField[];
+  data: TableRow[];
+  onEdit?: (updatedData: TableRow[]) => Promise<void> | void;
+  onDelete?: (id: number | string) => void;
+  onCreate?: (itemToAdd?: TableRow) => void|boolean;
+  groupedBy: string
+}
+
+const GroupedTableComponent = (
+  {
+    columns,
+    data,
+    groupedBy,
+    onEdit,
+    onDelete,
+    onCreate,
+  }: GroupedTableComponentProps
+) => {
+  const {t} = useTranslation();
+
+  const initialGroups = columns.filter((column: CrudField) => column.type === 'select' && column.options);
+
+  const groupedData: Record<string, TableRow[]> = data.reduce((acc: Record<string, TableRow[]>, cur: TableRow) => {
+    const group = cur[groupedBy] || '';
+    acc[group] = acc[group] || [];
+
+    acc[group].push(cur);
+
+    return acc;
+  }, {});
+
+  const selectedGroupOptions = (initialGroups
+    .find((column) => column.key === groupedBy)
+    ?.options || []) as SelectOption[]
+
+  return (
+    <div className='pt-2'>
+      {Object.keys(groupedData).map((group) =>
+        (
+          <div>
+            <div className='py-2 px-4 flex items-center space-x-2 '>
+              <div className='text-zinc-600 font-medium'>
+                {t(selectedGroupOptions.find(o => o.value === group)?.label || group)}
+              </div>
+            </div>
+            <TableComponent
+              data={groupedData[group]}
+              columns={columns}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onCreate={onCreate}
+              addPerLine={true}
+              noSearch={true}
+              pagination={false}
+            />
+          </div>
+        )
+      )}
+    </div>
+  )
+};
+
+export default GroupedTableComponent;

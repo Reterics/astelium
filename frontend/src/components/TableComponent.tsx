@@ -19,7 +19,7 @@ interface TableProps {
   data: TableRow[];
   onEdit?: (updatedData: TableRow[]) => Promise<void> | void;
   onDelete?: (id: number | string) => void;
-  onCreate?: (itemToAdd?: TableRow) => void;
+  onCreate?: (itemToAdd?: TableRow) => void|boolean;
   noSearch?: boolean;
   addPerLine?: boolean;
   pagination?: boolean;
@@ -366,7 +366,7 @@ const TableComponent: React.FC<TableProps> = ({
               </tr>
             ))}
 
-            {addPerLine && (
+            {addPerLine && onCreate && (
               <tr key={'addRow'}>
                 {columns.map((col) => (
                   <td key={col.key} className='p-2 border-b border-zinc-300'>
