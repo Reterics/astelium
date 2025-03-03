@@ -27,6 +27,7 @@ class User extends Authenticatable
         'password',
         'account_id',
         'role',
+        'image'
     ];
 
     /**
@@ -73,6 +74,13 @@ class User extends Authenticatable
         if (auth()->check() && auth()->user()->isAdmin()) {
             $this->attributes['role'] = $value;
         }
+    }
+
+    public function getImageAttribute($value)
+    {
+        return $value
+            ? asset('storage/' . $value)
+            : null;
     }
 
     protected static function booted()

@@ -9,14 +9,21 @@ export const getCSRFToken = () => {
         ?.getAttribute('content');
 };
 
-export const getFetchOptions = () =>
-  ({
+export const getFetchOptions = (noContentType?: boolean) => {
+  const options = {
     headers: {
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
     credentials: 'include',
-  }) as RequestInit;
+  };
+
+  if (!noContentType) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    options.headers['Content-Type'] = 'application/json';
+  }
+  return options as RequestInit;
+};
 
 export function transformTransactionData(
   transactions: Record<string, any>[]

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CommentController;
@@ -52,6 +53,9 @@ Route::middleware(['auth:sanctum', EnsureAccountAccess::class])->group(function 
     Route::post('/comments', [CommentController::class, 'store']);
     Route::put('/comments/{comment}', [CommentController::class, 'update']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+
+
+    Route::apiResource('users', UserController::class);
 });
 
 Route::middleware(['auth:sanctum', EnsureAccountAccess::class, EnsureUserRole::class . ':admin'])->group(function () {
@@ -64,3 +68,5 @@ Route::apiResource('appointments', AppointmentController::class);
 
 Route::post('/login', [ApiLoginController::class, 'login']);
 Route::middleware(['auth:sanctum', EnsureAccountAccess::class])->post('/logout', [ApiLoginController::class, 'logout']);
+
+Route::middleware('auth:sanctum')->post('/user/avatar', [UserController::class, 'updateAvatar']);

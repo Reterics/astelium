@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import SelectComponent from './SelectComponent.tsx';
 import MultiSelectComponent from './MultiSelectComponent.tsx';
 import {CrudField} from './CrudManager.tsx';
+import FileComponent from "./FileComponent.tsx";
 
 export interface FormModalProps {
   title: string;
@@ -72,6 +73,20 @@ const FormModal: React.FC<FormModalProps> = ({
                   handleFilterChange={(_column, value) => {
                     handleInputChange(field.key, value);
                   }}
+                />
+              ) : field.type === 'image' ? (
+                <FileComponent
+                  name='model'
+                  onChange={(file: File) => {
+                    setForm((prev) => {
+                      const data = {...prev, image: file};
+                      if (onInputChange) {
+                        onInputChange('image', data);
+                      }
+                      return data;
+                    });
+                  }}
+                  accept={'image/*'}
                 />
               ) : (
                 <input

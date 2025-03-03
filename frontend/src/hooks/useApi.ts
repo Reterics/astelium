@@ -47,11 +47,27 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     });
 
   const createMutation = useMutation({
-    mutationFn: async (newData: any) => {
+    mutationFn: async (newData: Record<string, any>) => {
+      const fileUpload = newData.image instanceof File;
+
+      let formData: FormData|string;
+
+      if (fileUpload) {
+        formData = new FormData();
+
+        Object.entries(newData).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            (formData as FormData).append(key, value);
+          }
+        });
+      } else {
+        formData = JSON.stringify(newData);
+      }
+
       const response = await fetch(`/api/${endpoint}`, {
-        ...getFetchOptions(),
+        ...getFetchOptions(fileUpload),
         method: 'POST',
-        body: JSON.stringify(newData),
+        body: formData,
       });
       if (!response.ok) throw new Error(`Failed to create ${endpoint}`);
       return response.json();
@@ -63,10 +79,26 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
 
   const updateMutation = useMutation({
     mutationFn: async (props: Record<string, any> & {id: number}) => {
+      const fileUpload = props.image instanceof File;
+
+      let formData: FormData|string;
+
+      if (fileUpload) {
+        formData = new FormData();
+
+        Object.entries(props).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            (formData as FormData).append(key, value);
+          }
+        });
+      } else {
+        formData = JSON.stringify(props);
+      }
+
       const response = await fetch(`/api/${endpoint}/${props.id}`, {
-        ...getFetchOptions(),
+        ...getFetchOptions(fileUpload),
         method: 'PUT',
-        body: JSON.stringify(props),
+        body: formData,
       });
       if (!response.ok) throw new Error(`Failed to update ${endpoint}`);
       return response.json();
@@ -89,6 +121,10 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     },
   });
 
+  const getImageUrl = (imagePath?: string) => {
+    return imagePath ? `/storage/${imagePath}` : null;
+  };
+
   return {
     data:
       (data?.pages.flatMap((page) => page.data ?? page) as Record<
@@ -103,5 +139,6 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     hasNextPage,
     hasPreviousPage,
     fetchNextPage,
+    getImageUrl
   };
 };

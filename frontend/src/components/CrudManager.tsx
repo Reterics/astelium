@@ -11,13 +11,15 @@ export type FieldType =
   | 'multiselect'
   | 'date'
   | 'password'
-  | 'datetime-local';
+  | 'datetime-local'
+  | 'image';
 
 export interface CrudField {
   key: string;
   label: string;
   type: FieldType;
   editable?: boolean;
+  creatable?: boolean;
   sortable?: boolean;
   visible?: boolean;
   options?: SelectOptions;
@@ -117,7 +119,7 @@ const CrudManager = <T extends Record<string, any>>({
         <FormModal
           title={(modalData.id ? 'Edit ' : 'Create ') + title}
           onClose={() => setModalData(false)}
-          fields={fields}
+          fields={fields.filter(filter => filter.creatable !== false)}
           data={modalData}
           onSave={(form) => {
             return saveData(form as Partial<T>);

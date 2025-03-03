@@ -24,8 +24,6 @@ Route::post('/users', [UserController::class, 'store']);
 
 // Admin SPA: This single route loads the admin application.
 // The {any?} catch-all pattern will let client-side routing work within the SPA.
-Route::get('/api/users', [UserController::class, 'index']);
-Route::put('/api/users/{user}', [UserController::class, 'update']);
 Route::get('/admin/{any?}', [AdminController::class, 'index'])
     ->where('any', '.*')
     ->name('admin');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -36,24 +37,32 @@ class UserController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:admin,member,viewer', // Allow only specific roles
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $newUser = User::create([
+
+        $data = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request['password']),
             'account_id' => $user->account_id,
             'role' => $request->role,
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('users', 'public');
+            $data['image'] = $path;
+        }
+
+        $newUser = User::create($data);
 
         Log::debug('User created');
 
@@ -71,12 +80,23 @@ class UserController extends Controller
             'email'    => "sometimes|required|email|max:255|unique:users,email,{$user->id}",
             'password' => 'sometimes|nullable|string|min:8',
             'role' => 'required|in:admin,member,viewer', // Allow only specific roles
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {
             unset($data['password']);
+        }
+
+        if ($request->hasFile('image')) {
+            if ($user->image) {
+                Storage::disk('public')->delete($user->image);
+            }
+
+            $path = $request->file('image')->store('users', 'public');
+
+            $data['image'] = $path;
         }
 
         $user->update($data);

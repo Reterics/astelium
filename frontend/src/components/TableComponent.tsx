@@ -5,6 +5,7 @@ import MultiSelectComponent from './MultiSelectComponent';
 import SelectComponent from './SelectComponent.tsx';
 import Pagination from './Pagination.tsx';
 import {CrudField} from './CrudManager.tsx';
+import UserAvatar from "./UserAvatar.tsx";
 
 export interface TableRow {
   [key: string]: any;
@@ -342,7 +343,7 @@ const TableComponent: React.FC<TableProps> = ({
                           className='w-full bg-transparent hover:border-b hover:border-zinc-300 focus:outline-none'
                         />
                       )
-                    ) : (
+                    ) : col.type === 'image' ? (<UserAvatar image={row[col.key]} name={row.name} />) : (
                       row[col.key]
                     )}
                   </td>

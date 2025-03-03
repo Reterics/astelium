@@ -58,7 +58,7 @@ const Board = () => {
         body as Record<string, any> & {id: number}
       );
     } else {
-      await createMutation.mutateAsync(body);
+      await createMutation.mutateAsync(body as Record<string, any> & { id: number; });
     }
 
     setModalData(false);
