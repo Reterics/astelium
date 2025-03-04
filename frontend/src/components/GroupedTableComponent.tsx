@@ -2,6 +2,7 @@ import TableComponent, {TableRow} from "./TableComponent.tsx";
 import {CrudField} from "./CrudManager.tsx";
 import {useTranslation} from "react-i18next";
 import {SelectOption} from "./SelectComponent.tsx";
+import {getInitialGroupedData} from "../utils/taskUtils.ts";
 
 interface GroupedTableComponentProps {
   columns: CrudField[];
@@ -33,37 +34,38 @@ const GroupedTableComponent = (
     acc[group].push(cur);
 
     return acc;
-  }, {});
+  }, getInitialGroupedData(groupedBy));
 
   const selectedGroupOptions = (initialGroups
     .find((column) => column.key === groupedBy)
     ?.options || []) as SelectOption[]
 
   return (
-    <div className='pt-2'>
-      {Object.keys(groupedData).map((group) =>
-        (
-          <div>
-            <div className='py-2 px-4 flex items-center space-x-2 '>
-              <div className='text-zinc-600 font-medium'>
-                {t(selectedGroupOptions.find(o => o.value === group)?.label || group)}
-              </div>
+    <div>
+      {Object.keys(groupedData).map((group) => (
+        <div>
+          <div className='py-2 px-4 flex items-center space-x-2 '>
+            <div className='text-zinc-600 font-medium'>
+              {t(
+                selectedGroupOptions.find((o) => o.value === group)?.label ||
+                  group
+              )}
             </div>
-            <TableComponent
-              data={groupedData[group]}
-              columns={columns}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              onCreate={onCreate}
-              addPerLine={true}
-              noSearch={true}
-              pagination={false}
-            />
           </div>
-        )
-      )}
+          <TableComponent
+            data={groupedData[group]}
+            columns={columns}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onCreate={onCreate}
+            addPerLine={true}
+            noSearch={true}
+            pagination={false}
+          />
+        </div>
+      ))}
     </div>
-  )
+  );
 };
 
 export default GroupedTableComponent;

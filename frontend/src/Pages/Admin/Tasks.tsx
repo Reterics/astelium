@@ -4,6 +4,8 @@ import {getTranslatedList} from '../../i18n/utils.ts';
 import {OPTIONS} from '../../constants.ts';
 import {useTranslation} from 'react-i18next';
 import GroupedTableComponent from "../../components/GroupedTableComponent.tsx";
+import SelectComponent from '../../components/SelectComponent.tsx';
+import {useState} from "react";
 
 const Tasks = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -15,6 +17,8 @@ const Tasks = () => {
 
   const {t} = useTranslation();
   const translationPrefix = 'task.';
+
+  const [groupedBy, setGroupedBy] = useState<string>('status');
 
   if (projectsAreLoading || usersAreLoading || tasksAreLoading) return <p>Loading...</p>;
 
@@ -100,10 +104,42 @@ const Tasks = () => {
   ];
   return (
     <div>
+      <div className="p-2 bg-zinc-50 rounded flex items-center space-x-2">
+        <label className='ps-2 text-sm font-medium text-zinc-700'>
+          Group:
+        </label>
+        <SelectComponent
+          column={{
+            key: 'group',
+            label: 'Grouped by',
+            type: 'select',
+            options: [
+              {
+                value: 'status',
+                label: t('status'),
+              },
+              {
+                value: 'priority',
+                label: t('priority'),
+              },
+              {
+                value: 'type',
+                label: t('type')
+              }
+            ],
+          }}
+          filters={{
+            group: groupedBy,
+          }}
+          handleFilterChange={(_column, value) => {
+            setGroupedBy(value);
+          }}
+        />
+      </div>
       <GroupedTableComponent
         columns={fields}
         data={tasksRaw}
-        groupedBy={'status'}
+        groupedBy={groupedBy}
       />
     </div>
   );
