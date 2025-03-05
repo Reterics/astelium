@@ -8,16 +8,16 @@ interface UserAvatarProps {
 
 const UserAvatar: React.FC<UserAvatarProps> = ({name, image}) =>
   image ? (
-    <div className='w-10 h-10 rounded-full flex items-center justify-center'>
+    <div className='h-6 rounded-full text-xs flex items-center justify-center max-h-full max-w-full'>
       <img
         src={image}
         alt={name}
-        className='w-10 h-10 rounded-full object-cover'
+        className='w-6 h-6 rounded-full object-cover'
       />
     </div>
   ) : (
     <div
-      className='w-10 h-10 rounded-full flex items-center justify-center text-white font-bold'
+      className='w-6 h-6 rounded-full text-xs flex items-center justify-center text-white font-bold'
       style={{backgroundColor: getAvatarColor(name)}}
     >
       {getInitials(name)}

@@ -6,6 +6,7 @@ import {useTranslation} from 'react-i18next';
 import GroupedTableComponent from "../../components/GroupedTableComponent.tsx";
 import SelectComponent from '../../components/SelectComponent.tsx';
 import {useState} from "react";
+import UserAvatar from '../../components/UserAvatar.tsx';
 
 const Tasks = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -29,7 +30,7 @@ const Tasks = () => {
 
   const users = usersRaw.map((d) => ({
     value: d.id,
-    label: d.name,
+    label: <div className="h-6 space-x-2 flex flex-row w-full"><UserAvatar image={d.image} name={d.name}/><div>{d.name}</div></div>,
   }));
 
   if (!projects) return <p>Please create a project for using Tasks</p>;
