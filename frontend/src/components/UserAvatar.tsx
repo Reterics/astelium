@@ -8,7 +8,7 @@ interface UserAvatarProps {
 
 const UserAvatar: React.FC<UserAvatarProps> = ({name, image}) =>
   image ? (
-    <div className='h-6 rounded-full text-xs flex items-center justify-center max-h-full max-w-full'>
+    <div className='h-6 rounded-full text-xs flex items-center justify-center max-h-full max-w-full w-fit'>
       <img
         src={image}
         alt={name}

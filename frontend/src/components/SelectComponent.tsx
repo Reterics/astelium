@@ -21,7 +21,6 @@ const SelectComponent: React.FC<SelectProps> = ({
   handleFilterChange,
   defaultLabel = 'All',
 }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState<{top: number; left: number;}|null>(null);
@@ -51,22 +50,36 @@ const SelectComponent: React.FC<SelectProps> = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (dropdownOpen && buttonRef.current) {
+  const toggleDropdown = () => {
+    if (dropdownPosition) {
+      return setDropdownPosition(null);
+    }
+
+    if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      let left = rect.left + window.scrollX;
+      const rightBoundary = left + rect.width;
+      const screenRight = window.innerWidth;
+
+      if (rightBoundary > screenRight) {
+        left = rect.right - rect.width;
+      } else if (left < 0) {
+        left = 0;
+      }
+
       setDropdownPosition({
         top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
+        left,
       });
     }
-  }, [dropdownOpen]);
+  };
 
   return (
-    <div className='relative inline-block min-w-28'>
+    <div key={column.key} className='relative inline-block min-w-28 max-w-full float-end'>
       <button
         ref={buttonRef}
         className='w-full border border-zinc-300 px-2 py-1 rounded-xs focus:outline-none flex justify-between items-center truncate bg-white'
-        onClick={() => setDropdownOpen((prev) => !prev)}
+        onClick={toggleDropdown}
       >
         {selectedOption
           ? typeof selectedOption === 'string'
@@ -81,26 +94,32 @@ const SelectComponent: React.FC<SelectProps> = ({
             position: 'fixed',
             top: dropdownPosition?.top,
             left: dropdownPosition?.left,
-            minWidth: buttonRef?.current?.offsetWidth || "unset",
+            width: buttonRef?.current?.offsetWidth || 'unset',
             zIndex: 50,
           }}
-          className='bg-white border border-zinc-300 shadow-lg rounded-xs overflow-hidden overflow-y-auto'
         >
-          {column.options?.map((option) => (
-            <div
-              key={typeof option !== 'object' ? option : option.value}
-              className='cursor-pointer px-2 py-1 hover:bg-zinc-200 text-sm whitespace-nowrap'
-              onClick={() => {
-                handleFilterChange(
-                  column.key,
-                  typeof option !== 'object' ? option : option.value
-                );
-                setDropdownOpen(false);
-              }}
-            >
-              {typeof option !== 'object' ? option : option.label}
-            </div>
-          ))}
+          <div
+            style={{
+              minWidth: buttonRef?.current?.offsetWidth || 'unset'
+            }}
+            className='bg-white border border-zinc-300 shadow-lg rounded-xs overflow-hidden overflow-y-auto w-max justify-self-end'>
+            {column.options?.map((option) => (
+              <div
+                key={typeof option !== 'object' ? option : option.value}
+                className='cursor-pointer px-2 py-1 hover:bg-zinc-200 text-sm whitespace-nowrap'
+                onClick={() => {
+                  handleFilterChange(
+                    column.key,
+                    typeof option !== 'object' ? option : option.value
+                  );
+                  setDropdownPosition(null);
+                }}
+              >
+                {typeof option !== 'object' ? option : option.label}
+              </div>
+            ))}
+          </div>
+
         </div>
       )}
     </div>
