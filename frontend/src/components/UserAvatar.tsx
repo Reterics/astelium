@@ -1,5 +1,5 @@
 import React from 'react';
-import { getAvatarColor, getInitials } from '../utils/avatar';
+import {getAvatarColor, getInitials} from '../utils/avatar';
 
 interface UserAvatarProps {
   name: string;

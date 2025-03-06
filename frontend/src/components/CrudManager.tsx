@@ -119,7 +119,7 @@ const CrudManager = <T extends Record<string, any>>({
         <FormModal
           title={(modalData.id ? 'Edit ' : 'Create ') + title}
           onClose={() => setModalData(false)}
-          fields={fields.filter(filter => filter.creatable !== false)}
+          fields={fields.filter((filter) => filter.creatable !== false)}
           data={modalData}
           onSave={(form) => {
             return saveData(form as Partial<T>);

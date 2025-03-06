@@ -3,16 +3,14 @@ interface PageBreadcrumbsProps {
   breadcrumbs: string[];
 }
 
-const PageBreadcrumbs: React.FC<PageBreadcrumbsProps> = ({
-  breadcrumbs,
-}) => {
+const PageBreadcrumbs: React.FC<PageBreadcrumbsProps> = ({breadcrumbs}) => {
   return (
     <div className='text-zinc-600 font-medium'>
       {breadcrumbs.map((crumb, index) => (
         <span key={index}>
-            {index > 0 && ' / '}
+          {index > 0 && ' / '}
           {crumb}
-          </span>
+        </span>
       ))}
     </div>
   );

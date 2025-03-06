@@ -1,8 +1,4 @@
-
-
-
 export const getInitialGroupedData = (key: string) => {
-
   switch (key) {
     case 'status':
       return {
@@ -11,20 +7,20 @@ export const getInitialGroupedData = (key: string) => {
         review: [],
         completed: [],
         closed: [],
-      }
+      };
     case 'type':
       return {
         issue: [],
         task: [],
-        feature: []
-      }
+        feature: [],
+      };
     case 'priority':
       return {
         high: [],
         medium: [],
-        low: []
-      }
+        low: [],
+      };
     default:
-        return {}
+      return {};
   }
-}
+};

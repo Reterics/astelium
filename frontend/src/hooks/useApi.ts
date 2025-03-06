@@ -50,7 +50,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     mutationFn: async (newData: Record<string, any>) => {
       const fileUpload = newData.image instanceof File;
 
-      let formData: FormData|string;
+      let formData: FormData | string;
 
       if (fileUpload) {
         formData = new FormData();
@@ -81,7 +81,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     mutationFn: async (props: Record<string, any> & {id: number}) => {
       const fileUpload = props.image instanceof File;
 
-      let formData: FormData|string;
+      let formData: FormData | string;
 
       if (fileUpload) {
         formData = new FormData();
@@ -139,6 +139,6 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     hasNextPage,
     hasPreviousPage,
     fetchNextPage,
-    getImageUrl
+    getImageUrl,
   };
 };

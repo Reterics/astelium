@@ -1,21 +1,18 @@
-import { motion } from "framer-motion";
-import { FiCircle } from "react-icons/fi";
-import {memo} from "react";
-
-
-
+import {motion} from 'framer-motion';
+import {FiCircle} from 'react-icons/fi';
+import {memo} from 'react';
 
 const ModernTable = memo(() => {
   const tasks = [
-    { name: "Contract", priority: "high", deadline: "2025-03-10" },
-    { name: "Warehouse", priority: "medium", deadline: "2025-03-15" },
-    { name: "Web Design", priority: "low", deadline: "2025-03-20" },
+    {name: 'Contract', priority: 'high', deadline: '2025-03-10'},
+    {name: 'Warehouse', priority: 'medium', deadline: '2025-03-15'},
+    {name: 'Web Design', priority: 'low', deadline: '2025-03-20'},
   ];
 
   const priorityColors = {
-    high: "text-red-500",
-    medium: "text-yellow-500",
-    low: "text-green-500",
+    high: 'text-red-500',
+    medium: 'text-yellow-500',
+    low: 'text-green-500',
   };
   return (
     <motion.div
@@ -44,7 +41,7 @@ const ModernTable = memo(() => {
               <div className='flex-1 px-1 py-1 text-center'>{task.name}</div>
               <div className='w-6 flex justify-center items-center'>
                 <FiCircle
-                  className={`w-3 h-3 ${priorityColors[task.priority as 'high'|'medium'|'low']}`}
+                  className={`w-3 h-3 ${priorityColors[task.priority as 'high' | 'medium' | 'low']}`}
                 />
               </div>
               <div className='flex-1 px-1 py-1 text-center'>
@@ -57,4 +54,4 @@ const ModernTable = memo(() => {
     </motion.div>
   );
 });
-export default ModernTable
+export default ModernTable;

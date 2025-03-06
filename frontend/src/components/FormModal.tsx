@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import SelectComponent from './SelectComponent.tsx';
 import MultiSelectComponent from './MultiSelectComponent.tsx';
 import {CrudField} from './CrudManager.tsx';
-import FileComponent from "./FileComponent.tsx";
+import FileComponent from './FileComponent.tsx';
 
 export interface FormModalProps {
   title: string;

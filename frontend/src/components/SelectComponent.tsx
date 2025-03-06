@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { CrudField } from './CrudManager.tsx';
+import React, {useState, useRef, useEffect} from 'react';
+import {CrudField} from './CrudManager.tsx';
 
 export type SelectOptions = (string | SelectOption)[];
 
@@ -10,7 +10,7 @@ export interface SelectOption {
 
 interface SelectProps {
   column: CrudField;
-  filters: { [key: string]: string };
+  filters: {[key: string]: string};
   handleFilterChange: (key: string, value: string) => void;
   defaultLabel?: string;
 }
@@ -23,13 +23,15 @@ const SelectComponent: React.FC<SelectProps> = ({
 }) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const [dropdownPosition, setDropdownPosition] = useState<{top: number; left: number;}|null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
 
-  const selectedOption = column.options?.find(
-    (option) =>
-      typeof option === 'string'
-        ? option === filters[column.key]
-        : option.value === filters[column.key]
+  const selectedOption = column.options?.find((option) =>
+    typeof option === 'string'
+      ? option === filters[column.key]
+      : option.value === filters[column.key]
   );
 
   useEffect(() => {
@@ -75,7 +77,10 @@ const SelectComponent: React.FC<SelectProps> = ({
   };
 
   return (
-    <div key={column.key} className='relative inline-block min-w-28 max-w-full float-end'>
+    <div
+      key={column.key}
+      className='relative inline-block min-w-28 max-w-full float-end'
+    >
       <button
         ref={buttonRef}
         className='w-full border border-zinc-300 px-2 py-1 rounded-xs focus:outline-none flex justify-between items-center truncate bg-white'
@@ -100,9 +105,10 @@ const SelectComponent: React.FC<SelectProps> = ({
         >
           <div
             style={{
-              minWidth: buttonRef?.current?.offsetWidth || 'unset'
+              minWidth: buttonRef?.current?.offsetWidth || 'unset',
             }}
-            className='bg-white border border-zinc-300 shadow-lg rounded-xs overflow-hidden overflow-y-auto w-max justify-self-end'>
+            className='bg-white border border-zinc-300 shadow-lg rounded-xs overflow-hidden overflow-y-auto w-max justify-self-end'
+          >
             {column.options?.map((option) => (
               <div
                 key={typeof option !== 'object' ? option : option.value}
@@ -119,7 +125,6 @@ const SelectComponent: React.FC<SelectProps> = ({
               </div>
             ))}
           </div>
-
         </div>
       )}
     </div>

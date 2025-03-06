@@ -1,44 +1,47 @@
-import TableComponent, {TableRow} from "./TableComponent.tsx";
-import {CrudField} from "./CrudManager.tsx";
-import {useTranslation} from "react-i18next";
-import {SelectOption} from "./SelectComponent.tsx";
-import {getInitialGroupedData} from "../utils/taskUtils.ts";
+import TableComponent, {TableRow} from './TableComponent.tsx';
+import {CrudField} from './CrudManager.tsx';
+import {useTranslation} from 'react-i18next';
+import {SelectOption} from './SelectComponent.tsx';
+import {getInitialGroupedData} from '../utils/taskUtils.ts';
 
 interface GroupedTableComponentProps {
   columns: CrudField[];
   data: TableRow[];
   onEdit?: (updatedData: TableRow[]) => Promise<void> | void;
   onDelete?: (id: number | string) => void;
-  onCreate?: (itemToAdd?: TableRow) => void|boolean;
-  groupedBy: string
+  onCreate?: (itemToAdd?: TableRow) => void | boolean;
+  groupedBy: string;
 }
 
-const GroupedTableComponent = (
-  {
-    columns,
-    data,
-    groupedBy,
-    onEdit,
-    onDelete,
-    onCreate,
-  }: GroupedTableComponentProps
-) => {
+const GroupedTableComponent = ({
+  columns,
+  data,
+  groupedBy,
+  onEdit,
+  onDelete,
+  onCreate,
+}: GroupedTableComponentProps) => {
   const {t} = useTranslation();
 
-  const initialGroups = columns.filter((column: CrudField) => column.type === 'select' && column.options);
+  const initialGroups = columns.filter(
+    (column: CrudField) => column.type === 'select' && column.options
+  );
 
-  const groupedData: Record<string, TableRow[]> = data.reduce((acc: Record<string, TableRow[]>, cur: TableRow) => {
-    const group = cur[groupedBy] || '';
-    acc[group] = acc[group] || [];
+  const groupedData: Record<string, TableRow[]> = data.reduce(
+    (acc: Record<string, TableRow[]>, cur: TableRow) => {
+      const group = cur[groupedBy] || '';
+      acc[group] = acc[group] || [];
 
-    acc[group].push(cur);
+      acc[group].push(cur);
 
-    return acc;
-  }, getInitialGroupedData(groupedBy));
+      return acc;
+    },
+    getInitialGroupedData(groupedBy)
+  );
 
-  const selectedGroupOptions = (initialGroups
-    .find((column) => column.key === groupedBy)
-    ?.options || []) as SelectOption[]
+  const selectedGroupOptions = (initialGroups.find(
+    (column) => column.key === groupedBy
+  )?.options || []) as SelectOption[];
 
   return (
     <div>
@@ -47,7 +50,7 @@ const GroupedTableComponent = (
           <div className='py-2 px-4 flex items-center space-x-2 '>
             <div className='text-zinc-600 font-medium'>
               {t(
-                selectedGroupOptions.find((o) => o.value === group)?.label ||
+                selectedGroupOptions.find((o) => o.value === group)?.label as string ||
                   group
               )}
             </div>

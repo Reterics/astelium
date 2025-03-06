@@ -16,12 +16,14 @@ const FileComponent = ({name, label, onChange, accept}: FileComponentProps) => {
 
   return (
     <div className='relative z-0 w-full group'>
-      {label && <label
-        htmlFor={name}
-        className='block mb-1 text-sm font-medium text-zinc-700'
-      >
-        {label}
-      </label>}
+      {label && (
+        <label
+          htmlFor={name}
+          className='block mb-1 text-sm font-medium text-zinc-700'
+        >
+          {label}
+        </label>
+      )}
       <input
         id={name}
         type='file'

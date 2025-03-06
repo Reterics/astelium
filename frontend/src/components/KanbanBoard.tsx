@@ -31,7 +31,7 @@ const pastelColors = [
   'bg-blue-500',
   'bg-green-500',
   'bg-purple-500',
-  'bg-red-500'
+  'bg-red-500',
 ];
 
 const getProjectColor = (name: string) => {
@@ -224,7 +224,10 @@ const KanbanBoard = ({
   return (
     <div className='flex gap-4 overflow-x-auto p-2'>
       {statuses.map((status) => (
-        <div key={status.id} className='w-1/5 min-w-[200px] border border-zinc-300 rounded'>
+        <div
+          key={status.id}
+          className='w-1/5 min-w-[200px] border border-zinc-300 rounded'
+        >
           <h2
             className={`p-2  ${status.color} text-left text-sm font-bold text-zinc-900`}
           >
@@ -267,7 +270,11 @@ const KanbanBoard = ({
                   )}
 
                   <div>
-                    <div className='text-xs flex flex-row font-semibold'> {typeIcons[task.type]} {`${task.type.charAt(0).toUpperCase()}-${task.id}`}</div>
+                    <div className='text-xs flex flex-row font-semibold'>
+                      {' '}
+                      {typeIcons[task.type]}{' '}
+                      {`${task.type.charAt(0).toUpperCase()}-${task.id}`}
+                    </div>
 
                     {task.priority && (
                       <div className='absolute bottom-2 right-2'>
@@ -275,8 +282,6 @@ const KanbanBoard = ({
                       </div>
                     )}
                   </div>
-
-
                 </div>
               ))}
           </div>

@@ -3,25 +3,23 @@ import {useApi} from '../../hooks/useApi.ts';
 import {getTranslatedList} from '../../i18n/utils.ts';
 import {OPTIONS} from '../../constants.ts';
 import {useTranslation} from 'react-i18next';
-import GroupedTableComponent from "../../components/GroupedTableComponent.tsx";
+import GroupedTableComponent from '../../components/GroupedTableComponent.tsx';
 import SelectComponent from '../../components/SelectComponent.tsx';
-import {useState} from "react";
+import {useState} from 'react';
 import UserAvatar from '../../components/UserAvatar.tsx';
 
 const Tasks = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
   const {data: usersRaw, isLoading: usersAreLoading} = useApi('users');
-  const {
-    data: tasksRaw,
-    isLoading: tasksAreLoading,
-  } = useApi('tasks');
+  const {data: tasksRaw, isLoading: tasksAreLoading} = useApi('tasks');
 
   const {t} = useTranslation();
   const translationPrefix = 'task.';
 
   const [groupedBy, setGroupedBy] = useState<string>('status');
 
-  if (projectsAreLoading || usersAreLoading || tasksAreLoading) return <p>Loading...</p>;
+  if (projectsAreLoading || usersAreLoading || tasksAreLoading)
+    return <p>Loading...</p>;
 
   const projects = projectsRaw.map((d) => ({
     value: d.id,
@@ -30,7 +28,12 @@ const Tasks = () => {
 
   const users = usersRaw.map((d) => ({
     value: d.id,
-    label: <div className="h-6 space-x-2 flex flex-row w-full"><UserAvatar image={d.image} name={d.name}/><div>{d.name}</div></div>,
+    label: (
+      <div className='h-6 space-x-2 flex flex-row w-full'>
+        <UserAvatar image={d.image} name={d.name} />
+        <div>{d.name}</div>
+      </div>
+    ),
   }));
 
   if (!projects) return <p>Please create a project for using Tasks</p>;
@@ -105,10 +108,8 @@ const Tasks = () => {
   ];
   return (
     <div>
-      <div className="p-2 bg-zinc-50 rounded flex items-center space-x-2">
-        <label className='ps-2 text-sm font-medium text-zinc-700'>
-          Group:
-        </label>
+      <div className='p-2 bg-zinc-50 rounded flex items-center space-x-2'>
+        <label className='ps-2 text-sm font-medium text-zinc-700'>Group:</label>
         <SelectComponent
           column={{
             key: 'group',
@@ -125,8 +126,8 @@ const Tasks = () => {
               },
               {
                 value: 'type',
-                label: t('type')
-              }
+                label: t('type'),
+              },
             ],
           }}
           filters={{

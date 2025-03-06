@@ -5,7 +5,7 @@ import MultiSelectComponent from './MultiSelectComponent';
 import SelectComponent from './SelectComponent.tsx';
 import Pagination from './Pagination.tsx';
 import {CrudField} from './CrudManager.tsx';
-import UserAvatar from "./UserAvatar.tsx";
+import UserAvatar from './UserAvatar.tsx';
 
 export interface TableRow {
   [key: string]: any;
@@ -20,7 +20,7 @@ interface TableProps {
   data: TableRow[];
   onEdit?: (updatedData: TableRow[]) => Promise<void> | void;
   onDelete?: (id: number | string) => void;
-  onCreate?: (itemToAdd?: TableRow) => void|boolean;
+  onCreate?: (itemToAdd?: TableRow) => void | boolean;
   noSearch?: boolean;
   addPerLine?: boolean;
   pagination?: boolean;
@@ -343,7 +343,9 @@ const TableComponent: React.FC<TableProps> = ({
                           className='w-full bg-transparent hover:border-b hover:border-zinc-300 focus:outline-none'
                         />
                       )
-                    ) : col.type === 'image' ? (<UserAvatar image={row[col.key]} name={row.name} />) : (
+                    ) : col.type === 'image' ? (
+                      <UserAvatar image={row[col.key]} name={row.name} />
+                    ) : (
                       row[col.key]
                     )}
                   </td>
