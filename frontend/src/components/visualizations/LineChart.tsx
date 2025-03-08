@@ -102,10 +102,12 @@ const LineChart: React.FC<LineChartProps> = ({
       yAxisGroup.call(d3.axisLeft(yScaleRef.current));
       yAxisGroup.selectAll('.tick line')
         .attr('stroke', themeColor)
+        .style('opacity', '0.4')
         .attr('stroke-dasharray', '4')
         .attr('x2', innerWidth);
       xAxisGroup.selectAll('.tick line')
         .attr('stroke', themeColor)
+        .style('opacity', '0.4')
         .attr('stroke-dasharray', '4')
         .attr('y2', -innerHeight);
     };
