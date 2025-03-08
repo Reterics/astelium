@@ -93,6 +93,7 @@ interface ContainerProps {
 
 const Container: React.FC<ContainerProps> = ({children}) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
 
   const selectedMenu =
@@ -103,13 +104,14 @@ const Container: React.FC<ContainerProps> = ({children}) => {
 
   return (
     <div className='flex h-screen overflow-hidden bg-zinc-100 text-zinc-700'>
-      <Sidebar menu={menu} />
+      <Sidebar menu={menu} collapsed={sidebarCollapsed} />
       <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto relative'>
         <Header
           theme={theme || 'light'}
           toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           username={'Test'}
           selectedMenu={selectedMenu}
+          toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
         ></Header>
 
         <div className='flex flex-col space-y-6'>{children}</div>

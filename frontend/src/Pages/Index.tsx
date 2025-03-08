@@ -43,7 +43,7 @@ const LandingPage = () => {
             </defs>
           </svg>
         </div>
-        <div className='absolute container mx-auto p-6 top-1/12 md:flex md:items-center'>
+        <div className='absolute container mx-auto p-6 top-1/12 sm:top-1 md:flex md:items-center'>
           <div className='md:w-1/2 text-center md:text-left'>
             <ContractCard />
 

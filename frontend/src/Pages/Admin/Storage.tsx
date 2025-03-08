@@ -29,7 +29,7 @@ const Storage = () => {
         {key: 'threshold', label: 'Threshold', type: 'number', visible: false},
         {
           key: 'storage_amount',
-          label: 'Storage Amount',
+          label: 'Storage',
           type: 'number',
           editable: true,
         },

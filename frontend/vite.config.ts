@@ -4,7 +4,9 @@ import tailwindcss from '@tailwindcss/vite'
 import laravel from 'laravel-vite-plugin';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import * as path from "node:path";
+import dotenv from 'dotenv';
 
+dotenv.config();
 
 const backendPath = process.env.BACKEND_PATH || '../backend/';
 
@@ -30,12 +32,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     hmr: {
-      host: '127.0.0.1',
+      host: process.env.VITE_DEV_SERVER_HOST || '127.0.0.1',
     },
     allowedHosts: true,
     proxy: {
       '/locales': {
-        target: 'http://localhost:8000', // Laravel server
+        target: `http://${process.env.VITE_DEV_SERVER_HOST || '127.0.0.1'}:8000`, // Laravel server
         changeOrigin: true,
       },
     },

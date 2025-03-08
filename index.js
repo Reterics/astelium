@@ -130,7 +130,7 @@ function startMySQLContainer() {
     }
   }
 
-  const backendProcess = spawn("php", ["artisan", "serve"], {
+  const backendProcess = spawn("php", ["artisan", "serve", "--host", "0.0.0.0"], {
     ...processOptions,
     shell: undefined
   });

@@ -289,12 +289,12 @@ const TableComponent: React.FC<TableProps> = ({
             {filteredData.map((row, rowIndex) => (
               <tr
                 key={rowIndex}
-                className={editedRows[rowIndex] ? 'bg-yellow-100' : ''}
+                className={(editedRows[rowIndex] ? 'bg-yellow-100' : '') + 'border-b border-zinc-300'}
               >
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className='p-2 border-b border-zinc-300 max-w-[150px] sm:max-w-[200px] md:max-w-[250px]'
+                    className='p-2 max-w-[150px] sm:max-w-[200px] md:max-w-[250px]'
                   >
                     {col.editable ? (
                       col.type === 'select' ? (
@@ -350,21 +350,23 @@ const TableComponent: React.FC<TableProps> = ({
                     )}
                   </td>
                 ))}
-                <td className='p-4 flex items-end w-fit space-x-2 h-fit border-b border-zinc-300'>
-                  {isResetEnabled && (
+                <td>
+                  <div className='flex space-x-1'>
+                    {isResetEnabled && (
+                      <button
+                        onClick={() => handleReset(rowIndex)}
+                        className='flex items-center bg-zinc-100 text-blue-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
+                      >
+                        <FiRefreshCw className="w-6 h-6" />
+                      </button>
+                    )}
                     <button
-                      className='text-blue-500 cursor-pointer'
-                      onClick={() => handleReset(rowIndex)}
+                      className='flex items-center bg-zinc-100 text-red-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
+                      onClick={() => onDelete && onDelete(row.id)}
                     >
-                      <FiRefreshCw />
+                      <FiTrash className="w-6 h-6" />
                     </button>
-                  )}
-                  <button
-                    className='text-red-500 cursor-pointer'
-                    onClick={() => onDelete && onDelete(row.id)}
-                  >
-                    <FiTrash />
-                  </button>
+                  </div>
                 </td>
               </tr>
             ))}
