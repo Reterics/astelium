@@ -9,7 +9,7 @@ interface SunburstChartProps {
   nestKeys?: string[]
 }
 
-interface HierarchicalData {
+export interface HierarchicalData {
   name: string,
   children: HierarchicalData[]
 }
