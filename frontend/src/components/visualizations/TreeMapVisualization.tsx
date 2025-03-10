@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import * as d3 from "d3";
 import DiiHelper from "dii-helper";
 import {HierarchyNode, HierarchyRectangularNode} from "d3";
@@ -23,14 +23,13 @@ const TreeMapVisualization: React.FC<TreeMapProps> = ({
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [currentRoot, setCurrentRoot] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
-  const xScale = useRef(d3.scaleLinear().range([0, width]));
-  const yScale = useRef(d3.scaleLinear().range([0, height]));
+  const xScale = useRef(d3.scaleLinear());
+  const yScale = useRef(d3.scaleLinear());
   const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
   useEffect(() => {
     if (!data || !svgRef.current) return;
 
     const nestedData = DiiHelper.nestKeys(data, nestKeys);
-    console.log(nestedData);
 
     const flare = {
       name: "Root",
@@ -43,7 +42,7 @@ const TreeMapVisualization: React.FC<TreeMapProps> = ({
 
     const root = d3
       .hierarchy(flare)
-      .sum((d: any) => d[fillKey])
+      .sum((d: any) => d[fillKey] || 1)
       .sort((a, b) => b.value! - a.value!);
 
     const treemap = d3
@@ -54,19 +53,13 @@ const TreeMapVisualization: React.FC<TreeMapProps> = ({
       .round(true);
 
     treemap(root as HierarchyNode<HierarchicalData>);
+    xScale.current.range([0, width]).domain([0, innerWidth]);
+    yScale.current.range([0, height]).domain([0, innerHeight]);
+    //drawTree(root);
     setCurrentRoot(root);
-    xScale.current.domain([0, innerWidth]);
-    yScale.current.domain([0, innerHeight]);
-    drawTree(root);
-  }, [data, width, height, fillKey]);
+  }, [data, width, height, fillKey, nestKeys]);
 
-  useEffect(() => {
-    if (currentRoot) {
-      drawTree(currentRoot);
-    }
-  }, [currentRoot]);
-
-  const drawTree = (node: any) => {
+  const drawTree = useCallback((node: any) => {
     if (!svgRef.current) return;
     d3.select(svgRef.current).selectAll("*").remove();
 
@@ -128,7 +121,14 @@ const TreeMapVisualization: React.FC<TreeMapProps> = ({
       .attr("pointer-events", "none")
       .text((d) => d.data?.name);
 
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [svgRef.current]);
+
+  useEffect(() => {
+    if (currentRoot) {
+      drawTree(currentRoot);
+    }
+  }, [currentRoot, drawTree]);
 
   const zoom = (d: any) => {
     setHistory((prev) => [...prev, currentRoot]);

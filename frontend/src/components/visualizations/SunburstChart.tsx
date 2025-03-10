@@ -28,9 +28,10 @@ const SunburstChart: React.FC<SunburstChartProps> = ({
   const ref = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current || !nestKeys.length) return;
 
-    const radius = width / 6;
+    const outerRadius = Math.min(width, height) / 4;
+    const radius = outerRadius / 1.6;
 
     // Convert flat data to hierarchical format
     const nestData = (data: Record<string, unknown>[], keys: string[]): HierarchicalData[] => {
@@ -66,14 +67,14 @@ const SunburstChart: React.FC<SunburstChartProps> = ({
       .startAngle((d) => d.x0)
       .endAngle((d) => d.x1)
       .padAngle((d) => Math.min((d.x1 - d.x0) / 2, 0.005))
-      .padRadius(radius * 1.5)
+      .padRadius(outerRadius)
       .innerRadius((d) => d.y0 * radius)
       .outerRadius((d) => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
     d3.select(ref.current).selectAll("*").remove();
 
     const svg = d3.select(ref.current)
-      .attr("viewBox", [-width / 2, -height / 2, width, width])
+      .attr("viewBox", [-width/2, -height/2, width, height])
       .style("font", "10px sans-serif");
 
     // Create arcs

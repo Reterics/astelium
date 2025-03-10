@@ -25,7 +25,8 @@ export interface SankeyInputData {
 }
 
 export interface SankeyChartProps {
-  data: SankeyInputData;
+  data: unknown[];
+  nestKeys: string[];
   width?: number;
   height?: number;
   themeColor?: string;
@@ -36,8 +37,46 @@ export interface SankeyChartProps {
   onClick?: (data: any) => void;
 }
 
+const convertToSankeyFormat = (data: any[], nestKeys: string[]): SankeyInputData => {
+  const nodeMap: Record<string, number> = {};
+  const nodes: { name: string }[] = [];
+  const links: { source: number; target: number; value: number }[] = [];
+
+  const getNodeIndex = (name: string) => {
+    if (!(name in nodeMap)) {
+      nodeMap[name] = nodes.length;
+      nodes.push({ name });
+    }
+    return nodeMap[name];
+  };
+
+  data.forEach((entry) => {
+    if (nestKeys.length < 2) return;
+
+    for (let i = 0; i < nestKeys.length - 1; i++) {
+      const sourceName = String(entry[nestKeys[i]]);
+      const targetName = String(entry[nestKeys[i + 1]]);
+      const sourceIndex = getNodeIndex(sourceName);
+      const targetIndex = getNodeIndex(targetName);
+
+      const existingLink = links.find(
+        (link) => link.source === sourceIndex && link.target === targetIndex
+      );
+
+      if (existingLink) {
+        existingLink.value += 1;
+      } else {
+        links.push({ source: sourceIndex, target: targetIndex, value: 1 });
+      }
+    }
+  });
+
+  return { nodes, links };
+};
+
 const SankeyChart: React.FC<SankeyChartProps> = ({
   data,
+  nestKeys,
   width = 800,
   height = 500,
   themeColor = '#A0A0A0',
@@ -50,7 +89,7 @@ const SankeyChart: React.FC<SankeyChartProps> = ({
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    if (!data || !svgRef.current) return;
+    if (!data || !svgRef.current || !data.length || nestKeys.length < 2) return;
 
     const margin = { top: 20, right: 30, bottom: 30, left: 50 };
     const innerWidth = width - margin.left - margin.right;
@@ -66,7 +105,8 @@ const SankeyChart: React.FC<SankeyChartProps> = ({
     const maxNodeWidth = 150;
     const nodeWidths: Record<string, number> = {};
 
-    data.nodes.forEach(node => {
+    const sankeyData = convertToSankeyFormat(data, nestKeys)
+    sankeyData.nodes.forEach(node => {
       const textWidth = ctx.measureText(node.name).width + 20;
       nodeWidths[node.name] = Math.min(Math.max(textWidth, minNodeWidth), maxNodeWidth);
     });
@@ -78,7 +118,7 @@ const SankeyChart: React.FC<SankeyChartProps> = ({
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    const { nodes, links } = sankeyGenerator(data);
+    const { nodes, links } = sankeyGenerator(sankeyData);
 
     nodes.forEach(node => {
       node.x1 = node.x0! + nodeWidths[node.name];
@@ -171,7 +211,7 @@ const SankeyChart: React.FC<SankeyChartProps> = ({
           g.selectAll('path').attr('d', sankeyLinkHorizontal());
         })
     );
-  }, [data, width, height, themeColor, fills, onMouseMove, onMouseOut, onMouseOver, onClick]);
+  }, [data, width, height, themeColor, fills, onMouseMove, onMouseOut, onMouseOver, onClick, nestKeys]);
 
   return <svg ref={svgRef} width={width} height={height} className='bg-white rounded shadow' />;
 };
