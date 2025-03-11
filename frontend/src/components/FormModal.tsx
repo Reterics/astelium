@@ -61,6 +61,9 @@ const FormModal: React.FC<FormModalProps> = ({
                   }}
                   handleFilterChange={(_column, value) => {
                     handleInputChange(field.key, value);
+                    if (field.props?.onChange) {
+                      field.props?.onChange(value, form);
+                    }
                   }}
                 />
               ) : field.type === 'multiselect' ? (
@@ -72,6 +75,9 @@ const FormModal: React.FC<FormModalProps> = ({
                   }}
                   handleFilterChange={(_column, value) => {
                     handleInputChange(field.key, value);
+                    if (field.props?.onChange) {
+                      field.props?.onChange(value, form);
+                    }
                   }}
                 />
               ) : field.type === 'image' ? (
@@ -92,7 +98,12 @@ const FormModal: React.FC<FormModalProps> = ({
                 <input
                   type={field.type}
                   value={(form[field.key] as string) || ''}
-                  onChange={(e) => handleInputChange(field.key, e.target.value)}
+                  onChange={(e) => {
+                    handleInputChange(field.key, e.target.value);
+                    if (field.props?.onChange) {
+                      field.props?.onChange(e.target.value, form);
+                    }
+                  }}
                   className='mt-1 p-1 border border-zinc-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
                 />
               )}

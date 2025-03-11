@@ -3,6 +3,7 @@ import {CrudField} from './CrudManager.tsx';
 import {useTranslation} from 'react-i18next';
 import {SelectOption} from './SelectComponent.tsx';
 import {getInitialGroupedData} from '../utils/taskUtils.ts';
+import {useState} from "react";
 
 interface GroupedTableComponentProps {
   columns: CrudField[];
@@ -22,6 +23,7 @@ const GroupedTableComponent = ({
   onCreate,
 }: GroupedTableComponentProps) => {
   const {t} = useTranslation();
+  const [itemToAdd, setItemToAdd] = useState<TableRow>({})
 
   const initialGroups = columns.filter(
     (column: CrudField) => column.type === 'select' && column.options
@@ -61,7 +63,8 @@ const GroupedTableComponent = ({
             onEdit={onEdit}
             onDelete={onDelete}
             onCreate={onCreate}
-            addPerLine={true}
+            itemToAdd={itemToAdd}
+            setItemToAdd={setItemToAdd}
             noSearch={true}
             pagination={false}
           />

@@ -22,7 +22,8 @@ interface TableProps {
   onDelete?: (id: number | string) => void;
   onCreate?: (itemToAdd?: TableRow) => void | boolean;
   noSearch?: boolean;
-  addPerLine?: boolean;
+  itemToAdd?: TableRow,
+  setItemToAdd?: React.Dispatch<React.SetStateAction<TableRow>>,
   pagination?: boolean;
 }
 
@@ -33,7 +34,8 @@ const TableComponent: React.FC<TableProps> = ({
   onDelete,
   onCreate,
   noSearch,
-  addPerLine,
+  itemToAdd,
+  setItemToAdd,
   pagination,
 }) => {
   const [tableData, setTableData] = useState(data);
@@ -57,7 +59,6 @@ const TableComponent: React.FC<TableProps> = ({
   const debounceInterval = 500;
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const [itemToAdd, setItemToAdd] = useState<TableRow>({});
   const handleFilterChange = (key: string, value: string | string[]) => {
     const column = columns.find((col) => col.key === key);
     if (Array.isArray(value)) {
@@ -216,11 +217,34 @@ const TableComponent: React.FC<TableProps> = ({
     [debounceFunc]
   );
 
+  const handleAddItemFilterChange = (col: CrudField, value: unknown) => {
+    if (col.props?.onChange) {
+      const updatedItem = col.props?.onChange(
+        value,
+        {
+          ...itemToAdd,
+          [col.key]: value,
+        }
+      );
+      if (updatedItem) {
+        return setItemToAdd!({
+          ...updatedItem,
+          [col.key]: value,
+        });
+      } else if (updatedItem === false) {
+        return;
+      }
+    }
+    if (setItemToAdd) {
+      setItemToAdd({...itemToAdd, [col.key]: value});
+    }
+  }
+
   const isResetEnabled = !!columns.filter((col) => col.editable).length;
 
   return (
     <div className='p-2 bg-zinc-50 rounded'>
-      {(!noSearch || (onCreate && !addPerLine)) && (
+      {(!noSearch || (onCreate && !itemToAdd)) && (
         <div className='flex items-center mb-2 space-x-2'>
           <div className='flex items-center space-x-2 flex-1'>
             <FiSearch className='text-zinc-600' />
@@ -257,7 +281,7 @@ const TableComponent: React.FC<TableProps> = ({
               <FiSave className='mr-1' /> Save
             </button>
           )}
-          {onCreate && !addPerLine && (
+          {onCreate && !itemToAdd && (
             <button
               onClick={() => onCreate()}
               className='flex items-center bg-zinc-800 text-white px-3 py-1 rounded-xs hover:bg-zinc-700'
@@ -288,7 +312,7 @@ const TableComponent: React.FC<TableProps> = ({
           <tbody>
             {filteredData.map((row, rowIndex) => (
               <tr
-                key={rowIndex}
+                key={rowIndex + 'table'}
                 className={(editedRows[rowIndex] ? 'bg-yellow-100' : '') + 'border-b border-zinc-300'}
               >
                 {columns.map((col) => (
@@ -371,7 +395,7 @@ const TableComponent: React.FC<TableProps> = ({
               </tr>
             ))}
 
-            {addPerLine && onCreate && (
+            {itemToAdd && onCreate && (
               <tr key={'addRow'}>
                 {columns.map((col) => (
                   <td key={col.key} className='p-2 border-b border-zinc-300'>
@@ -380,71 +404,23 @@ const TableComponent: React.FC<TableProps> = ({
                         defaultLabel={`Select option`}
                         column={col}
                         filters={itemToAdd}
-                        handleFilterChange={(_column, value) => {
-                          if (col.props?.onChange) {
-                            const updatedItem = col.props?.onChange(
-                              value,
-                              itemToAdd
-                            );
-                            if (updatedItem) {
-                              return setItemToAdd({
-                                ...itemToAdd,
-                                [col.key]: value,
-                              });
-                            } else if (updatedItem === false) {
-                              return;
-                            }
-                          }
-                          setItemToAdd({...itemToAdd, [col.key]: value});
-                        }}
+                        handleFilterChange={(_column, value) =>
+                          handleAddItemFilterChange(col, value)}
                       />
                     ) : col.type === 'multiselect' ? (
                       <MultiSelectComponent
                         defaultLabel={`Select option`}
                         column={col}
                         filters={itemToAdd}
-                        handleFilterChange={(_column, value) => {
-                          if (col.props?.onChange) {
-                            const updatedItem = col.props?.onChange(
-                              value,
-                              itemToAdd
-                            );
-                            if (updatedItem) {
-                              return setItemToAdd({
-                                ...itemToAdd,
-                                [col.key]: value,
-                              });
-                            } else if (updatedItem === false) {
-                              return;
-                            }
-                          }
-                          setItemToAdd({...itemToAdd, [col.key]: value});
-                        }}
+                        handleFilterChange={(_column, value) =>
+                          handleAddItemFilterChange(col, value)}
                       />
                     ) : (
                       <input
                         type={col.type || 'text'}
                         value={itemToAdd[col.key] || ''}
-                        onChange={(e) => {
-                          if (col.props?.onChange) {
-                            const updatedItem = col.props?.onChange(
-                              e.target.value,
-                              itemToAdd
-                            );
-                            if (updatedItem) {
-                              return setItemToAdd({
-                                ...itemToAdd,
-                                [col.key]: e.target.value,
-                              });
-                            } else if (updatedItem === false) {
-                              return;
-                            }
-                          }
-                          setItemToAdd({
-                            ...itemToAdd,
-                            [col.key]: e.target.value,
-                          });
-                        }}
+                        onChange={(e) =>
+                          handleAddItemFilterChange(col, e.target.value)}
                         className='w-full bg-transparent border border-zinc-300 focus:outline-none p-1'
                       />
                     )}
@@ -455,7 +431,7 @@ const TableComponent: React.FC<TableProps> = ({
                     className='flex items-center bg-zinc-800 text-white px-3 py-1 rounded-xs hover:bg-zinc-700'
                     onClick={() => {
                       if (onCreate && onCreate(itemToAdd)) {
-                        setItemToAdd({});
+                        setItemToAdd!({});
                       }
                     }}
                   >

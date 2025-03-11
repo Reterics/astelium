@@ -1,7 +1,11 @@
 import {useState} from 'react';
 import FormModal from './FormModal';
-import TableComponent from './TableComponent';
+import TableComponent, {TableRow} from './TableComponent';
 import {useApi} from '../hooks/useApi.ts';
+import {SelectOption} from "./SelectComponent.tsx";
+import {lineVatRateNormal, lineVatRateSimplified} from "../utils/invoiceUtils.ts";
+import {useTranslation} from "react-i18next";
+import {getTranslatedList} from "../i18n/utils.ts";
 
 interface InvoiceItem {
   id?: number;
@@ -34,6 +38,8 @@ const InvoiceModal = ({
   const {data: invoiceUsersRaw, isLoading: isUsersLoading} =
     useApi('invoice-users');
   const {data: clientsRaw, isLoading: isClientsLoading} = useApi('clients');
+  const {t} = useTranslation();
+  const translationPrefix = 'invoice.';
 
   const invoiceUsers = invoiceUsersRaw.map((d) => ({
     value: d.id,
@@ -46,6 +52,10 @@ const InvoiceModal = ({
   }));
 
   const [items, setItems] = useState<InvoiceItem[]>(invoice.items || []);
+  const [itemToAdd, setItemToAdd] = useState<TableRow>({})
+
+  const [invoiceCategory, setInvoiceCategory] = useState<'SIMPLIFIED'|'NORMAL'>('SIMPLIFIED');
+  const [lineVatRate, setLineVatRate] = useState<SelectOption[]>(lineVatRateSimplified);
 
   if (isUsersLoading || isClientsLoading) return <p>Loading...</p>;
 
@@ -53,6 +63,44 @@ const InvoiceModal = ({
     const updatedItems = [...invoice.items];
     updatedItems.splice(index, 1);
     setInvoice({...invoice, items: updatedItems});
+  };
+
+  const calculateFromUnitPrice = function (form: TableRow) {
+    if (form.quantity && form.quantity.includes(",")) {
+      form.quantity = form.quantity.replace(",",".");
+    }
+    if (form.unit_price && form.unit_price.includes(",")) {
+      form.unit_price = form.unit_price.replace(",",".");
+    }
+
+    const lineNetAmountData = parseInt(form.line_net_amount);
+    const lineVatRate = parseFloat(form.line_vat_rate);
+    // const ratePercentage  = parseFloat((lineVatRate*100).toFixed(2));
+
+    const quantity = parseFloat(form.quantity);
+    const unitPrice = parseInt(form.unit_price);
+
+    if (invoiceCategory === "SIMPLIFIED") {
+      if (!Number.isNaN(quantity) && !Number.isNaN(unitPrice)) {
+        form.line_gross_amount = quantity * unitPrice
+      }
+      if (!Number.isNaN(form.line_gross_amount) && !Number.isNaN(lineVatRate)) {
+        const vatValue = (form.line_gross_amount * lineVatRate).toFixed(2);
+        form.line_vat_amount = vatValue
+        form.line_net_amount = form.line_gross_amount - Number(vatValue)
+      }
+    }else{
+      if (!Number.isNaN(quantity) && !Number.isNaN(unitPrice)) {
+        form.line_net_amount = quantity * unitPrice
+      }
+
+      if (!Number.isNaN(lineNetAmountData) && !Number.isNaN(lineVatRate)) {
+        form.line_vat_amount = (lineNetAmountData * lineVatRate).toFixed(2)
+      }
+      form.line_gross_amount = form.line_net_amount + form.line_vat_amount
+    }
+
+    return form;
   };
 
   return (
@@ -105,6 +153,16 @@ const InvoiceModal = ({
             value: d,
             label: d,
           })),
+          props: {
+            onChange: (value: unknown) => {
+              if ((value as string).toLowerCase() === 'simplified') {
+                setLineVatRate(lineVatRateSimplified);
+              } else {
+                setLineVatRate(lineVatRateNormal);
+              }
+              setInvoiceCategory(value as 'SIMPLIFIED'|'NORMAL')
+            }
+          }
         },
         {
           key: 'invoice_currency',
@@ -147,16 +205,13 @@ const InvoiceModal = ({
             key: 'lineNatureIndicator',
             label: 'Type',
             type: 'select',
-            options: ['SERVICE', 'PRODUCT', 'OTHER'].map((d) => ({
-              value: d,
-              label: d,
-            })),
+            options: getTranslatedList(['SERVICE', 'PRODUCT', 'OTHER'], t, translationPrefix),
           },
           {
             key: 'product_code_category',
             label: 'TESZOR',
             type: 'select',
-            options: [
+            options: getTranslatedList([
               'OWN',
               'VTSZ',
               'SZJ',
@@ -167,7 +222,7 @@ const InvoiceModal = ({
               'EJ',
               'TESZOR',
               'OTHER',
-            ].map((d) => ({value: d, label: d})),
+            ], t, translationPrefix),
           },
           {
             key: 'product_code_value',
@@ -179,12 +234,14 @@ const InvoiceModal = ({
             label: 'Description',
             type: 'text',
           },
-          {key: 'quantity', label: 'Quantity', type: 'number'},
+          {key: 'quantity', label: 'Quantity', type: 'number', props: {
+            onChange: (_value, form) => calculateFromUnitPrice(form)
+          }},
           {
             key: 'unit_of_measure',
             label: 'Unit',
             type: 'select',
-            options: [
+            options: getTranslatedList([
               'PIECE',
               'KILOGRAM',
               'TON',
@@ -201,13 +258,16 @@ const InvoiceModal = ({
               'CARTON',
               'PACK',
               'OWN',
-            ].map((d) => ({value: d, label: d})),
+            ], t, translationPrefix),
           },
 
           {
             key: 'unit_price',
             label: 'Unit Price',
             type: 'number',
+            props: {
+              onChange: (_value, form) => calculateFromUnitPrice(form)
+            }
           },
           {
             key: 'line_net_amount',
@@ -217,7 +277,11 @@ const InvoiceModal = ({
           {
             key: 'line_vat_rate',
             label: 'Vat(%)',
-            type: 'number',
+            type: 'select',
+            options: lineVatRate,
+            props: {
+              onChange: (_value, form) => calculateFromUnitPrice(form)
+            }
           },
           {
             key: 'line_vat_amount',
@@ -228,7 +292,8 @@ const InvoiceModal = ({
         ]}
         data={items}
         noSearch={true}
-        addPerLine={true}
+        itemToAdd={itemToAdd}
+        setItemToAdd={setItemToAdd}
         pagination={false}
         onDelete={(index) => deleteItem(Number(index))}
         onCreate={(item) => {
