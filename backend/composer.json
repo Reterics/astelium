@@ -7,20 +7,20 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "inertiajs/inertia-laravel": "^2.0",
-        "laravel/framework": "^11.31",
-        "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9",
+        "inertiajs/inertia-laravel": "^v2.0.1",
+        "laravel/framework": "^v11.44.2",
+        "laravel/sanctum": "^v4.0.8",
+        "laravel/tinker": "^v2.10.1",
         "openai-php/client": "^0.10.3"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
-        "laravel/pail": "^1.1",
-        "laravel/pint": "^1.13",
-        "laravel/sail": "^1.26",
-        "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^11.0.1"
+        "fakerphp/faker": "^v1.24.1",
+        "laravel/pail": "^v1.2.2",
+        "laravel/pint": "^v1.21.1",
+        "laravel/sail": "^v1.41.0",
+        "mockery/mockery": "^1.6.12",
+        "nunomaduro/collision": "^v8.6.1",
+        "phpunit/phpunit": "^11.5.12"
     },
     "autoload": {
         "psr-4": {
