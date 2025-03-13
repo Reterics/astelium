@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CommentController;
@@ -75,3 +76,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/chat', [ChatController::class, 'index']);
     Route::post('/chat', [ChatController::class, 'store']);
 });
+
+Route::post('/register', [RegisterController::class, 'register']);

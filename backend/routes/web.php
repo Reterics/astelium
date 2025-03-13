@@ -16,7 +16,6 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 
 // Registration routes
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [UserController::class, 'store'])->name('store');
 
 // Register endpoint:
 Route::post('/users', [UserController::class, 'store']);
