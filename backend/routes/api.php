@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -78,3 +79,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::post('/register', [RegisterController::class, 'register']);
+
+Route::middleware('auth:sanctum')->get('/account', [AccountController::class, 'show']);

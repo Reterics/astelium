@@ -22,6 +22,7 @@ import Contracts from './Contracts';
 import PrivateRoute from '../../components/PrivateRoute.tsx';
 import Board from './Board.tsx';
 import Appointments from '../Appointments.tsx';
+import Account from "./Account.tsx";
 
 const AdminPanel = () => {
   return (
@@ -51,6 +52,7 @@ const AdminPanel = () => {
             <Route path='/transactions' element={<Transactions />} />
 
             <Route path='/appointments' element={<Appointments />} />
+            <Route path='/account' element={<Account />} />
           </Route>
         </Routes>
       </Container>
