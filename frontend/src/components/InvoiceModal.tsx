@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {ReactNode, useEffect, useState} from 'react';
 import FormModal from './FormModal';
 import TableComponent, {TableRow} from './TableComponent';
 import {useApi} from '../hooks/useApi.ts';
@@ -9,10 +9,17 @@ import {getTranslatedList} from "../i18n/utils.ts";
 
 interface InvoiceItem {
   id?: number;
-  description: string;
+  lineNatureIndicator: 'SERVICE'|'PRODUCT'|'OTHER';
+  product_code_category: 'OWN'|'VTSZ'|'SZJ'|'KN'|'AHK'|'CSK'|'KT'|'EJ'|'TESZOR'|'OTHER';
+  product_code_value: string;
+  line_description: string;
   quantity: number;
+  unit_of_measure: 'PIECE'|'KILOGRAM'|'TON'|'KWH'|'DAY'|'HOUR'|'MINUTE'|'MONTH'|'LITER'|'KILOMETER'|'CUBIC_METER'|'METER'|'LINEAR_METER'|'CARTON'|'PACK'|'OWN';
   unit_price: number;
-  total: number;
+  line_net_amount: number;
+  line_vat_rate: number;
+  line_vat_amount: number;
+  line_gross_amount: number;
 }
 
 interface Invoice {
@@ -40,6 +47,7 @@ const InvoiceModal = ({
   const {data: clientsRaw, isLoading: isClientsLoading} = useApi('clients');
   const {t} = useTranslation();
   const translationPrefix = 'invoice.';
+  const currencyName = 'Ft';
 
   const invoiceUsers = invoiceUsersRaw.map((d) => ({
     value: d.id,
@@ -56,7 +64,32 @@ const InvoiceModal = ({
 
   const [invoiceCategory, setInvoiceCategory] = useState<'SIMPLIFIED'|'NORMAL'>('SIMPLIFIED');
   const [lineVatRate, setLineVatRate] = useState<SelectOption[]>(lineVatRateSimplified);
+  const [summary, setSummary] = useState({
+    subTotal: 0,
+    tax: 0,
+    taxType: lineVatRate[0].label,
+    total: 0,
+  })
 
+  useEffect(() => {
+    setSummary(items.reduce((sum, currentValue)=> {
+      sum.subTotal += currentValue.line_net_amount;
+      sum.tax += currentValue.line_vat_amount;
+      sum.total += currentValue.line_gross_amount;
+      const vatRate = lineVatRate
+        .find(v=> String(v.value) === String(currentValue.line_vat_rate));
+      if (vatRate) {
+        sum.taxType = vatRate.label;
+      }
+
+      return sum;
+    }, {
+      subTotal: 0,
+      tax: 0,
+      taxType: lineVatRate[0].label,
+      total: 0,
+    }))
+  }, [items, lineVatRate])
   if (isUsersLoading || isClientsLoading) return <p>Loading...</p>;
 
   const deleteItem = (index: number) => {
@@ -160,9 +193,9 @@ const InvoiceModal = ({
               } else {
                 setLineVatRate(lineVatRateNormal);
               }
-              setInvoiceCategory(value as 'SIMPLIFIED'|'NORMAL')
-            }
-          }
+              setInvoiceCategory(value as 'SIMPLIFIED' | 'NORMAL');
+            },
+          },
         },
         {
           key: 'invoice_currency',
@@ -205,24 +238,32 @@ const InvoiceModal = ({
             key: 'lineNatureIndicator',
             label: 'Type',
             type: 'select',
-            options: getTranslatedList(['SERVICE', 'PRODUCT', 'OTHER'], t, translationPrefix),
+            options: getTranslatedList(
+              ['SERVICE', 'PRODUCT', 'OTHER'],
+              t,
+              translationPrefix
+            ),
           },
           {
             key: 'product_code_category',
             label: 'TESZOR',
             type: 'select',
-            options: getTranslatedList([
-              'OWN',
-              'VTSZ',
-              'SZJ',
-              'KN',
-              'AHK',
-              'CSK',
-              'KT',
-              'EJ',
-              'TESZOR',
-              'OTHER',
-            ], t, translationPrefix),
+            options: getTranslatedList(
+              [
+                'OWN',
+                'VTSZ',
+                'SZJ',
+                'KN',
+                'AHK',
+                'CSK',
+                'KT',
+                'EJ',
+                'TESZOR',
+                'OTHER',
+              ],
+              t,
+              translationPrefix
+            ),
           },
           {
             key: 'product_code_value',
@@ -234,31 +275,40 @@ const InvoiceModal = ({
             label: 'Description',
             type: 'text',
           },
-          {key: 'quantity', label: 'Quantity', type: 'number', props: {
-            onChange: (_value, form) => calculateFromUnitPrice(form)
-          }},
+          {
+            key: 'quantity',
+            label: 'Quantity',
+            type: 'number',
+            props: {
+              onChange: (_value, form) => calculateFromUnitPrice(form),
+            },
+          },
           {
             key: 'unit_of_measure',
             label: 'Unit',
             type: 'select',
-            options: getTranslatedList([
-              'PIECE',
-              'KILOGRAM',
-              'TON',
-              'KWH',
-              'DAY',
-              'HOUR',
-              'MINUTE',
-              'MONTH',
-              'LITER',
-              'KILOMETER',
-              'CUBIC_METER',
-              'METER',
-              'LINEAR_METER',
-              'CARTON',
-              'PACK',
-              'OWN',
-            ], t, translationPrefix),
+            options: getTranslatedList(
+              [
+                'PIECE',
+                'KILOGRAM',
+                'TON',
+                'KWH',
+                'DAY',
+                'HOUR',
+                'MINUTE',
+                'MONTH',
+                'LITER',
+                'KILOMETER',
+                'CUBIC_METER',
+                'METER',
+                'LINEAR_METER',
+                'CARTON',
+                'PACK',
+                'OWN',
+              ],
+              t,
+              translationPrefix
+            ),
           },
 
           {
@@ -266,8 +316,8 @@ const InvoiceModal = ({
             label: 'Unit Price',
             type: 'number',
             props: {
-              onChange: (_value, form) => calculateFromUnitPrice(form)
-            }
+              onChange: (_value, form) => calculateFromUnitPrice(form),
+            },
           },
           {
             key: 'line_net_amount',
@@ -280,8 +330,12 @@ const InvoiceModal = ({
             type: 'select',
             options: lineVatRate,
             props: {
-              onChange: (_value, form) => calculateFromUnitPrice(form)
-            }
+              onChange: (_value, form) => {
+                setSummary((prevSummary) =>
+                  ({...prevSummary, taxType: lineVatRate.find(v => v.value === _value)!.label as ReactNode}))
+                return calculateFromUnitPrice(form);
+              },
+            },
           },
           {
             key: 'line_vat_amount',
@@ -307,27 +361,33 @@ const InvoiceModal = ({
       <div className='flex flex-row justify-between'>
         <div />
         <div className='p-3 pb-1 shadow-md bg-zinc-50 rounded-lg w-1/4'>
-          <h2 className='text-lg font-semibold mb-2'>Summary</h2>
+          <h2 className='text-lg font-semibold mb-2'>{t('Summary')}</h2>
 
           <table className='w-full border-collapse border border-zinc-300 mb-4'>
             <tbody>
               <tr>
                 <td className='bg-zinc-200 text-left text-sm font-medium text-zinc-900 border border-zinc-300 p-2 cursor-pointer'>
-                  Subtotal
+                  {t('Subtotal')}
                 </td>
-                <td className='p-2 border-b border-zinc-300'>0 Ft</td>
+                <td className='p-2 border-b border-zinc-300'>
+                  {summary.subTotal} {currencyName}
+                </td>
               </tr>
               <tr>
                 <td className='bg-zinc-200 text-left text-sm font-medium text-zinc-900 border border-zinc-300 p-2 cursor-pointer'>
-                  Tax
+                  {t('Tax')}
                 </td>
-                <td className='p-2 border-b border-zinc-300'>27%</td>
+                <td className='p-2 border-b border-zinc-300'>
+                  {summary.taxType}
+                </td>
               </tr>
               <tr>
                 <td className='bg-zinc-200 text-left text-sm font-medium text-zinc-900 border border-zinc-300 p-2 cursor-pointer'>
-                  Total
+                  {t('Total')}
                 </td>
-                <td className='p-2 border-b border-zinc-300'>0 FT</td>
+                <td className='p-2 border-b border-zinc-300'>
+                  0 {currencyName}
+                </td>
               </tr>
             </tbody>
           </table>
