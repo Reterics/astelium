@@ -241,7 +241,7 @@ const TableComponent: React.FC<TableProps> = ({
   }
 
   const isResetEnabled = !!columns.filter((col) => col.editable).length;
-
+console.log(changes, data, tableData);
   return (
     <div className='p-2 bg-zinc-50 rounded'>
       {(!noSearch || (onCreate && !itemToAdd)) && (

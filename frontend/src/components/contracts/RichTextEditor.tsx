@@ -1,6 +1,8 @@
-import {ReactNode, useEffect, useRef, useState} from 'react';
+import {ReactNode, useCallback, useEffect, useRef} from 'react';
 import {Editor} from '@tinymce/tinymce-react';
 import {Editor as TinyMCEEditor} from 'tinymce';
+
+const DEBOUNCE_MS = 10000;
 
 const RichTextEditor = ({
   text,
@@ -11,21 +13,32 @@ const RichTextEditor = ({
   setText?: (text: string) => void;
   children?: ReactNode;
 }) => {
-  const editorRef = useRef<TinyMCEEditor>(null);
-  const [dirty, setDirty] = useState(false);
-  useEffect(() => setDirty(false), [text]);
+  const editorRef = useRef<TinyMCEEditor | null>(null);
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const save = () => {
-    if (editorRef.current) {
-      const content = editorRef.current.getContent();
-      setDirty(false);
-      editorRef.current.setDirty(false);
-      // an application would save the editor content to the server here
-      if (typeof setText === 'function') {
-        setText(content);
-      }
+  const saveContent = useCallback((content: string) => {
+    if (typeof setText === 'function') {
+      setText(content);
     }
+    editorRef.current?.setDirty(false);
+  }, [setText]);
+
+  const handleEditorChange = (content: string) => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+    debounceTimer.current = setTimeout(() => {
+      if (content !== text) {
+        saveContent(content);
+      }
+    }, DEBOUNCE_MS);
   };
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, []);
+
   return (
     <div className='min-h-[400px]'>
       <Editor
@@ -38,21 +51,20 @@ const RichTextEditor = ({
         }}
         apiKey={import.meta.env.VITE_TINYMCE}
         initialValue={text}
-        onInit={(_evt, editor) => (editorRef.current = editor)}
-        onDirty={() => setDirty(true)}
+        onInit={(_evt, editor) => {
+          editorRef.current = editor;
+        }}
+        onEditorChange={handleEditorChange}
+        onBlur={() => {
+          const content = editorRef.current?.getContent();
+          if (content && content !== text) {
+            saveContent(content);
+          }
+        }}
       />
+
       <div className='p-1 flex flex-row justify-between z-10'>
         {children}
-
-        {dirty && <p>You have unsaved content!</p>}
-
-        <button
-          className='focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
-          onClick={save}
-          type='button'
-        >
-          Finalize
-        </button>
       </div>
     </div>
   );

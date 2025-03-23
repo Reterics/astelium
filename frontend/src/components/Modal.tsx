@@ -9,8 +9,8 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({children, onClose, title}) => {
   return (
-    <div className='fixed inset-0 flex items-center justify-center bg-zinc-900/50'>
-      <div className='relative bg-zinc-100 text-zinc-700 p-4 rounded-md shadow-lg w-auto max-w-screen'>
+    <div className='fixed inset-0 flex items-center justify-center bg-zinc-900/50 max-h-screen'>
+      <div className='relative bg-zinc-100 text-zinc-700 p-4 rounded-md shadow-lg w-auto max-w-screen max-h-screen overflow-y-auto'>
         <div className='flex items-center justify-between border-b border-zinc-300 pb-2 mb-3'>
           <h2 className='text-lg font-semibold text-zinc-800'>{title}</h2>
           <button
