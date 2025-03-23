@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {debounce} from 'throttle-debounce';
 import {FiTrash, FiRefreshCw, FiSearch, FiPlus, FiSave} from 'react-icons/fi';
 import MultiSelectComponent from './MultiSelectComponent';
@@ -15,6 +15,12 @@ export interface FilteredTableRow extends TableRow {
   rowIndex: number;
 }
 
+export interface TableAction {
+  onClick: (row: TableRow, rowIndex: number) => void;
+  icon: ReactNode;
+  isActive: (row: TableRow, rowIndex: number) => boolean
+}
+
 interface TableProps {
   columns: CrudField[];
   data: TableRow[];
@@ -25,6 +31,7 @@ interface TableProps {
   itemToAdd?: TableRow,
   setItemToAdd?: React.Dispatch<React.SetStateAction<TableRow>>,
   pagination?: boolean;
+  actions?: TableAction[];
 }
 
 const TableComponent: React.FC<TableProps> = ({
@@ -37,6 +44,7 @@ const TableComponent: React.FC<TableProps> = ({
   itemToAdd,
   setItemToAdd,
   pagination,
+  actions
 }) => {
   const [tableData, setTableData] = useState(data);
   const [sortConfig, setSortConfig] = useState<{
@@ -219,13 +227,10 @@ const TableComponent: React.FC<TableProps> = ({
 
   const handleAddItemFilterChange = (col: CrudField, value: unknown) => {
     if (col.props?.onChange) {
-      const updatedItem = col.props?.onChange(
-        value,
-        {
-          ...itemToAdd,
-          [col.key]: value,
-        }
-      );
+      const updatedItem = col.props?.onChange(value, {
+        ...itemToAdd,
+        [col.key]: value,
+      });
       if (updatedItem) {
         return setItemToAdd!({
           ...updatedItem,
@@ -238,10 +243,10 @@ const TableComponent: React.FC<TableProps> = ({
     if (setItemToAdd) {
       setItemToAdd({...itemToAdd, [col.key]: value});
     }
-  }
+  };
 
   const isResetEnabled = !!columns.filter((col) => col.editable).length;
-console.log(changes, data, tableData);
+
   return (
     <div className='p-2 bg-zinc-50 rounded'>
       {(!noSearch || (onCreate && !itemToAdd)) && (
@@ -313,7 +318,10 @@ console.log(changes, data, tableData);
             {filteredData.map((row, rowIndex) => (
               <tr
                 key={rowIndex + 'table'}
-                className={(editedRows[rowIndex] ? 'bg-yellow-100' : '') + 'border-b border-zinc-300'}
+                className={
+                  (editedRows[rowIndex] ? 'bg-yellow-100' : '') +
+                  'border-b border-zinc-300'
+                }
               >
                 {columns.map((col) => (
                   <td
@@ -376,19 +384,28 @@ console.log(changes, data, tableData);
                 ))}
                 <td>
                   <div className='flex space-x-1'>
+                    {Array.isArray(actions) &&
+                      actions.map(({onClick, icon, isActive}: TableAction) => (isActive === undefined || isActive(row, rowIndex)) && (
+                        <button
+                          onClick={() => onClick(row, rowIndex)}
+                          className='flex items-center bg-zinc-100 text-zinc-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
+                        >
+                          {icon}
+                        </button>
+                      ))}
                     {isResetEnabled && (
                       <button
                         onClick={() => handleReset(rowIndex)}
                         className='flex items-center bg-zinc-100 text-blue-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
                       >
-                        <FiRefreshCw className="w-6 h-6" />
+                        <FiRefreshCw className='w-6 h-6' />
                       </button>
                     )}
                     <button
                       className='flex items-center bg-zinc-100 text-red-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
                       onClick={() => onDelete && onDelete(row.id)}
                     >
-                      <FiTrash className="w-6 h-6" />
+                      <FiTrash className='w-6 h-6' />
                     </button>
                   </div>
                 </td>
@@ -405,7 +422,8 @@ console.log(changes, data, tableData);
                         column={col}
                         filters={itemToAdd}
                         handleFilterChange={(_column, value) =>
-                          handleAddItemFilterChange(col, value)}
+                          handleAddItemFilterChange(col, value)
+                        }
                       />
                     ) : col.type === 'multiselect' ? (
                       <MultiSelectComponent
@@ -413,14 +431,16 @@ console.log(changes, data, tableData);
                         column={col}
                         filters={itemToAdd}
                         handleFilterChange={(_column, value) =>
-                          handleAddItemFilterChange(col, value)}
+                          handleAddItemFilterChange(col, value)
+                        }
                       />
                     ) : (
                       <input
                         type={col.type || 'text'}
                         value={itemToAdd[col.key] || ''}
                         onChange={(e) =>
-                          handleAddItemFilterChange(col, e.target.value)}
+                          handleAddItemFilterChange(col, e.target.value)
+                        }
                         className='w-full bg-transparent border border-zinc-300 focus:outline-none p-1'
                       />
                     )}

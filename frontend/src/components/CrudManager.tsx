@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import TableComponent, {TableRow} from './TableComponent.tsx';
+import TableComponent, {TableAction, TableRow} from './TableComponent.tsx';
 import FormModal from './FormModal.tsx';
 import {SelectOption, SelectOptions} from './SelectComponent.tsx';
 import {useApi} from '../hooks/useApi.ts';
@@ -34,6 +34,7 @@ interface CrudManagerProps {
   fields: CrudField[];
   children?: React.ReactNode;
   childOnly?: boolean;
+  actions?: TableAction[];
 }
 
 const CrudManager = <T extends Record<string, any>>({
@@ -42,6 +43,7 @@ const CrudManager = <T extends Record<string, any>>({
   fields,
   children,
   childOnly,
+  actions
 }: CrudManagerProps) => {
   const [modalData, setModalData] = useState<Partial<T> | false>(false);
 
@@ -110,6 +112,7 @@ const CrudManager = <T extends Record<string, any>>({
               await saveData(change);
             }
           }}
+          actions={actions}
         ></TableComponent>
       )}
 
