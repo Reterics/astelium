@@ -1,4 +1,4 @@
-import {ChangeEvent, useState} from 'react';
+import {ChangeEvent, Dispatch, SetStateAction, useState} from 'react';
 import Modal from '../Modal.tsx';
 import FileComponent from '../FileComponent.tsx';
 import RichTextEditor from './RichTextEditor.tsx';
@@ -11,12 +11,23 @@ export interface TemplateRaw {
   document: Template;
 }
 
+export type TemplateFieldTypeKind = 'Text'|'Phone'|'Tax Number'|'Address'|'Signature'
+
+export interface TemplateFieldType {
+  id: number;
+  name: string;
+  type: TemplateFieldTypeKind;
+  validation: string;
+}
+
 export interface Template {
   id?: number;
   name?: string;
   path?: string;
   content?: string;
+  fields: TemplateFieldType[]
 }
+
 
 export interface TemplateModalProps {
   onClose?: () => void;
@@ -24,14 +35,7 @@ export interface TemplateModalProps {
   selected?: null | Template;
 
   template: Template;
-  setTemplate: (template: Template) => void;
-}
-
-export interface TemplateFieldType {
-  id: number;
-  name: string;
-  type: string;
-  validation: string;
+  setTemplate: Dispatch<SetStateAction<Template | null>>;
 }
 
 const TemplateModal = ({
@@ -41,7 +45,15 @@ const TemplateModal = ({
   setTemplate,
 }: TemplateModalProps) => {
   const [file, setFile] = useState<File | null>(null);
-  const [fields, setFields] = useState<TemplateFieldType[]>([]);
+
+  const setFields = (modifier: (prevFields: TemplateFieldType[]) => TemplateFieldType[]) => {
+    setTemplate((prevState) => {
+      return {
+        ...(prevState || {}),
+        fields: modifier(prevState?.fields || []),
+      }
+    })
+  }
 
   const fieldColumns: CrudField[] = [
     {key: 'name', label: 'Name', type: 'text', editable: true},
@@ -49,7 +61,7 @@ const TemplateModal = ({
       key: 'type',
       label: 'Type',
       type: 'select',
-      options: ['Text', 'Phone', 'Tax Number', 'Address'],
+      options: ['Text', 'Phone', 'Tax Number', 'Address', 'Signature'],
       editable: true,
     },
     {key: 'validation', label: 'Validation', type: 'text', editable: true},
@@ -60,11 +72,13 @@ const TemplateModal = ({
     setTemplate({...template, content: text});
   };
 
-  const changeType = (e: ChangeEvent<HTMLInputElement>, key: string) => {
-    const value = e.target.value;
-    const obj = {...template} as Record<string, any>;
-    obj[key as keyof Template] = value;
-    setTemplate(obj);
+  const changeName = (e: ChangeEvent<HTMLInputElement>) => {
+    setTemplate((prev) => {
+      const value = e.target.value;
+      const obj = {...prev} as Template;
+      obj.name = value;
+      return obj;
+    });
   };
 
   const onClickSaveBtn = () => {
@@ -114,7 +128,7 @@ const TemplateModal = ({
               type='text'
               name='name'
               value={template.name}
-              onChange={(e) => changeType(e, 'name')}
+              onChange={(e) => changeName(e)}
               className='w-full p-2 border border-zinc-300 bg-zinc-50 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
             />
           </div>
@@ -153,7 +167,7 @@ const TemplateModal = ({
         { openSection === 'fields' && <div>
           <TableComponent
             columns={fieldColumns}
-            data={fields}
+            data={template.fields}
             onEdit={async (changes) => {
               setFields((prev: TemplateFieldType[]) => {
                 return [...prev.map(item => changes.find(c => c.id === item.id) || item )] as TemplateFieldType[]
@@ -168,7 +182,7 @@ const TemplateModal = ({
             }}
             onCreate={() => {
               setFields((prevFields =>
-                [...prevFields, { id: prevFields.length + 1, name: 'field_' + (fields.length + 1), type: 'Text', validation: '' }]));
+                [...prevFields, { id: prevFields.length + 1, name: 'field_' + (prevFields.length + 1), type: 'Text', validation: '' }]));
             }}
             pagination={false}
           />
@@ -176,7 +190,7 @@ const TemplateModal = ({
 
         { openSection === 'editor' && <div>
           <div className="flex space-x-2 pb-1 px-1">
-            {fields.map((field)=>
+            {template.fields.map((field)=>
               field.name &&
               <div
                 onClick={()=> setText(`${template.content || ''} {{${field.name}}}`)}

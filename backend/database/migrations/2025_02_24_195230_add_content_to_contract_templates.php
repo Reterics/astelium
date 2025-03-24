@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('path')->nullable()->after('name'); // Stores file path
             $table->text('content')->nullable()->after('path');
+            $table->text('fields')->nullable()->after('content');
             $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
-
             $table->timestamps();
         });
         Schema::create('contracts', function (Blueprint $table) {

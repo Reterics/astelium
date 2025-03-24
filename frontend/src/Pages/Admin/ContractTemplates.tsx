@@ -39,7 +39,7 @@ const ContractTemplates = () => {
         data={templates || []}
         onDelete={(id) => handleDelete(id as number)}
         onCreate={() => {
-          setCurrentTemplate({});
+          setCurrentTemplate({fields:[]});
         }}
       />
 

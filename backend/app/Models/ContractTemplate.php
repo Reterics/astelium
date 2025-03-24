@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContractTemplate extends Model
 {
-    protected $fillable = ['name', 'path', 'content', 'account_id'];
+    protected $fillable = ['name', 'path', 'content', 'fields', 'account_id'];
 
     public function account()
     {

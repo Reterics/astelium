@@ -58,7 +58,14 @@ const Contracts = () => {
               return !(row as Contract|null)?.data?.signature;
             },
             onClick: (row) => {
-              setContract(row as Contract | null);
+              const contract = {
+                ...row,
+                template: {
+                  ...(row.template || {}),
+                  fields: typeof row.template.fields === 'string' ? JSON.parse(row.template.fields) : row.template.fields
+                }
+              } as unknown as Contract;
+              setContract(contract);
             }
           }
         ]}

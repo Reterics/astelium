@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ContractTemplate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ContractTemplateController extends Controller
@@ -25,6 +26,13 @@ class ContractTemplateController extends Controller
             'file' => 'nullable|file|mimes:pdf,doc,docx,txt',
             'content' => 'nullable|string',
         ]);
+        $fields = $request->input('fields');
+
+        if (is_array($fields)) {
+            $validated['fields'] = json_encode($fields);
+        } else if (is_string($fields)) {
+            $validated['fields'] = $fields;
+        }
 
         // Handle file upload
         if ($request->hasFile('file')) {
