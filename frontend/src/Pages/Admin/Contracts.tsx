@@ -36,7 +36,7 @@ const Contracts = () => {
         fields={[
           {key: 'id', label: 'ID', type: 'text', creatable: false},
           {key: 'name', label: 'Contract Name', type: 'text'},
-          {key: 'created', label: 'Created Date', type: 'date'},
+          {key: 'created', label: 'Created Date', type: 'date', creatable: false},
           {
             key: 'template_id',
             label: 'Template',

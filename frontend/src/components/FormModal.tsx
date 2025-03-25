@@ -44,12 +44,12 @@ const FormModal: React.FC<FormModalProps> = ({
       <div className='space-y-3'>
         <div
           className={
-            cols === 4 ? 'grid grid-cols-4 gap-4' : 'grid grid-cols-2 gap-4'
+            cols === 4 ? 'grid grid-cols-4 gap-3' : 'grid grid-cols-2 gap-3'
           }
         >
           {fields.map((field) => (
             <div key={field.key} className='flex flex-col'>
-              <label className='text-sm font-medium text-zinc-700'>
+              <label className='text-sm font-medium text-zinc-700 mb-1'>
                 {field.label}
               </label>
               {field.type === 'select' ? (
@@ -104,7 +104,7 @@ const FormModal: React.FC<FormModalProps> = ({
                       field.props?.onChange(e.target.value, form);
                     }
                   }}
-                  className='mt-1 p-1 border border-zinc-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
+                  className='p-1 bg-white border border-zinc-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
                 />
               )}
             </div>

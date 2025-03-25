@@ -4,6 +4,7 @@ import FileComponent from '../FileComponent.tsx';
 import RichTextEditor from './RichTextEditor.tsx';
 import TableComponent from "../TableComponent.tsx";
 import {CrudField} from "../CrudManager.tsx";
+import {normalizeName} from "../../utils/templateUtils.ts";
 
 export interface TemplateRaw {
   file: File;
@@ -47,12 +48,10 @@ const TemplateModal = ({
   const [file, setFile] = useState<File | null>(null);
 
   const setFields = (modifier: (prevFields: TemplateFieldType[]) => TemplateFieldType[]) => {
-    setTemplate((prevState) => {
-      return {
-        ...(prevState || {}),
-        fields: modifier(prevState?.fields || []),
-      }
-    })
+    setTemplate((prevState) => ({
+      ...(prevState || {}),
+      fields: modifier(prevState?.fields || []),
+    }))
   }
 
   const fieldColumns: CrudField[] = [
@@ -137,14 +136,18 @@ const TemplateModal = ({
             name='model'
             label={
               'Model ' +
-              (template.path ? `(${template.path.replace('files/', '')})` : '(Optional)')
+              (template.path
+                ? `(${template.path.replace('files/', '')})`
+                : '(Optional)')
             }
             onChange={(file: File) => setFile(file)}
           />
         </div>
-        <div className="flex space-x-2">
+        <div className='flex space-x-2'>
           <button
-            onClick={() => setOpenSection(openSection === 'fields' ? null : 'fields')}
+            onClick={() =>
+              setOpenSection(openSection === 'fields' ? null : 'fields')
+            }
             className={`px-3 py-1 rounded-md text-sm font-medium cursor-pointer ${
               openSection === 'fields'
                 ? 'bg-zinc-800 text-white'
@@ -154,7 +157,9 @@ const TemplateModal = ({
             Fields
           </button>
           <button
-            onClick={() => setOpenSection(openSection === 'editor' ? null : 'editor')}
+            onClick={() =>
+              setOpenSection(openSection === 'editor' ? null : 'editor')
+            }
             className={`px-3 py-1 rounded-md text-sm font-medium ${
               openSection === 'editor'
                 ? 'bg-zinc-800 text-white'
@@ -164,48 +169,82 @@ const TemplateModal = ({
             Editor
           </button>
         </div>
-        { openSection === 'fields' && <div>
-          <TableComponent
-            columns={fieldColumns}
-            data={template.fields}
-            onEdit={async (changes) => {
-              setFields((prev: TemplateFieldType[]) => {
-                return [...prev.map(item => changes.find(c => c.id === item.id) || item )] as TemplateFieldType[]
-              });
-            }}
-            onDelete={(index) => {
-              setFields((prevFields) => {
-                const newFields = [...prevFields];
-                newFields.splice(index as number, 1);
-                return newFields;
-              });
-            }}
-            onCreate={() => {
-              setFields((prevFields =>
-                [...prevFields, { id: prevFields.length + 1, name: 'field_' + (prevFields.length + 1), type: 'Text', validation: '' }]));
-            }}
-            pagination={false}
-          />
-        </div> }
-
-        { openSection === 'editor' && <div>
-          <div className="flex space-x-2 pb-1 px-1">
-            {template.fields.map((field)=>
-              field.name &&
-              <div
-                onClick={()=> setText(`${template.content || ''} {{${field.name}}}`)}
-                className="rounded px-2 py-0.5 bg-blue-200 cursor-pointer">{field.name}</div>)}
+        {openSection === 'fields' && (
+          <div>
+            <TableComponent
+              columns={fieldColumns}
+              data={template.fields}
+              onEdit={async (changes) => {
+                setFields(
+                  (prev: TemplateFieldType[]) =>
+                    [
+                      ...prev.map(
+                        (item) =>
+                          ({
+                            ...item,
+                            ...(changes
+                              .map((change) => ({
+                                ...change,
+                                id: change.id,
+                                name: normalizeName(change.name),
+                              }))
+                              .find((c) => c.id === item.id) || {})
+                          })
+                      ),
+                    ] as TemplateFieldType[]
+                );
+              }}
+              onDelete={(index) => {
+                setFields((prevFields) => {
+                  const newFields = [...prevFields];
+                  newFields.splice(index as number, 1);
+                  return newFields;
+                });
+              }}
+              onCreate={() => {
+                setFields((prevFields) => [
+                  ...prevFields,
+                  {
+                    id: prevFields.length + 1,
+                    name: 'field_' + (prevFields.length + 1),
+                    type: 'Text',
+                    validation: '',
+                  },
+                ]);
+              }}
+              pagination={false}
+            />
           </div>
-          <RichTextEditor text={template.content || ''} setText={setText}>
-            <button
-              type='button'
-              onClick={onClickSaveBtn}
-              className='px-4 py-2 bg-zinc-800 text-white rounded-md hover:bg-zinc-700 transition'
-            >
-              Save
-            </button>
-          </RichTextEditor>
-        </div> }
+        )}
+
+        {openSection === 'editor' && (
+          <div>
+            <div className='flex space-x-2 pb-1 px-1'>
+              {template.fields.map(
+                (field) =>
+                  field.name && (
+                    <div
+                      onClick={() =>
+                        setText(`${template.content || ''} {{${field.name}}}`)
+                      }
+                      className='rounded px-2 py-0.5 bg-blue-200 cursor-pointer'
+                    >
+                      {field.name}
+                    </div>
+                  )
+              )}
+            </div>
+            <RichTextEditor text={template.content || ''} setText={setText}>
+              <button
+                type='button'
+                onClick={onClickSaveBtn}
+                className='px-4 py-2 bg-zinc-800 text-white rounded-md hover:bg-zinc-700 transition'
+              >
+                Save
+              </button>
+            </RichTextEditor>
+          </div>
+        )}
       </div>
     </Modal>
   );

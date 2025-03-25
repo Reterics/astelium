@@ -24,7 +24,7 @@ export interface TableAction {
 interface TableProps {
   columns: CrudField[];
   data: TableRow[];
-  onEdit?: (updatedData: TableRow[]) => Promise<void> | void;
+  onEdit?: (updatedData: TableRow[]) => Promise<void|boolean> | void | boolean;
   onDelete?: (id: number | string) => void;
   onCreate?: (itemToAdd?: TableRow) => void | boolean;
   noSearch?: boolean;
@@ -187,6 +187,7 @@ const TableComponent: React.FC<TableProps> = ({
       ...row,
       ...(changes[index] || {}),
     }));
+    let result = !!onEdit;
 
     if (onEdit) {
       const updates = Object.keys(changes)
@@ -195,9 +196,11 @@ const TableComponent: React.FC<TableProps> = ({
           ...changes[Number(index)],
         }))
         .filter((d) => d.id) as TableRow[];
-      await onEdit(updates);
+      result = !((await onEdit(updates)) === false);
     }
-    setTableData(updatedData);
+    if (!result) {
+      setTableData(updatedData);
+    }
     setChanges({});
     setEditedRows({});
     setAllowSort(true);

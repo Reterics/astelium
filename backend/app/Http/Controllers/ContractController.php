@@ -12,7 +12,13 @@ class ContractController extends Controller
     }
 
     public function store(Request $request) {
-        return Contract::create($request->all());
+        $data = $request->all();
+
+        if (!isset($data['created'])) {
+            $data['created'] = now()->toDateString();
+        }
+
+        return Contract::create($data);
     }
 
     public function show(Contract $contract): Contract
