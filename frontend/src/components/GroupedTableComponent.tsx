@@ -57,7 +57,8 @@ const GroupedTableComponent = ({
               )}
             </div>
           </div>
-          <TableComponent
+          {!groupedData[group.length] && (<div className='bg-white px-4 py-2'>There are no tasks for this group.</div>)}
+          {groupedData[group.length] && <TableComponent
             data={groupedData[group]}
             columns={columns}
             onEdit={onEdit}
@@ -67,7 +68,7 @@ const GroupedTableComponent = ({
             setItemToAdd={setItemToAdd}
             noSearch={true}
             pagination={false}
-          />
+          />}
         </div>
       ))}
     </div>
