@@ -396,7 +396,7 @@ const TableComponent: React.FC<TableProps> = ({
                           {icon}
                         </button>
                       ))}
-                    {isResetEnabled && (
+                    {isResetEnabled && changes[rowIndex] && (
                       <button
                         onClick={() => handleReset(rowIndex)}
                         className='flex items-center bg-zinc-100 text-blue-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'

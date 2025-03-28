@@ -3,6 +3,7 @@ import TableComponent, {TableAction, TableRow} from './TableComponent.tsx';
 import FormModal from './FormModal.tsx';
 import {SelectOption, SelectOptions} from './SelectComponent.tsx';
 import {useApi} from '../hooks/useApi.ts';
+import {confirm} from "./confirm";
 
 export type FieldType =
   | 'text'
@@ -107,9 +108,12 @@ const CrudManager = <T extends Record<string, any>>({
             setModalData({});
           }}
           onEdit={async (changes) => {
-            for (let i = 0; i < changes.length; i++) {
-              const change = changes[i] as Partial<T>;
-              await saveData(change);
+            const response = await confirm('Are you sure to save?');
+            if (response) {
+              for (let i = 0; i < changes.length; i++) {
+                const change = changes[i] as Partial<T>;
+                await saveData(change);
+              }
             }
           }}
           actions={actions}
