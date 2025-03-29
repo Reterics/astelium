@@ -251,7 +251,7 @@ const TableComponent: React.FC<TableProps> = ({
   const isResetEnabled = !!columns.filter((col) => col.editable).length;
 
   return (
-    <div className='p-2 bg-zinc-50 rounded'>
+    <div className='bg-zinc-50 rounded'>
       {(!noSearch || (onCreate && !itemToAdd)) && (
         <div className='flex items-center mb-2 space-x-2'>
           <div className='flex items-center space-x-2 flex-1'>
@@ -261,7 +261,7 @@ const TableComponent: React.FC<TableProps> = ({
               onKeyDown={handleKeyPress}
               type='text'
               placeholder='Search...'
-              className='p-1 border border-zinc-300 rounded-sm bg-transparent text-zinc-900'
+              className='p-1 border border-zinc-300 rounded-xs bg-white text-zinc-900'
             />
           </div>
           {columns.map((col) =>
@@ -385,7 +385,7 @@ const TableComponent: React.FC<TableProps> = ({
                     )}
                   </td>
                 ))}
-                <td>
+                <td className='place-items-end'>
                   <div className='flex space-x-1'>
                     {Array.isArray(actions) &&
                       actions.map(({onClick, icon, isActive}: TableAction) => (isActive === undefined || isActive(row, rowIndex)) && (
@@ -404,12 +404,12 @@ const TableComponent: React.FC<TableProps> = ({
                         <FiRefreshCw className='w-6 h-6' />
                       </button>
                     )}
-                    <button
+                    {onDelete && <button
                       className='flex items-center bg-zinc-100 text-red-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
                       onClick={() => onDelete && onDelete(row.id)}
                     >
                       <FiTrash className='w-6 h-6' />
-                    </button>
+                    </button> }
                   </div>
                 </td>
               </tr>

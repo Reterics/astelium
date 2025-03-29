@@ -36,19 +36,21 @@ class StorageController extends Controller
     public function update(Request $request, Storage $storage): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validate([
-            'sku' => 'required|unique:storages,sku,' . $storage->id,
-            'name' => 'required',
+            'sku' => 'sometimes|required|unique:storages,sku,' . $storage->id,
+            'name' => 'sometimes|required',
             'description' => 'nullable|string',
-            'threshold' => 'required|integer',
-            'storage_amount' => 'required|integer',
-            'value' => 'required|numeric',
+            'threshold' => 'sometimes|required|integer',
+            'storage_amount' => 'sometimes|required|integer',
+            'value' => 'sometimes|required|numeric',
             'warehouses' => 'nullable|array',
             'warehouses.*' => 'exists:warehouses,id'
         ]);
 
         $storage->update($validated);
 
-        $storage->warehouses()->sync($validated['warehouses']);
+        if (isset($validated['warehouses'])) {
+            $storage->warehouses()->sync($validated['warehouses']);
+        }
 
         return response()->json($storage->load('warehouses'));
     }

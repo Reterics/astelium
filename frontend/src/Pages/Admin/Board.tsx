@@ -146,7 +146,7 @@ const Board = () => {
             placeholder='Search...'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className='p-1 border border-zinc-300 rounded-xs'
+            className='p-1 border border-zinc-300 rounded-xs bg-white text-zinc-900'
           />
         </div>
 

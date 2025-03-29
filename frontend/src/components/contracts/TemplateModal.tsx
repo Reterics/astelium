@@ -170,7 +170,7 @@ const TemplateModal = ({
           </button>
         </div>
         {openSection === 'fields' && (
-          <div>
+          <div className="p-2 bg-zinc-50">
             <TableComponent
               columns={fieldColumns}
               data={template.fields}

@@ -7,7 +7,7 @@ import GroupedTableComponent from '../../components/GroupedTableComponent.tsx';
 import SelectComponent from '../../components/SelectComponent.tsx';
 import {useState} from 'react';
 import UserAvatar from '../../components/UserAvatar.tsx';
-import {FiPlus} from "react-icons/fi";
+import {FiPlus, FiSearch} from "react-icons/fi";
 import FormModal from "../../components/FormModal.tsx";
 import TaskModal from "../../components/TaskModal.tsx";
 import {Task} from "../../components/KanbanBoard.tsx";
@@ -28,6 +28,7 @@ const Tasks = () => {
   const [modalData, setModalData] = useState<
     (Record<string, any> & {id?: number}) | false
   >(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [groupedBy, setGroupedBy] = useState<string>('status');
 
@@ -49,7 +50,7 @@ const Tasks = () => {
     ),
   }));
 
-  if (!projects) return <p>Please create a project for using Tasks</p>;
+  if (!tasksRaw) return <p>Please create a project for using Tasks</p>;
 
   const updateTask = async (body: Record<string, any>) => {
     if (body.id) {
@@ -146,10 +147,19 @@ const Tasks = () => {
       editable: true,
     },
   ];
+
   return (
-    <div>
-      <div className='p-2 bg-zinc-50 rounded flex justify-between'>
-        <div className='flex items-center space-x-2'>
+    <div className="pb-1 shadow-md bg-zinc-50">
+      <div className='p-2 pb-0 flex items-center space-x-2'>
+        <div className='flex items-center space-x-2 flex-1'>
+          <FiSearch className='text-zinc-600' />
+          <input
+            type='text'
+            placeholder='Search...'
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className='p-1 border border-zinc-300 rounded-xs bg-white text-zinc-900'
+          />
           <label className='ps-2 text-sm font-medium text-zinc-700'>Group:</label>
           <SelectComponent
             column={{
@@ -182,7 +192,7 @@ const Tasks = () => {
 
         <button
           onClick={() => setModalData({})}
-          className='flex items-center bg-zinc-800 text-white px-3 py-1 rounded-xs hover:bg-zinc-700'
+          className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
         >
           <FiPlus className='mr-1' /> Add
         </button>

@@ -98,7 +98,7 @@ const CrudManager = <T extends Record<string, any>>({
     : (data as Partial<T>[]);
 
   return (
-    <div>
+    <div className="p-2 bg-zinc-50">
       {!childOnly && (
         <TableComponent
           columns={fields.filter((f) => f.visible !== false)}
@@ -107,11 +107,62 @@ const CrudManager = <T extends Record<string, any>>({
           onCreate={() => {
             setModalData({});
           }}
-          onEdit={async (changes) => {
-            const response = await confirm('Are you sure to save?');
+          onEdit={async (changesArray) => {
+            const changedKeysSet = new Set<string>();
+
+            const updatedRows = changesArray.map((row) => {
+              const originalRow = processedData.find((r) => r.id === row.id);
+              const changedFields = Object.keys(row) as (keyof TableRow)[];
+
+              const result: Record<string, any> = {
+                id: row.id,
+              };
+
+              changedFields.forEach((key) => {
+                changedKeysSet.add(key as string);
+
+                result[`original_${key}`] = originalRow?.[key];
+                result[key] = row[key];
+              });
+
+              return result;
+            })
+
+            const changedFields: CrudField[] = [];
+
+            fields.forEach((field) => {
+              if (changedKeysSet.has(field.key)) {
+                changedFields.push(
+                  {
+                    ...field,
+                    key: `original_${field.key}`,
+                    label: `Original ${field.label}`,
+                    editable: false,
+                  },
+                  {
+                    ...field,
+                    key: field.key,
+                    label: `New ${field.label}`,
+                  }
+                );
+              }
+            });
+
+            const content = <div className="min-w-[50vw]">
+              <div className="pb-1">Are you sure to apply the following changes?</div>
+              <div className="overflow-y-auto max-h-[40vh]">
+                <TableComponent
+                  noSearch={true}
+                  pagination={false}
+                  columns={changedFields}
+                  data={updatedRows}
+                ></TableComponent>
+              </div>
+            </div>
+            const response = await confirm(content);
             if (response) {
-              for (let i = 0; i < changes.length; i++) {
-                const change = changes[i] as Partial<T>;
+              for (let i = 0; i < changesArray.length; i++) {
+                const change = changesArray[i] as Partial<T>;
                 await saveData(change);
               }
             }

@@ -37,7 +37,7 @@ const InvoicesPage = () => {
   };
 
   return (
-    <div className=''>
+    <div className="p-2 bg-zinc-50">
       <TableComponent
         columns={[
           {

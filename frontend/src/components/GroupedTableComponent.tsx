@@ -47,19 +47,19 @@ const GroupedTableComponent = ({
 
   return (
     <div>
-      {Object.keys(groupedData).map((group) => (
-        <div>
-          <div className='py-2 px-4 flex items-center space-x-2 '>
+      {Object.keys(groupedData).map((groupName) => (
+        <div className="p-2">
+          <div className='pb-1 px-3 flex items-center space-x-2 border-t border-x border-zinc-300 w-fit'>
             <div className='text-zinc-600 font-medium'>
               {t(
-                selectedGroupOptions.find((o) => o.value === group)?.label as string ||
-                  group
+                selectedGroupOptions.find((o) => o.value === groupName)?.label as string ||
+                groupName
               )}
             </div>
           </div>
-          {!groupedData[group.length] && (<div className='bg-white px-4 py-2'>There are no tasks for this group.</div>)}
-          {groupedData[group.length] && <TableComponent
-            data={groupedData[group]}
+          {!groupedData[groupName].length && (<div className='bg-white px-4 py-2'>There are no tasks for this group.</div>)}
+          {!!groupedData[groupName].length && <TableComponent
+            data={groupedData[groupName]}
             columns={columns}
             onEdit={onEdit}
             onDelete={onDelete}

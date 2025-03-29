@@ -16,7 +16,7 @@ const Appointments = () => {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div className='flex flex-col space-y-4 mb-4'>
+    <div className='p-2 bg-zinc-50 flex flex-col space-y-4 mb-4'>
       <AppointmentTable
         appointments={appointments}
         onDelete={(id) => deleteMutation.mutate(id as number)}
@@ -29,6 +29,7 @@ const Appointments = () => {
             await createMutation.mutateAsync(form);
           }
         }}
+        title={'Appointment'}
       />
       <AppointmentCalendar
         appointments={appointments as TimeSlot[]}
