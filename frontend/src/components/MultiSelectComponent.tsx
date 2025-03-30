@@ -75,7 +75,7 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
     >
       <button
         ref={buttonRef}
-        className='max-w-full border border-zinc-300 p-1 rounded-xs focus:outline-none flex justify-end truncate'
+        className='max-w-full bg-white border border-zinc-300 p-1 rounded-xs focus:outline-none flex justify-end truncate'
         onClick={toggleDropdown}
       >
         <div className='flex-1 text-nowrap'>

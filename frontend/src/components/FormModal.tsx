@@ -4,6 +4,7 @@ import SelectComponent from './SelectComponent.tsx';
 import MultiSelectComponent from './MultiSelectComponent.tsx';
 import {CrudField} from './CrudManager.tsx';
 import FileComponent from './FileComponent.tsx';
+import DateComponent from "./DateComponent.tsx";
 
 export interface FormModalProps {
   title: string;
@@ -93,6 +94,16 @@ const FormModal: React.FC<FormModalProps> = ({
                     });
                   }}
                   accept={'image/*'}
+                />
+              ) : field.type === 'date' ? (
+                <DateComponent
+                  value={form[field.key] as string|undefined}
+                  onChange={(e) => {
+                    handleInputChange(field.key, e.target.value);
+                    if (field.props?.onChange) {
+                      field.props?.onChange(e.target.value, form);
+                    }
+                  }}
                 />
               ) : (
                 <input

@@ -7,7 +7,7 @@ import {lineVatRateNormal, lineVatRateSimplified} from "../utils/invoiceUtils.ts
 import {useTranslation} from "react-i18next";
 import {getTranslatedList} from "../i18n/utils.ts";
 
-interface InvoiceItem {
+export interface InvoiceItem {
   id?: number;
   lineNatureIndicator: 'SERVICE'|'PRODUCT'|'OTHER';
   product_code_category: 'OWN'|'VTSZ'|'SZJ'|'KN'|'AHK'|'CSK'|'KT'|'EJ'|'TESZOR'|'OTHER';
@@ -22,12 +22,19 @@ interface InvoiceItem {
   line_gross_amount: number;
 }
 
-interface Invoice {
+export interface Invoice {
   id?: number;
+  invoice_user_id?: number;
+  client_id?: number;
   number: string;
-  issue_date: string;
-  due_date: string;
-  client: string;
+  invoice_issue_date: string;
+  invoice_delivery_date: string;
+  invoice_payment_date: string;
+  invoice_category: 'SIMPLIFIED'|'NORMAL'|'AGGREGATE';
+  invoice_currency: 'HUF';
+  invoice_payment_method: 'CASH'|'TRANSFER'|'CARD'|'VOUCHER'|'OTHER';
+  invoice_appearance: 'ELECTRONIC'|'PAPER'|'EDI'|'UNKNOWN';
+  invoice_exchange_rate: number;
   items: InvoiceItem[];
 }
 

@@ -1,16 +1,8 @@
 import {useState} from 'react';
 import {useApi} from '../../hooks/useApi';
 import TableComponent from '../../components/TableComponent';
-import InvoiceModal from '../../components/InvoiceModal';
+import InvoiceModal, {Invoice} from '../../components/InvoiceModal';
 
-interface Invoice {
-  id?: number;
-  number: string;
-  issue_date: string;
-  due_date: string;
-  client: string;
-  items: any[];
-}
 
 const InvoicesPage = () => {
   const {
@@ -61,12 +53,18 @@ const InvoicesPage = () => {
         }}
         onDelete={(id) => handleDelete(id as number)}
         onCreate={() => {
+          const today = new Date().toISOString().split('T')[0];
           setCurrentInvoice({
-            number: '',
-            issue_date: '',
-            due_date: '',
-            client: '',
+            number: 'INV-' + (invoices.length.toString().padStart(5, '0')),
             items: [],
+            invoice_appearance: 'ELECTRONIC',
+            invoice_delivery_date: today,
+            invoice_exchange_rate: 1,
+            invoice_issue_date: today,
+            invoice_payment_date: today,
+            invoice_category: 'SIMPLIFIED',
+            invoice_currency: 'HUF',
+            invoice_payment_method: 'TRANSFER'
           });
         }}
       />

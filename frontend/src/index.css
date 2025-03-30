@@ -27,3 +27,23 @@ input:-webkit-autofill:focus {
 td > select {
   width: 100%;
 }
+
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: #18181b;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #3f3f46;
+  border-radius: 0;
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 #18181b;
+}

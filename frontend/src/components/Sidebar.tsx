@@ -25,7 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ menu, collapsed }) => {
 
   return (
     <aside
-      className={`h-screen bg-zinc-900 text-white p-1 space-y-0 transition-all duration-100 ${
+      className={`thin-scrollbar h-screen bg-zinc-900 text-white p-1 space-y-0 transition-all duration-100 ${
         collapsed ? 'w-12' : 'w-44'
       }`}
     >
