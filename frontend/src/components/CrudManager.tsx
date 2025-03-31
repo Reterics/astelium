@@ -1,9 +1,9 @@
-import {useState} from 'react';
 import TableComponent, {TableAction, TableRow} from './TableComponent.tsx';
 import FormModal from './FormModal.tsx';
 import {SelectOption, SelectOptions} from './SelectComponent.tsx';
 import {useApi} from '../hooks/useApi.ts';
 import {confirm} from "./confirm";
+import mountComponent from "./mounter.tsx";
 
 export type FieldType =
   | 'text'
@@ -46,8 +46,6 @@ const CrudManager = <T extends Record<string, any>>({
   childOnly,
   actions
 }: CrudManagerProps) => {
-  const [modalData, setModalData] = useState<Partial<T> | false>(false);
-
   const {data, isLoading, createMutation, deleteMutation, updateMutation} =
     useApi(apiEndpoint);
 
@@ -60,7 +58,6 @@ const CrudManager = <T extends Record<string, any>>({
       await createMutation.mutateAsync(body);
     }
 
-    setModalData(false);
     return true;
   };
 
@@ -98,14 +95,26 @@ const CrudManager = <T extends Record<string, any>>({
     : (data as Partial<T>[]);
 
   return (
-    <div className="p-2 bg-zinc-50">
+    <div className='p-2 bg-zinc-50'>
       {!childOnly && (
         <TableComponent
           columns={fields.filter((f) => f.visible !== false)}
           data={processedData}
-          onDelete={(id) => deleteMutation.mutate(id as number)}
-          onCreate={() => {
-            setModalData({});
+          onDelete={async (id) => {
+            const response = await confirm('Are you sure to delete this component?');
+            if (response) {
+              deleteMutation.mutate(id as number);
+            }
+          }}
+          onCreate={async () => {
+            const form = await mountComponent(FormModal, {
+              title: 'Create ' + title,
+              fields: fields.filter((filter) => filter.creatable !== false),
+              data: {},
+            });
+            if (form) {
+              await saveData(form as Partial<T>);
+            }
           }}
           onEdit={async (changesArray) => {
             const changedKeysSet = new Set<string>();
@@ -126,7 +135,7 @@ const CrudManager = <T extends Record<string, any>>({
               });
 
               return result;
-            })
+            });
 
             const changedFields: CrudField[] = [];
 
@@ -148,17 +157,21 @@ const CrudManager = <T extends Record<string, any>>({
               }
             });
 
-            const content = <div className="min-w-[50vw]">
-              <div className="pb-1">Are you sure to apply the following changes?</div>
-              <div className="overflow-y-auto max-h-[40vh]">
-                <TableComponent
-                  noSearch={true}
-                  pagination={false}
-                  columns={changedFields}
-                  data={updatedRows}
-                ></TableComponent>
+            const content = (
+              <div className='min-w-[50vw]'>
+                <div className='pb-1'>
+                  Are you sure to apply the following changes?
+                </div>
+                <div className='overflow-y-auto max-h-[40vh]'>
+                  <TableComponent
+                    noSearch={true}
+                    pagination={false}
+                    columns={changedFields}
+                    data={updatedRows}
+                  ></TableComponent>
+                </div>
               </div>
-            </div>
+            );
             const response = await confirm(content);
             if (response) {
               for (let i = 0; i < changesArray.length; i++) {
@@ -172,18 +185,6 @@ const CrudManager = <T extends Record<string, any>>({
       )}
 
       {children}
-
-      {modalData && (
-        <FormModal
-          title={(modalData.id ? 'Edit ' : 'Create ') + title}
-          onClose={() => setModalData(false)}
-          fields={fields.filter((filter) => filter.creatable !== false)}
-          data={modalData}
-          onSave={(form) => {
-            return saveData(form as Partial<T>);
-          }}
-        />
-      )}
     </div>
   );
 };

@@ -8,7 +8,6 @@ import React, {
 
 export interface DraggableDivProps {
   ref: RefObject<HTMLDivElement | null>;
-  pos: RefObject<{x: number; y: number}>;
   handle: string;
   className?: string;
   children?: React.ReactNode;
@@ -18,7 +17,6 @@ export interface DraggableDivProps {
 const DraggableDiv = (
 {
   ref,
-  pos,
   handle,
   onClick,
   className,
@@ -26,6 +24,10 @@ const DraggableDiv = (
 }: Readonly<DraggableDivProps>) => {
   const [dragging, setDragging] = useState(false);
   const offsetRef = useRef({x: 0, y: 0});
+  const pos = useRef<{x: number; y: number}>({
+    x: window.innerWidth / 2 - 140,
+    y: window.innerHeight / 4,
+  });
 
   const handleMouseDown = useCallback(
     (e: MouseEvent) => {
@@ -106,12 +108,22 @@ const DraggableDiv = (
     }
   }, [handle, handleMouseDown, ref]);
 
+  useEffect(() => {
+    if (ref.current && pos.current) {
+      pos.current.x = window.innerWidth / 2 - ref.current.offsetWidth / 2;
+      pos.current.y = window.innerHeight / 2 - ref.current.offsetHeight / 2;
+
+      console.log(pos.current, window.innerHeight, window.innerWidth)
+      ref.current.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`
+    }
+  }, [ref]);
+
   return (
     <div
-      className={'absolute select-none ' + (className ?? '')}
+      className={'fixed z-50 select-none ' + (className ?? '')}
       ref={ref}
       style={{
-        transform: `translate(${pos.current.x}px, ${pos.current.y}px)`,
+        /*transform: `translate(${pos.current.x}px, ${pos.current.y}px)`,*/
         cursor: dragging ? 'grabbing' : undefined,
       }}
     >

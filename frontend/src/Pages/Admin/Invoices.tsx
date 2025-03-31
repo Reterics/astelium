@@ -55,7 +55,7 @@ const InvoicesPage = () => {
         onCreate={() => {
           const today = new Date().toISOString().split('T')[0];
           setCurrentInvoice({
-            number: 'INV-' + (invoices.length.toString().padStart(5, '0')),
+            number: 'INV-' + ((invoices.length + 1).toString().padStart(5, '0')),
             items: [],
             invoice_appearance: 'ELECTRONIC',
             invoice_delivery_date: today,

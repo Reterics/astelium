@@ -26,7 +26,7 @@ interface TableProps {
   data: TableRow[];
   onEdit?: (updatedData: TableRow[]) => Promise<void|boolean> | void | boolean;
   onDelete?: (id: number | string) => void;
-  onCreate?: (itemToAdd?: TableRow) => void | boolean;
+  onCreate?: (itemToAdd?: TableRow) => void | boolean | Promise<void>;
   noSearch?: boolean;
   itemToAdd?: TableRow,
   setItemToAdd?: React.Dispatch<React.SetStateAction<TableRow>>,
