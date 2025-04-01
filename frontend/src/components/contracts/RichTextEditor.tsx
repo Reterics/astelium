@@ -16,12 +16,15 @@ const RichTextEditor = ({
   const editorRef = useRef<TinyMCEEditor | null>(null);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const saveContent = useCallback((content: string) => {
-    if (typeof setText === 'function') {
-      setText(content);
-    }
-    editorRef.current?.setDirty(false);
-  }, [setText]);
+  const saveContent = useCallback(
+    (content: string) => {
+      if (typeof setText === 'function') {
+        setText(content);
+      }
+      editorRef.current?.setDirty(false);
+    },
+    [setText]
+  );
 
   const handleEditorChange = (content: string) => {
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
@@ -56,9 +59,7 @@ const RichTextEditor = ({
         }}
       />
 
-      <div className='p-1 flex flex-row justify-between z-10'>
-        {children}
-      </div>
+      <div className='p-1 flex flex-row justify-between z-10'>{children}</div>
     </div>
   );
 };

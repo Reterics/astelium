@@ -80,7 +80,8 @@ const Dashboard = () => {
                     {t('dashboard.view')}
                   </button>
                 </div>
-              )).slice(0,4) || (
+              ))
+              .slice(0, 4) || (
               <p className='text-zinc-600'>
                 {t('dashboard.no_open_tasks_available')}
               </p>

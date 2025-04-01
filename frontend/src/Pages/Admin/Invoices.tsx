@@ -1,8 +1,7 @@
-import {useState} from 'react';
 import {useApi} from '../../hooks/useApi';
 import TableComponent from '../../components/TableComponent';
 import InvoiceModal, {Invoice} from '../../components/InvoiceModal';
-
+import mountComponent from '../../components/mounter.tsx';
 
 const InvoicesPage = () => {
   const {
@@ -11,7 +10,19 @@ const InvoicesPage = () => {
     updateMutation,
     deleteMutation,
   } = useApi('invoices');
-  const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
+  const {data: invoiceUsersRaw, isLoading: isUsersLoading} =
+    useApi('invoice-users');
+  const {data: clientsRaw, isLoading: isClientsLoading} = useApi('clients');
+
+  const invoiceUsers = invoiceUsersRaw.map((d) => ({
+    value: d.id,
+    label: d.name,
+  }));
+
+  const clients = clientsRaw.map((d) => ({
+    value: d.id,
+    label: d.name,
+  }));
 
   const handleSave = async (invoice: Invoice) => {
     if (invoice.id) {
@@ -21,7 +32,6 @@ const InvoicesPage = () => {
     } else {
       await createMutation.mutateAsync(invoice);
     }
-    setCurrentInvoice(null);
   };
 
   const handleDelete = async (id: number) => {
@@ -29,7 +39,7 @@ const InvoicesPage = () => {
   };
 
   return (
-    <div className="p-2 bg-zinc-50">
+    <div className='p-2 bg-zinc-50'>
       <TableComponent
         columns={[
           {
@@ -52,31 +62,34 @@ const InvoicesPage = () => {
           //setCurrentInvoice(invoice);
         }}
         onDelete={(id) => handleDelete(id as number)}
-        onCreate={() => {
+        onCreate={async () => {
           const today = new Date().toISOString().split('T')[0];
-          setCurrentInvoice({
-            number: 'INV-' + ((invoices.length + 1).toString().padStart(5, '0')),
-            items: [],
-            invoice_appearance: 'ELECTRONIC',
-            invoice_delivery_date: today,
-            invoice_exchange_rate: 1,
-            invoice_issue_date: today,
-            invoice_payment_date: today,
-            invoice_category: 'SIMPLIFIED',
-            invoice_currency: 'HUF',
-            invoice_payment_method: 'TRANSFER'
+
+          if (isUsersLoading || isClientsLoading)
+            return alert('Users and clients are loading');
+
+          const currentInvoice = await mountComponent(InvoiceModal, {
+            invoiceUsers,
+            clients,
+            initialInvoice: {
+              number:
+                'INV-' + (invoices.length + 1).toString().padStart(5, '0'),
+              items: [],
+              invoice_appearance: 'ELECTRONIC',
+              invoice_delivery_date: today,
+              invoice_exchange_rate: 1,
+              invoice_issue_date: today,
+              invoice_payment_date: today,
+              invoice_category: 'SIMPLIFIED',
+              invoice_currency: 'HUF',
+              invoice_payment_method: 'TRANSFER',
+            },
           });
+          if (currentInvoice) {
+            await handleSave(currentInvoice);
+          }
         }}
       />
-
-      {currentInvoice && (
-        <InvoiceModal
-          onClose={() => setCurrentInvoice(null)}
-          invoice={currentInvoice!}
-          setInvoice={setCurrentInvoice}
-          onSave={() => handleSave(currentInvoice!)}
-        />
-      )}
     </div>
   );
 };

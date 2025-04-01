@@ -1,6 +1,6 @@
 import React, {useRef} from 'react';
-import DraggableDiv from "../DraggableDiv.tsx";
-import {FiCheck, FiX} from "react-icons/fi";
+import DraggableDiv from '../DraggableDiv.tsx';
+import {FiCheck, FiX} from 'react-icons/fi';
 
 type ConfirmDialogProps = {
   title?: string;
@@ -11,8 +11,7 @@ type ConfirmDialogProps = {
   cancelMessage?: string;
 };
 
-export default function ConfirmDialog(
-{
+export default function ConfirmDialog({
   title,
   children,
   onClose,
@@ -31,7 +30,9 @@ export default function ConfirmDialog(
       <div className='relative bg-zinc-50 border border-zinc-400 text-zinc-700 p-3 rounded-md shadow-lg w-auto max-w-screen max-h-screen overflow-y-auto'>
         <div className={`title-bar`}>
           <div className='flex items-center justify-between border-b border-zinc-300 pb-2'>
-            <h2 className='text-lg font-semibold text-zinc-800'>{title ?? 'Confirmation'}</h2>
+            <h2 className='text-lg font-semibold text-zinc-800'>
+              {title ?? 'Confirmation'}
+            </h2>
             <button
               className='text-zinc-400 hover:text-zinc-600 transition cursor-pointer'
               onClick={() => onClose()}

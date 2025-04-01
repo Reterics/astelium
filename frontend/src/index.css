@@ -28,7 +28,6 @@ td > select {
   width: 100%;
 }
 
-
 .thin-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;

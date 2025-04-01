@@ -1,9 +1,9 @@
 import CrudManager from '../../components/CrudManager';
 import {useApi} from '../../hooks/useApi.ts';
-import { FiEdit3 } from "react-icons/fi";
-import {useState} from "react";
-import {Template} from "../../components/contracts/TemplateModal.tsx";
-import ContractModal from "../../components/contracts/ContractModal.tsx";
+import {FiEdit3} from 'react-icons/fi';
+import {Template} from '../../components/contracts/TemplateModal.tsx';
+import ContractModal from '../../components/contracts/ContractModal.tsx';
+import mountComponent from '../../components/mounter.tsx';
 
 export interface Contract {
   account_id?: number;
@@ -18,8 +18,6 @@ export interface Contract {
 const Contracts = () => {
   const {data: contractTemplates, isLoading: isLoadingTemplates} =
     useApi('contract-templates');
-
-  const [contract, setContract] = useState<Contract | null>(null);
 
   if (isLoadingTemplates) return <p>Loading...</p>;
 
@@ -36,7 +34,12 @@ const Contracts = () => {
         fields={[
           {key: 'id', label: 'ID', type: 'text', creatable: false},
           {key: 'name', label: 'Contract Name', type: 'text'},
-          {key: 'created', label: 'Created Date', type: 'date', creatable: false},
+          {
+            key: 'created',
+            label: 'Created Date',
+            type: 'date',
+            creatable: false,
+          },
           {
             key: 'template_id',
             label: 'Template',
@@ -48,34 +51,37 @@ const Contracts = () => {
             label: 'Contract Data',
             type: 'text',
             creatable: false,
-            visible: false
+            visible: false,
           },
         ]}
         actions={[
           {
             icon: <FiEdit3 />,
             isActive: (row) => {
-              return !(row as Contract|null)?.data?.signature;
+              return !(row as Contract | null)?.data?.signature;
             },
-            onClick: (row) => {
+            onClick: async (row) => {
               const contract = {
                 ...row,
                 template: {
                   ...(row.template || {}),
-                  fields: typeof row.template.fields === 'string' ? JSON.parse(row.template.fields) : row.template.fields
-                }
+                  fields:
+                    typeof row.template.fields === 'string'
+                      ? JSON.parse(row.template.fields)
+                      : row.template.fields,
+                },
               } as unknown as Contract;
-              setContract(contract);
-            }
-          }
+
+              const currentContract = await mountComponent(ContractModal, {
+                initialContract: contract,
+              });
+              if (currentContract) {
+                // TODO: Implement saving
+              }
+            },
+          },
         ]}
       />
-      {contract && <ContractModal
-        contract={contract}
-        setContract={setContract}
-        onClose={() => setContract(null)}
-        onSave={() => {}}
-      />}
     </div>
   );
 };

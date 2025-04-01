@@ -5,10 +5,10 @@
   margin: 0;
   padding: 1.9cm 1.32cm 3.67cm 1.9cm;
   text-align: left;
-  color:black;
+  color: black;
   background-color: white;
   tab-size: 4;
 }
 .a4-print > * {
-  all:revert;
+  all: revert;
 }

@@ -14,8 +14,7 @@ export interface DraggableDivProps {
   onClick?: (e: MouseEvent) => void;
 }
 
-const DraggableDiv = (
-{
+const DraggableDiv = ({
   ref,
   handle,
   onClick,
@@ -113,17 +112,16 @@ const DraggableDiv = (
       pos.current.x = window.innerWidth / 2 - ref.current.offsetWidth / 2;
       pos.current.y = window.innerHeight / 2 - ref.current.offsetHeight / 2;
 
-      console.log(pos.current, window.innerHeight, window.innerWidth)
-      ref.current.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`
+      console.log(pos.current, window.innerHeight, window.innerWidth);
+      ref.current.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`;
     }
   }, [ref]);
 
   return (
     <div
-      className={'fixed z-50 select-none ' + (className ?? '')}
+      className={'z-50 select-none ' + (className ?? '')}
       ref={ref}
       style={{
-        /*transform: `translate(${pos.current.x}px, ${pos.current.y}px)`,*/
         cursor: dragging ? 'grabbing' : undefined,
       }}
     >
@@ -131,4 +129,4 @@ const DraggableDiv = (
     </div>
   );
 };
-export default DraggableDiv
+export default DraggableDiv;

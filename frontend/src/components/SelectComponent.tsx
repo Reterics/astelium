@@ -97,8 +97,8 @@ const SelectComponent: React.FC<SelectProps> = ({
           ref={dropdownRef}
           style={{
             position: 'fixed',
-            top: dropdownPosition?.top,
-            left: dropdownPosition?.left,
+            // top: dropdownPosition?.top, // TODO: Test, and remove connected implementation
+            // left: dropdownPosition?.left,
             width: buttonRef?.current?.offsetWidth || 'unset',
             zIndex: 50,
           }}

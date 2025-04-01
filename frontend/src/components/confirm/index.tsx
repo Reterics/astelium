@@ -1,6 +1,6 @@
 import React from 'react';
 import ConfirmDialog from './ConfirmDialog';
-import mountComponent from "../mounter.tsx";
+import mountComponent from '../mounter.tsx';
 
 export async function confirm(
   children: React.ReactNode,

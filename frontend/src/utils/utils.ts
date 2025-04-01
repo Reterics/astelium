@@ -91,7 +91,6 @@ export function transformTransactionData(
   return monthlyData;
 }
 
-
 export function isObjectEmpty(obj: object) {
   for (const _ in obj) return false;
   return true;

@@ -1,5 +1,5 @@
 import CrudManager from '../../components/CrudManager';
-import {useApi} from "../../hooks/useApi.ts";
+import {useApi} from '../../hooks/useApi.ts';
 
 const Notes = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -21,7 +21,7 @@ const Notes = () => {
 
   const tasks = tasksRaw.map((d) => ({
     value: d.id,
-    label: d.name,
+    label: d.title,
   }));
 
   return (
@@ -31,9 +31,27 @@ const Notes = () => {
       fields={[
         {key: 'title', label: 'Title', type: 'text'},
         {key: 'content', label: 'Content', type: 'text'},
-        {key: 'related_project_id', label: 'Project ID', type: 'select', editable: true, options: projects},
-        {key: 'related_task_id', label: 'Task ID', type: 'select', editable: true, options: tasks},
-        {key: 'related_client_id', label: 'Client ID', type: 'select', editable: true, options: clients},
+        {
+          key: 'related_project_id',
+          label: 'Project ID',
+          type: 'select',
+          editable: true,
+          options: projects,
+        },
+        {
+          key: 'related_task_id',
+          label: 'Task ID',
+          type: 'select',
+          editable: true,
+          options: tasks,
+        },
+        {
+          key: 'related_client_id',
+          label: 'Client ID',
+          type: 'select',
+          editable: true,
+          options: clients,
+        },
       ]}
     />
   );

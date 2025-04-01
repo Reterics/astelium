@@ -22,7 +22,7 @@ import Contracts from './Contracts';
 import PrivateRoute from '../../components/PrivateRoute.tsx';
 import Board from './Board.tsx';
 import Appointments from '../Appointments.tsx';
-import Account from "./Account.tsx";
+import Account from './Account.tsx';
 
 const AdminPanel = () => {
   return (

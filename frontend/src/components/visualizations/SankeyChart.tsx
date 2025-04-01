@@ -1,18 +1,21 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import * as d3 from 'd3';
 import {
   sankey,
   sankeyLinkHorizontal,
   SankeyNodeMinimal,
   SankeyLinkMinimal,
-  SankeyExtraProperties, SankeyNode
+  SankeyExtraProperties,
+  SankeyNode,
 } from 'd3-sankey';
 
-interface SankeyNodeExtended extends SankeyNodeMinimal<SankeyExtraProperties, SankeyExtraProperties> {
+interface SankeyNodeExtended
+  extends SankeyNodeMinimal<SankeyExtraProperties, SankeyExtraProperties> {
   name: string;
 }
 
-interface SankeyLinkExtended extends SankeyLinkMinimal<SankeyExtraProperties, SankeyExtraProperties> {
+interface SankeyLinkExtended
+  extends SankeyLinkMinimal<SankeyExtraProperties, SankeyExtraProperties> {
   source: SankeyNodeExtended;
   target: SankeyNodeExtended;
   value: number;
@@ -21,7 +24,7 @@ interface SankeyLinkExtended extends SankeyLinkMinimal<SankeyExtraProperties, Sa
 
 export interface SankeyInputData {
   nodes: SankeyNode<SankeyNodeExtended, SankeyLinkExtended>[];
-  links: { source: number, target: number, value: number }[]
+  links: {source: number; target: number; value: number}[];
 }
 
 export interface SankeyChartProps {
@@ -37,15 +40,18 @@ export interface SankeyChartProps {
   onClick?: (data: any) => void;
 }
 
-const convertToSankeyFormat = (data: any[], nestKeys: string[]): SankeyInputData => {
+const convertToSankeyFormat = (
+  data: any[],
+  nestKeys: string[]
+): SankeyInputData => {
   const nodeMap: Record<string, number> = {};
-  const nodes: { name: string }[] = [];
-  const links: { source: number; target: number; value: number }[] = [];
+  const nodes: {name: string}[] = [];
+  const links: {source: number; target: number; value: number}[] = [];
 
   const getNodeIndex = (name: string) => {
     if (!(name in nodeMap)) {
       nodeMap[name] = nodes.length;
-      nodes.push({ name });
+      nodes.push({name});
     }
     return nodeMap[name];
   };
@@ -66,12 +72,12 @@ const convertToSankeyFormat = (data: any[], nestKeys: string[]): SankeyInputData
       if (existingLink) {
         existingLink.value += 1;
       } else {
-        links.push({ source: sourceIndex, target: targetIndex, value: 1 });
+        links.push({source: sourceIndex, target: targetIndex, value: 1});
       }
     }
   });
 
-  return { nodes, links };
+  return {nodes, links};
 };
 
 const SankeyChart: React.FC<SankeyChartProps> = ({
@@ -91,7 +97,7 @@ const SankeyChart: React.FC<SankeyChartProps> = ({
   useEffect(() => {
     if (!data || !svgRef.current || !data.length || nestKeys.length < 2) return;
 
-    const margin = { top: 20, right: 30, bottom: 30, left: 50 };
+    const margin = {top: 20, right: 30, bottom: 30, left: 50};
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -99,54 +105,74 @@ const SankeyChart: React.FC<SankeyChartProps> = ({
     svg.selectAll('*').remove();
 
     const ctx = document.createElement('canvas').getContext('2d')!;
-    ctx.font = "12px Arial";
+    ctx.font = '12px Arial';
 
     const minNodeWidth = 80;
     const maxNodeWidth = 150;
     const nodeWidths: Record<string, number> = {};
 
-    const sankeyData = convertToSankeyFormat(data, nestKeys)
-    sankeyData.nodes.forEach(node => {
+    const sankeyData = convertToSankeyFormat(data, nestKeys);
+    sankeyData.nodes.forEach((node) => {
       const textWidth = ctx.measureText(node.name).width + 20;
-      nodeWidths[node.name] = Math.min(Math.max(textWidth, minNodeWidth), maxNodeWidth);
+      nodeWidths[node.name] = Math.min(
+        Math.max(textWidth, minNodeWidth),
+        maxNodeWidth
+      );
     });
 
     const sankeyGenerator = sankey<SankeyNodeExtended, SankeyLinkExtended>()
       .nodeWidth(minNodeWidth)
       .nodePadding(15)
-      .extent([[1, 1], [innerWidth - 1, innerHeight - 5]]);
+      .extent([
+        [1, 1],
+        [innerWidth - 1, innerHeight - 5],
+      ]);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    const { nodes, links } = sankeyGenerator(sankeyData);
+    const {nodes, links} = sankeyGenerator(sankeyData);
 
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       node.x1 = node.x0! + nodeWidths[node.name];
     });
 
-    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+    const g = svg
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const colorScale = d3.scaleOrdinal<string>()
-      .domain(nodes.map(d => d.name))
+    const colorScale = d3
+      .scaleOrdinal<string>()
+      .domain(nodes.map((d) => d.name))
       .range(fills);
 
-    const defs = svg.append("defs");
+    const defs = svg.append('defs');
 
     links.forEach((link, i) => {
       const gradientId = `gradient-${i}`;
-      const gradient = defs.append("linearGradient")
-        .attr("id", gradientId)
-        .attr("gradientUnits", "userSpaceOnUse")
-        .attr("x1", link.source.x1 || 0)
-        .attr("x2", link.target.x0 || 0);
+      const gradient = defs
+        .append('linearGradient')
+        .attr('id', gradientId)
+        .attr('gradientUnits', 'userSpaceOnUse')
+        .attr('x1', link.source.x1 || 0)
+        .attr('x2', link.target.x0 || 0);
 
-      gradient.append("stop")
-        .attr("offset", "0%")
-        .attr("stop-color", d3.color(colorScale(link.source?.name))?.brighter(1.5)?.toString() || themeColor);
+      gradient
+        .append('stop')
+        .attr('offset', '0%')
+        .attr(
+          'stop-color',
+          d3.color(colorScale(link.source?.name))?.brighter(1.5)?.toString() ||
+            themeColor
+        );
 
-      gradient.append("stop")
-        .attr("offset", "100%")
-        .attr("stop-color", d3.color(colorScale(link.target?.name))?.darker(0.5)?.toString() || themeColor);
+      gradient
+        .append('stop')
+        .attr('offset', '100%')
+        .attr(
+          'stop-color',
+          d3.color(colorScale(link.target?.name))?.darker(0.5)?.toString() ||
+            themeColor
+        );
 
       link.gradientId = gradientId;
     });
@@ -157,8 +183,8 @@ const SankeyChart: React.FC<SankeyChartProps> = ({
       .join('path')
       .attr('d', sankeyLinkHorizontal())
       .attr('fill', 'none')
-      .attr('stroke', d => `url(#${d.gradientId})`)
-      .attr('stroke-width', d => Math.max(1, (d as any).width))
+      .attr('stroke', (d) => `url(#${d.gradientId})`)
+      .attr('stroke-width', (d) => Math.max(1, (d as any).width))
       .attr('stroke-opacity', 0.4)
       .style('cursor', 'pointer')
       .on('mouseover', () => onMouseOver?.())
@@ -166,23 +192,26 @@ const SankeyChart: React.FC<SankeyChartProps> = ({
       .on('mouseout', () => onMouseOut?.())
       .on('click', (_event, d) => onClick?.(d));
 
-    const node = g.append('g')
+    const node = g
+      .append('g')
       .selectAll('g')
       .data(nodes)
       .join('g')
-      .attr('transform', d => `translate(${d.x0},${d.y0})`);
+      .attr('transform', (d) => `translate(${d.x0},${d.y0})`);
 
-    node.append('rect')
-      .attr('width', d => nodeWidths[d.name])
-      .attr('height', d => Math.max(30, d.y1! - d.y0!))
-      .attr('fill', d => colorScale(d.name) || themeColor)
+    node
+      .append('rect')
+      .attr('width', (d) => nodeWidths[d.name])
+      .attr('height', (d) => Math.max(30, d.y1! - d.y0!))
+      .attr('fill', (d) => colorScale(d.name) || themeColor)
       .style('cursor', 'move');
 
-    node.append('foreignObject')
+    node
+      .append('foreignObject')
       .attr('x', 5)
       .attr('y', 5)
-      .attr('width', d => nodeWidths[d.name] - 10)
-      .attr('height', d => Math.max(30, d.y1! - d.y0!) - 10)
+      .attr('width', (d) => nodeWidths[d.name] - 10)
+      .attr('height', (d) => Math.max(30, d.y1! - d.y0!) - 10)
       .append('xhtml:div')
       .style('display', 'flex')
       .style('align-items', 'center')
@@ -194,26 +223,46 @@ const SankeyChart: React.FC<SankeyChartProps> = ({
       .style('font-size', '12px')
       .style('color', '#333')
       .style('user-select', 'text')
-      .text(d => d.name);
+      .text((d) => d.name);
 
     node.call(
-      d3.drag<any, any>()
-        .subject(d => d)
-        .on('start', function () { this.parentNode.appendChild(this); })
+      d3
+        .drag<any, any>()
+        .subject((d) => d)
+        .on('start', function () {
+          this.parentNode.appendChild(this);
+        })
         .on('drag', function (event, d) {
           d.y0 += event.dy;
           d.y1 += event.dy;
-          d3.select(this)
-            .attr('transform', `translate(${d.x0},${d.y0})`);
-          sankeyGenerator.update({ nodes, links });
+          d3.select(this).attr('transform', `translate(${d.x0},${d.y0})`);
+          sankeyGenerator.update({nodes, links});
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
           g.selectAll('path').attr('d', sankeyLinkHorizontal());
         })
     );
-  }, [data, width, height, themeColor, fills, onMouseMove, onMouseOut, onMouseOver, onClick, nestKeys]);
+  }, [
+    data,
+    width,
+    height,
+    themeColor,
+    fills,
+    onMouseMove,
+    onMouseOut,
+    onMouseOver,
+    onClick,
+    nestKeys,
+  ]);
 
-  return <svg ref={svgRef} width={width} height={height} className='bg-white rounded shadow' />;
+  return (
+    <svg
+      ref={svgRef}
+      width={width}
+      height={height}
+      className='bg-white rounded shadow'
+    />
+  );
 };
 
 export default SankeyChart;

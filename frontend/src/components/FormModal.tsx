@@ -4,7 +4,8 @@ import SelectComponent from './SelectComponent.tsx';
 import MultiSelectComponent from './MultiSelectComponent.tsx';
 import {CrudField} from './CrudManager.tsx';
 import FileComponent from './FileComponent.tsx';
-import DateComponent from "./DateComponent.tsx";
+import DateComponent from './DateComponent.tsx';
+import {defaultModalButtons} from '../utils/reactUtils.tsx';
 
 export interface FormModalProps {
   title: string;
@@ -41,7 +42,13 @@ const FormModal: React.FC<FormModalProps> = ({
   };
 
   return (
-    <Modal title={title} onClose={onClose}>
+    <Modal
+      title={title}
+      onClose={onClose}
+      buttons={defaultModalButtons(() => {
+        onSave(form);
+      })}
+    >
       <div className='space-y-3'>
         <div
           className={
@@ -97,7 +104,7 @@ const FormModal: React.FC<FormModalProps> = ({
                 />
               ) : field.type === 'date' ? (
                 <DateComponent
-                  value={form[field.key] as string|undefined}
+                  value={form[field.key] as string | undefined}
                   onChange={(e) => {
                     handleInputChange(field.key, e.target.value);
                     if (field.props?.onChange) {
@@ -122,15 +129,6 @@ const FormModal: React.FC<FormModalProps> = ({
           ))}
         </div>
         {children}
-        <button
-          type='button'
-          onClick={() => {
-            onSave(form);
-          }}
-          className='w-full p-2 bg-zinc-800 text-white rounded-md hover:bg-zinc-700 transition'
-        >
-          Save
-        </button>
       </div>
     </Modal>
   );

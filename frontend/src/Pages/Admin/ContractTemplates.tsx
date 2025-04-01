@@ -1,9 +1,9 @@
 import {useApi} from '../../hooks/useApi.ts';
-import {useState} from 'react';
 import TemplateModal, {
   Template,
 } from '../../components/contracts/TemplateModal.tsx';
 import TableComponent from '../../components/TableComponent.tsx';
+import mountComponent from '../../components/mounter.tsx';
 
 const ContractTemplates = () => {
   const {
@@ -12,7 +12,6 @@ const ContractTemplates = () => {
     updateMutation,
     deleteMutation,
   } = useApi('contract-templates');
-  const [currentTemplate, setCurrentTemplate] = useState<Template | null>(null);
 
   const handleSave = async (template: Template) => {
     if (template.id) {
@@ -22,7 +21,6 @@ const ContractTemplates = () => {
     } else {
       await createMutation.mutateAsync(template);
     }
-    setCurrentTemplate(null);
   };
 
   const handleDelete = async (id: number) => {
@@ -30,7 +28,7 @@ const ContractTemplates = () => {
   };
 
   return (
-    <div className="p-2 bg-zinc-50">
+    <div className='p-2 bg-zinc-50'>
       <TableComponent
         columns={[
           {key: 'name', label: 'Template Name', type: 'text', editable: true},
@@ -38,19 +36,15 @@ const ContractTemplates = () => {
         ]}
         data={templates || []}
         onDelete={(id) => handleDelete(id as number)}
-        onCreate={() => {
-          setCurrentTemplate({fields:[]});
+        onCreate={async () => {
+          const currentTemplate = await mountComponent(TemplateModal, {
+            initialTemplate: {fields: []},
+          });
+          if (currentTemplate) {
+            await handleSave(currentTemplate as unknown as Template);
+          }
         }}
       />
-
-      {currentTemplate && (
-        <TemplateModal
-          onClose={() => setCurrentTemplate(null)}
-          template={currentTemplate!}
-          setTemplate={setCurrentTemplate}
-          onSave={() => handleSave(currentTemplate!)}
-        />
-      )}
     </div>
   );
 };

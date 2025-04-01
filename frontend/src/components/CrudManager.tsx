@@ -2,8 +2,8 @@ import TableComponent, {TableAction, TableRow} from './TableComponent.tsx';
 import FormModal from './FormModal.tsx';
 import {SelectOption, SelectOptions} from './SelectComponent.tsx';
 import {useApi} from '../hooks/useApi.ts';
-import {confirm} from "./confirm";
-import mountComponent from "./mounter.tsx";
+import {confirm} from './confirm';
+import mountComponent from './mounter.tsx';
 
 export type FieldType =
   | 'text'
@@ -44,7 +44,7 @@ const CrudManager = <T extends Record<string, any>>({
   fields,
   children,
   childOnly,
-  actions
+  actions,
 }: CrudManagerProps) => {
   const {data, isLoading, createMutation, deleteMutation, updateMutation} =
     useApi(apiEndpoint);
@@ -101,7 +101,9 @@ const CrudManager = <T extends Record<string, any>>({
           columns={fields.filter((f) => f.visible !== false)}
           data={processedData}
           onDelete={async (id) => {
-            const response = await confirm('Are you sure to delete this component?');
+            const response = await confirm(
+              'Are you sure to delete this component?'
+            );
             if (response) {
               deleteMutation.mutate(id as number);
             }

@@ -1,20 +1,48 @@
 import {ReactNode, useEffect, useState} from 'react';
 import FormModal from './FormModal';
 import TableComponent, {TableRow} from './TableComponent';
-import {useApi} from '../hooks/useApi.ts';
-import {SelectOption} from "./SelectComponent.tsx";
-import {lineVatRateNormal, lineVatRateSimplified} from "../utils/invoiceUtils.ts";
-import {useTranslation} from "react-i18next";
-import {getTranslatedList} from "../i18n/utils.ts";
+import {SelectOption} from './SelectComponent.tsx';
+import {
+  lineVatRateNormal,
+  lineVatRateSimplified,
+} from '../utils/invoiceUtils.ts';
+import {useTranslation} from 'react-i18next';
+import {getTranslatedList} from '../i18n/utils.ts';
 
 export interface InvoiceItem {
   id?: number;
-  lineNatureIndicator: 'SERVICE'|'PRODUCT'|'OTHER';
-  product_code_category: 'OWN'|'VTSZ'|'SZJ'|'KN'|'AHK'|'CSK'|'KT'|'EJ'|'TESZOR'|'OTHER';
+  lineNatureIndicator: 'SERVICE' | 'PRODUCT' | 'OTHER';
+  product_code_category:
+    | 'OWN'
+    | 'VTSZ'
+    | 'SZJ'
+    | 'KN'
+    | 'AHK'
+    | 'CSK'
+    | 'KT'
+    | 'EJ'
+    | 'TESZOR'
+    | 'OTHER';
   product_code_value: string;
   line_description: string;
   quantity: number;
-  unit_of_measure: 'PIECE'|'KILOGRAM'|'TON'|'KWH'|'DAY'|'HOUR'|'MINUTE'|'MONTH'|'LITER'|'KILOMETER'|'CUBIC_METER'|'METER'|'LINEAR_METER'|'CARTON'|'PACK'|'OWN';
+  unit_of_measure:
+    | 'PIECE'
+    | 'KILOGRAM'
+    | 'TON'
+    | 'KWH'
+    | 'DAY'
+    | 'HOUR'
+    | 'MINUTE'
+    | 'MONTH'
+    | 'LITER'
+    | 'KILOMETER'
+    | 'CUBIC_METER'
+    | 'METER'
+    | 'LINEAR_METER'
+    | 'CARTON'
+    | 'PACK'
+    | 'OWN';
   unit_price: number;
   line_net_amount: number;
   line_vat_rate: number;
@@ -30,74 +58,73 @@ export interface Invoice {
   invoice_issue_date: string;
   invoice_delivery_date: string;
   invoice_payment_date: string;
-  invoice_category: 'SIMPLIFIED'|'NORMAL'|'AGGREGATE';
+  invoice_category: 'SIMPLIFIED' | 'NORMAL' | 'AGGREGATE';
   invoice_currency: 'HUF';
-  invoice_payment_method: 'CASH'|'TRANSFER'|'CARD'|'VOUCHER'|'OTHER';
-  invoice_appearance: 'ELECTRONIC'|'PAPER'|'EDI'|'UNKNOWN';
+  invoice_payment_method: 'CASH' | 'TRANSFER' | 'CARD' | 'VOUCHER' | 'OTHER';
+  invoice_appearance: 'ELECTRONIC' | 'PAPER' | 'EDI' | 'UNKNOWN';
   invoice_exchange_rate: number;
   items: InvoiceItem[];
 }
 
 const InvoiceModal = ({
   onClose,
-  invoice,
-  setInvoice,
+  initialInvoice,
   onSave,
+  invoiceUsers,
+  clients,
 }: {
   onClose: () => void;
-  invoice: Invoice;
-  setInvoice: (invoice: Invoice) => void;
-  onSave: () => void;
+  initialInvoice: Invoice;
+  onSave: (invoice: Invoice) => void;
+  invoiceUsers: SelectOption[];
+  clients: SelectOption[];
 }) => {
-  const {data: invoiceUsersRaw, isLoading: isUsersLoading} =
-    useApi('invoice-users');
-  const {data: clientsRaw, isLoading: isClientsLoading} = useApi('clients');
+  const [invoice, setInvoice] = useState<Invoice>(initialInvoice);
   const {t} = useTranslation();
   const translationPrefix = 'invoice.';
   const currencyName = 'Ft';
 
-  const invoiceUsers = invoiceUsersRaw.map((d) => ({
-    value: d.id,
-    label: d.name,
-  }));
-
-  const clients = clientsRaw.map((d) => ({
-    value: d.id,
-    label: d.name,
-  }));
-
   const [items, setItems] = useState<InvoiceItem[]>(invoice.items || []);
-  const [itemToAdd, setItemToAdd] = useState<TableRow>({})
+  const [itemToAdd, setItemToAdd] = useState<TableRow>({});
 
-  const [invoiceCategory, setInvoiceCategory] = useState<'SIMPLIFIED'|'NORMAL'>('SIMPLIFIED');
-  const [lineVatRate, setLineVatRate] = useState<SelectOption[]>(lineVatRateSimplified);
+  const [invoiceCategory, setInvoiceCategory] = useState<
+    'SIMPLIFIED' | 'NORMAL'
+  >('SIMPLIFIED');
+  const [lineVatRate, setLineVatRate] = useState<SelectOption[]>(
+    lineVatRateSimplified
+  );
   const [summary, setSummary] = useState({
     subTotal: 0,
     tax: 0,
     taxType: lineVatRate[0].label,
     total: 0,
-  })
+  });
 
   useEffect(() => {
-    setSummary(items.reduce((sum, currentValue)=> {
-      sum.subTotal += currentValue.line_net_amount;
-      sum.tax += currentValue.line_vat_amount;
-      sum.total += currentValue.line_gross_amount;
-      const vatRate = lineVatRate
-        .find(v=> String(v.value) === String(currentValue.line_vat_rate));
-      if (vatRate) {
-        sum.taxType = vatRate.label;
-      }
+    setSummary(
+      items.reduce(
+        (sum, currentValue) => {
+          sum.subTotal += currentValue.line_net_amount;
+          sum.tax += currentValue.line_vat_amount;
+          sum.total += currentValue.line_gross_amount;
+          const vatRate = lineVatRate.find(
+            (v) => String(v.value) === String(currentValue.line_vat_rate)
+          );
+          if (vatRate) {
+            sum.taxType = vatRate.label;
+          }
 
-      return sum;
-    }, {
-      subTotal: 0,
-      tax: 0,
-      taxType: lineVatRate[0].label,
-      total: 0,
-    }))
-  }, [items, lineVatRate])
-  if (isUsersLoading || isClientsLoading) return <p>Loading...</p>;
+          return sum;
+        },
+        {
+          subTotal: 0,
+          tax: 0,
+          taxType: lineVatRate[0].label,
+          total: 0,
+        }
+      )
+    );
+  }, [items, lineVatRate]);
 
   const deleteItem = (index: number) => {
     const updatedItems = [...invoice.items];
@@ -106,11 +133,11 @@ const InvoiceModal = ({
   };
 
   const calculateFromUnitPrice = function (form: TableRow) {
-    if (form.quantity && form.quantity.includes(",")) {
-      form.quantity = form.quantity.replace(",",".");
+    if (form.quantity && form.quantity.includes(',')) {
+      form.quantity = form.quantity.replace(',', '.');
     }
-    if (form.unit_price && form.unit_price.includes(",")) {
-      form.unit_price = form.unit_price.replace(",",".");
+    if (form.unit_price && form.unit_price.includes(',')) {
+      form.unit_price = form.unit_price.replace(',', '.');
     }
 
     const lineNetAmountData = parseInt(form.line_net_amount);
@@ -120,24 +147,24 @@ const InvoiceModal = ({
     const quantity = parseFloat(form.quantity);
     const unitPrice = parseInt(form.unit_price);
 
-    if (invoiceCategory === "SIMPLIFIED") {
+    if (invoiceCategory === 'SIMPLIFIED') {
       if (!Number.isNaN(quantity) && !Number.isNaN(unitPrice)) {
-        form.line_gross_amount = quantity * unitPrice
+        form.line_gross_amount = quantity * unitPrice;
       }
       if (!Number.isNaN(form.line_gross_amount) && !Number.isNaN(lineVatRate)) {
         const vatValue = (form.line_gross_amount * lineVatRate).toFixed(2);
-        form.line_vat_amount = vatValue
-        form.line_net_amount = form.line_gross_amount - Number(vatValue)
+        form.line_vat_amount = vatValue;
+        form.line_net_amount = form.line_gross_amount - Number(vatValue);
       }
-    }else{
+    } else {
       if (!Number.isNaN(quantity) && !Number.isNaN(unitPrice)) {
-        form.line_net_amount = quantity * unitPrice
+        form.line_net_amount = quantity * unitPrice;
       }
 
       if (!Number.isNaN(lineNetAmountData) && !Number.isNaN(lineVatRate)) {
-        form.line_vat_amount = (lineNetAmountData * lineVatRate).toFixed(2)
+        form.line_vat_amount = (lineNetAmountData * lineVatRate).toFixed(2);
       }
-      form.line_gross_amount = form.line_net_amount + form.line_vat_amount
+      form.line_gross_amount = form.line_net_amount + form.line_vat_amount;
     }
 
     return form;
@@ -148,7 +175,7 @@ const InvoiceModal = ({
       title={invoice.id ? 'Edit Invoice' : 'Create Invoice'}
       onClose={onClose}
       data={invoice as Record<string, any>}
-      onSave={onSave}
+      onSave={() => onSave(invoice)}
       cols={4}
       fields={[
         {
@@ -338,8 +365,11 @@ const InvoiceModal = ({
             options: lineVatRate,
             props: {
               onChange: (_value, form) => {
-                setSummary((prevSummary) =>
-                  ({...prevSummary, taxType: lineVatRate.find(v => v.value === _value)!.label as ReactNode}))
+                setSummary((prevSummary) => ({
+                  ...prevSummary,
+                  taxType: lineVatRate.find((v) => v.value === _value)!
+                    .label as ReactNode,
+                }));
                 return calculateFromUnitPrice(form);
               },
             },

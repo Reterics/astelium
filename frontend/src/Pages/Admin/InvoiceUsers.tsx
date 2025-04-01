@@ -1,10 +1,10 @@
 import CrudManager from '../../components/CrudManager';
-import {useTranslation} from "react-i18next";
-import {getTranslatedList} from "../../i18n/utils.ts";
-import {streetTypes} from "../../utils/invoiceUtils.ts";
+import {useTranslation} from 'react-i18next';
+import {getTranslatedList} from '../../i18n/utils.ts';
+import {streetTypes} from '../../utils/invoiceUtils.ts';
 
 const InvoiceUsers = () => {
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const translationPrefix = 'invoice.';
 
   return (
@@ -51,7 +51,7 @@ const InvoiceUsers = () => {
           type: 'select',
           editable: true,
           visible: false,
-          options: getTranslatedList(streetTypes, t, translationPrefix)
+          options: getTranslatedList(streetTypes, t, translationPrefix),
         },
         {
           key: 'supplier_address',

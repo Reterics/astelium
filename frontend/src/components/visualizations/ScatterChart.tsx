@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import * as d3 from 'd3';
 
 interface ScatterChartProps {
-  data: { [key: string]: any }[];
+  data: {[key: string]: any}[];
   width?: number;
   height?: number;
   xAxisLabel?: string;
@@ -49,7 +49,7 @@ const ScatterChart: React.FC<ScatterChartProps> = ({
   useEffect(() => {
     if (!data || !svgRef.current) return;
 
-    const margin = { top: 30, right: 10, bottom: 50, left: 60 };
+    const margin = {top: 30, right: 10, bottom: 50, left: 60};
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -57,10 +57,10 @@ const ScatterChart: React.FC<ScatterChartProps> = ({
     svg.selectAll('*').remove();
 
     // Compute scale domains
-    const xMin = d3.min(data, d => d[xAxisValue])!;
-    const xMax = d3.max(data, d => d[xAxisValue])!;
-    const yMin = d3.min(data, d => d[yAxisValue])!;
-    const yMax = d3.max(data, d => d[yAxisValue])!;
+    const xMin = d3.min(data, (d) => d[xAxisValue])!;
+    const xMax = d3.max(data, (d) => d[xAxisValue])!;
+    const yMin = d3.min(data, (d) => d[yAxisValue])!;
+    const yMax = d3.max(data, (d) => d[yAxisValue])!;
 
     /**
      * Returns the appropriate D3 scale for the given axis type.
@@ -76,9 +76,15 @@ const ScatterChart: React.FC<ScatterChartProps> = ({
         return d3.scaleTime().domain([min, max]).range(range);
       }
       if (scaleType === 'log') {
-        return d3.scaleLog().domain([Math.max(1, min), max * 1.1]).range(range);
+        return d3
+          .scaleLog()
+          .domain([Math.max(1, min), max * 1.1])
+          .range(range);
       }
-      return d3.scaleLinear().domain([min * 0.9, max * 1.1]).range(range);
+      return d3
+        .scaleLinear()
+        .domain([min * 0.9, max * 1.1])
+        .range(range);
     };
 
     // Create scales
@@ -86,17 +92,27 @@ const ScatterChart: React.FC<ScatterChartProps> = ({
     const y = getScale('y');
 
     // Create Axes
-    const xAxis = d3.axisBottom(x).ticks(innerWidth / 100).tickSize(-innerHeight);
-    const yAxis = d3.axisLeft(y).ticks(innerHeight / 50).tickSize(-innerWidth);
+    const xAxis = d3
+      .axisBottom(x)
+      .ticks(innerWidth / 100)
+      .tickSize(-innerHeight);
+    const yAxis = d3
+      .axisLeft(y)
+      .ticks(innerHeight / 50)
+      .tickSize(-innerWidth);
 
-    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+    const g = svg
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const xAxisNode = g.append('g')
+    const xAxisNode = g
+      .append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0,${innerHeight})`)
       .call(xAxis);
 
-    xAxisNode.append('text')
+    xAxisNode
+      .append('text')
       .attr('x', innerWidth)
       .attr('y', 40)
       .style('text-anchor', 'end')
@@ -104,11 +120,10 @@ const ScatterChart: React.FC<ScatterChartProps> = ({
       .style('fill', themeColor)
       .text(xAxisLabel);
 
-    const yAxisNode = g.append('g')
-      .attr('class', 'y-axis')
-      .call(yAxis);
+    const yAxisNode = g.append('g').attr('class', 'y-axis').call(yAxis);
 
-    yAxisNode.append('text')
+    yAxisNode
+      .append('text')
       .attr('x', -10)
       .attr('y', -20)
       .style('text-anchor', 'end')
@@ -116,28 +131,37 @@ const ScatterChart: React.FC<ScatterChartProps> = ({
       .style('fill', themeColor)
       .text(yAxisLabel);
 
-    const dots = g.append("g").attr("clip-path", "url(#clip)")
+    const dots = g
+      .append('g')
+      .attr('clip-path', 'url(#clip)')
       .selectAll('.dot')
       .data(data)
       .enter()
       .append('circle')
       .attr('class', 'dot')
       .attr('r', 6)
-      .attr('cx', d => x(d[xAxisValue]))
-      .attr('cy', d => y(d[yAxisValue]))
-      .style('fill', d => fills[d[fillKey]] || fills[0])
-      .attr('stroke', d => d3.rgb(fills[d[fillKey]] || fills[0]).darker(2).toString())
+      .attr('cx', (d) => x(d[xAxisValue]))
+      .attr('cy', (d) => y(d[yAxisValue]))
+      .style('fill', (d) => fills[d[fillKey]] || fills[0])
+      .attr('stroke', (d) =>
+        d3
+          .rgb(fills[d[fillKey]] || fills[0])
+          .darker(2)
+          .toString()
+      )
       .style('fill-opacity', 0.6)
       .on('mouseover', (event, d) => onMouseOver?.(event, d))
       .on('mouseout', () => onMouseOut?.())
       .on('mousemove', (event, d) => onMouseMove?.(event, d))
       .on('click', (_event, d) => onClick?.(d));
 
-    svg.selectAll('.x-axis .tick text, .y-axis .tick text')
+    svg
+      .selectAll('.x-axis .tick text, .y-axis .tick text')
       .style('fill', tickColor)
       .style('font-size', '12px');
 
-    svg.selectAll('.x-axis .domain, .y-axis .domain')
+    svg
+      .selectAll('.x-axis .domain, .y-axis .domain')
       .attr('stroke', borderColor);
 
     g.selectAll('.tick line')
@@ -145,7 +169,8 @@ const ScatterChart: React.FC<ScatterChartProps> = ({
       .style('opacity', '0.4')
       .attr('stroke', borderColor);
 
-    const zoomBehavior = d3.zoom()
+    const zoomBehavior = d3
+      .zoom()
       .scaleExtent([0.5, 10])
       //.translateExtent([[-100, 100], [width, height]])
       //.extent([[-100, 100], [width, height]])
@@ -156,7 +181,9 @@ const ScatterChart: React.FC<ScatterChartProps> = ({
         xAxisNode.call(xAxis.scale(newX));
         yAxisNode.call(yAxis.scale(newY));
 
-        dots.attr('cx', d => newX(d[xAxisValue])).attr('cy', d => newY(d[yAxisValue]));
+        dots
+          .attr('cx', (d) => newX(d[xAxisValue]))
+          .attr('cy', (d) => newY(d[yAxisValue]));
 
         g.selectAll('.tick line')
           .attr('stroke', themeColor)
@@ -167,10 +194,36 @@ const ScatterChart: React.FC<ScatterChartProps> = ({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     svg.call(zoomBehavior);
+  }, [
+    data,
+    width,
+    height,
+    xAxisLabel,
+    yAxisLabel,
+    themeColor,
+    borderColor,
+    tickColor,
+    fillKey,
+    fills,
+    scaleType,
+    onMouseMove,
+    onMouseOut,
+    onMouseOver,
+    onClick,
+    xAxisValue,
+    yAxisValue,
+    xAxisType,
+    yAxisType,
+  ]);
 
-  }, [data, width, height, xAxisLabel, yAxisLabel, themeColor, borderColor, tickColor, fillKey, fills, scaleType, onMouseMove, onMouseOut, onMouseOver, onClick, xAxisValue, yAxisValue, xAxisType, yAxisType]);
-
-  return <svg ref={svgRef} width={width} height={height} className="bg-white rounded shadow" />;
+  return (
+    <svg
+      ref={svgRef}
+      width={width}
+      height={height}
+      className='bg-white rounded shadow'
+    />
+  );
 };
 
 export default ScatterChart;

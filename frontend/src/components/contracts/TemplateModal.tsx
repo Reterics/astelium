@@ -1,18 +1,21 @@
-import {ChangeEvent, Dispatch, SetStateAction, useState} from 'react';
+import {ChangeEvent, useState} from 'react';
 import Modal from '../Modal.tsx';
 import FileComponent from '../FileComponent.tsx';
 import RichTextEditor from './RichTextEditor.tsx';
-import TableComponent from "../TableComponent.tsx";
-import {CrudField} from "../CrudManager.tsx";
-import {normalizeName} from "../../utils/templateUtils.ts";
+import TableComponent from '../TableComponent.tsx';
+import {CrudField} from '../CrudManager.tsx';
+import {normalizeName} from '../../utils/templateUtils.ts';
 
-export interface TemplateRaw {
+export interface TemplateRaw extends Template {
   file: File;
-  html?: string;
-  document: Template;
 }
 
-export type TemplateFieldTypeKind = 'Text'|'Phone'|'Tax Number'|'Address'|'Signature'
+export type TemplateFieldTypeKind =
+  | 'Text'
+  | 'Phone'
+  | 'Tax Number'
+  | 'Address'
+  | 'Signature';
 
 export interface TemplateFieldType {
   id: number;
@@ -26,33 +29,33 @@ export interface Template {
   name?: string;
   path?: string;
   content?: string;
-  fields: TemplateFieldType[]
+  fields: TemplateFieldType[];
 }
-
 
 export interface TemplateModalProps {
   onClose?: () => void;
   onSave?: (template: TemplateRaw) => void;
   selected?: null | Template;
 
-  template: Template;
-  setTemplate: Dispatch<SetStateAction<Template | null>>;
+  initialTemplate: Template;
 }
 
 const TemplateModal = ({
   onClose,
   onSave,
-  template,
-  setTemplate,
+  initialTemplate,
 }: TemplateModalProps) => {
   const [file, setFile] = useState<File | null>(null);
+  const [template, setTemplate] = useState<Template>(initialTemplate);
 
-  const setFields = (modifier: (prevFields: TemplateFieldType[]) => TemplateFieldType[]) => {
+  const setFields = (
+    modifier: (prevFields: TemplateFieldType[]) => TemplateFieldType[]
+  ) => {
     setTemplate((prevState) => ({
       ...(prevState || {}),
       fields: modifier(prevState?.fields || []),
-    }))
-  }
+    }));
+  };
 
   const fieldColumns: CrudField[] = [
     {key: 'name', label: 'Name', type: 'text', editable: true},
@@ -65,7 +68,9 @@ const TemplateModal = ({
     },
     {key: 'validation', label: 'Validation', type: 'text', editable: true},
   ];
-  const [openSection, setOpenSection] = useState<'fields' | 'editor' | null>('fields');
+  const [openSection, setOpenSection] = useState<'fields' | 'editor' | null>(
+    'fields'
+  );
 
   const setText = (text: string) => {
     setTemplate({...template, content: text});
@@ -85,19 +90,12 @@ const TemplateModal = ({
       alert('You need to upload a file for creating a template');
       return;
     }
-    const extension = file
-      ? file.name.substring(file.name.lastIndexOf('.'))
-      : '';
+    // const extension = file ? file.name.substring(file.name.lastIndexOf('.')) : '';
 
     const rawDocument: TemplateRaw = {
       file: file as File,
-      html: template.content,
-      document: {
-        ...template,
-        path: file
-          ? 'files/' + (template.name || '') + extension
-          : template.path,
-      },
+      ...template,
+      // path: file ? 'files/' + (template.name || '') + extension : template.path
     };
     if (typeof onSave === 'function') {
       onSave(rawDocument);
@@ -109,7 +107,6 @@ const TemplateModal = ({
       onClose();
     }
   };
-
 
   return (
     <Modal title={'Template Modal'} onClose={close}>
@@ -170,7 +167,7 @@ const TemplateModal = ({
           </button>
         </div>
         {openSection === 'fields' && (
-          <div className="p-2 bg-zinc-50">
+          <div className='p-2 bg-zinc-50'>
             <TableComponent
               columns={fieldColumns}
               data={template.fields}
@@ -178,19 +175,16 @@ const TemplateModal = ({
                 setFields(
                   (prev: TemplateFieldType[]) =>
                     [
-                      ...prev.map(
-                        (item) =>
-                          ({
-                            ...item,
-                            ...(changes
-                              .map((change) => ({
-                                ...change,
-                                id: change.id,
-                                name: normalizeName(change.name),
-                              }))
-                              .find((c) => c.id === item.id) || {})
-                          })
-                      ),
+                      ...prev.map((item) => ({
+                        ...item,
+                        ...(changes
+                          .map((change) => ({
+                            ...change,
+                            id: change.id,
+                            name: normalizeName(change.name || ''),
+                          }))
+                          .find((c) => c.id === item.id) || {}),
+                      })),
                     ] as TemplateFieldType[]
                 );
               }}

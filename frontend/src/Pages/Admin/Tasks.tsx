@@ -7,10 +7,10 @@ import GroupedTableComponent from '../../components/GroupedTableComponent.tsx';
 import SelectComponent from '../../components/SelectComponent.tsx';
 import {useState} from 'react';
 import UserAvatar from '../../components/UserAvatar.tsx';
-import {FiPlus, FiSearch} from "react-icons/fi";
-import FormModal from "../../components/FormModal.tsx";
-import TaskModal from "../../components/TaskModal.tsx";
-import {Task} from "../../components/KanbanBoard.tsx";
+import {FiPlus, FiSearch} from 'react-icons/fi';
+import FormModal from '../../components/FormModal.tsx';
+import TaskModal from '../../components/TaskModal.tsx';
+import {Task} from '../../components/KanbanBoard.tsx';
 
 const Tasks = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -149,7 +149,7 @@ const Tasks = () => {
   ];
 
   return (
-    <div className="pb-1 shadow-md bg-zinc-50">
+    <div className='pb-1 shadow-md bg-zinc-50'>
       <div className='p-2 pb-0 flex items-center space-x-2'>
         <div className='flex items-center space-x-2 flex-1'>
           <FiSearch className='text-zinc-600' />
@@ -160,7 +160,9 @@ const Tasks = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className='p-1 border border-zinc-300 rounded-xs bg-white text-zinc-900'
           />
-          <label className='ps-2 text-sm font-medium text-zinc-700'>Group:</label>
+          <label className='ps-2 text-sm font-medium text-zinc-700'>
+            Group:
+          </label>
           <SelectComponent
             column={{
               key: 'group',

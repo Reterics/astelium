@@ -1,4 +1,10 @@
-import React, {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {debounce} from 'throttle-debounce';
 import {FiTrash, FiRefreshCw, FiSearch, FiPlus, FiSave} from 'react-icons/fi';
 import MultiSelectComponent from './MultiSelectComponent';
@@ -18,18 +24,20 @@ export interface FilteredTableRow extends TableRow {
 export interface TableAction {
   onClick: (row: TableRow, rowIndex: number) => void;
   icon: ReactNode;
-  isActive: (row: TableRow, rowIndex: number) => boolean
+  isActive: (row: TableRow, rowIndex: number) => boolean;
 }
 
 interface TableProps {
   columns: CrudField[];
   data: TableRow[];
-  onEdit?: (updatedData: TableRow[]) => Promise<void|boolean> | void | boolean;
+  onEdit?: (
+    updatedData: TableRow[]
+  ) => Promise<void | boolean> | void | boolean;
   onDelete?: (id: number | string) => void;
   onCreate?: (itemToAdd?: TableRow) => void | boolean | Promise<void>;
   noSearch?: boolean;
-  itemToAdd?: TableRow,
-  setItemToAdd?: React.Dispatch<React.SetStateAction<TableRow>>,
+  itemToAdd?: TableRow;
+  setItemToAdd?: React.Dispatch<React.SetStateAction<TableRow>>;
   pagination?: boolean;
   actions?: TableAction[];
 }
@@ -44,7 +52,7 @@ const TableComponent: React.FC<TableProps> = ({
   itemToAdd,
   setItemToAdd,
   pagination,
-  actions
+  actions,
 }) => {
   const [tableData, setTableData] = useState(data);
   const [sortConfig, setSortConfig] = useState<{
@@ -388,14 +396,18 @@ const TableComponent: React.FC<TableProps> = ({
                 <td className='place-items-end'>
                   <div className='flex space-x-1'>
                     {Array.isArray(actions) &&
-                      actions.map(({onClick, icon, isActive}: TableAction) => (isActive === undefined || isActive(row, rowIndex)) && (
-                        <button
-                          onClick={() => onClick(row, rowIndex)}
-                          className='flex items-center bg-zinc-100 text-zinc-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
-                        >
-                          {icon}
-                        </button>
-                      ))}
+                      actions.map(
+                        ({onClick, icon, isActive}: TableAction) =>
+                          (isActive === undefined ||
+                            isActive(row, rowIndex)) && (
+                            <button
+                              onClick={() => onClick(row, rowIndex)}
+                              className='flex items-center bg-zinc-100 text-zinc-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
+                            >
+                              {icon}
+                            </button>
+                          )
+                      )}
                     {isResetEnabled && changes[rowIndex] && (
                       <button
                         onClick={() => handleReset(rowIndex)}
@@ -404,12 +416,14 @@ const TableComponent: React.FC<TableProps> = ({
                         <FiRefreshCw className='w-6 h-6' />
                       </button>
                     )}
-                    {onDelete && <button
-                      className='flex items-center bg-zinc-100 text-red-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
-                      onClick={() => onDelete && onDelete(row.id)}
-                    >
-                      <FiTrash className='w-6 h-6' />
-                    </button> }
+                    {onDelete && (
+                      <button
+                        className='flex items-center bg-zinc-100 text-red-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
+                        onClick={() => onDelete && onDelete(row.id)}
+                      >
+                        <FiTrash className='w-6 h-6' />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
