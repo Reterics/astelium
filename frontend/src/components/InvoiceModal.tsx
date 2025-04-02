@@ -8,6 +8,7 @@ import {
 } from '../utils/invoiceUtils.ts';
 import {useTranslation} from 'react-i18next';
 import {getTranslatedList} from '../i18n/utils.ts';
+import {isObjectEmpty} from '../utils/utils.ts';
 
 export interface InvoiceItem {
   id?: number;
@@ -85,7 +86,20 @@ const InvoiceModal = ({
   const currencyName = 'Ft';
 
   const [items, setItems] = useState<InvoiceItem[]>(invoice.items || []);
-  const [itemToAdd, setItemToAdd] = useState<TableRow>({});
+  const defaultItemsToAdd = {
+    lineNatureIndicator: 'SERVICE',
+    product_code_category: 'OWN',
+    product_code_value: 'Occurence',
+    line_description: '',
+    quantity: 1,
+    unit_of_measure: 'OWN',
+    unit_price: 1,
+    line_net_amount: 1,
+    line_vat_rate: '0',
+    line_vat_amount: 0,
+    line_gross_amount: 1,
+  };
+  const [itemToAdd, setItemToAdd] = useState<TableRow>(defaultItemsToAdd);
 
   const [invoiceCategory, setInvoiceCategory] = useState<
     'SIMPLIFIED' | 'NORMAL'
@@ -104,9 +118,9 @@ const InvoiceModal = ({
     setSummary(
       items.reduce(
         (sum, currentValue) => {
-          sum.subTotal += currentValue.line_net_amount;
-          sum.tax += currentValue.line_vat_amount;
-          sum.total += currentValue.line_gross_amount;
+          sum.subTotal += Number(currentValue.line_net_amount);
+          sum.tax += Number(currentValue.line_vat_amount);
+          sum.total += Number(currentValue.line_gross_amount);
           const vatRate = lineVatRate.find(
             (v) => String(v.value) === String(currentValue.line_vat_rate)
           );
@@ -136,7 +150,7 @@ const InvoiceModal = ({
     if (form.quantity && form.quantity.includes(',')) {
       form.quantity = form.quantity.replace(',', '.');
     }
-    if (form.unit_price && form.unit_price.includes(',')) {
+    if (typeof form.unit_price === 'string' && form.unit_price.includes(',')) {
       form.unit_price = form.unit_price.replace(',', '.');
     }
 
@@ -384,7 +398,26 @@ const InvoiceModal = ({
         data={items}
         noSearch={true}
         itemToAdd={itemToAdd}
-        setItemToAdd={setItemToAdd}
+        setItemToAdd={(value) => {
+          if (isObjectEmpty(value)) {
+            if (items.length) {
+              setItemToAdd(
+                Object.assign(defaultItemsToAdd, {
+                  lineNatureIndicator: items[0].lineNatureIndicator,
+                  product_code_category: items[0].product_code_category,
+                  product_code_value: items[0].product_code_value,
+                  unit_of_measure: items[0].unit_of_measure,
+                  line_description: items[0].line_description,
+                  line_vat_rate: items[0].line_vat_rate,
+                })
+              );
+            } else {
+              setItemToAdd(defaultItemsToAdd);
+            }
+          } else {
+            setItemToAdd(value);
+          }
+        }}
         pagination={false}
         onDelete={(index) => deleteItem(Number(index))}
         onCreate={(item) => {
@@ -415,7 +448,7 @@ const InvoiceModal = ({
                   {t('Tax')}
                 </td>
                 <td className='p-2 border-b border-zinc-300'>
-                  {summary.taxType}
+                  {summary.tax} {currencyName} ({summary.taxType})
                 </td>
               </tr>
               <tr>
@@ -423,7 +456,7 @@ const InvoiceModal = ({
                   {t('Total')}
                 </td>
                 <td className='p-2 border-b border-zinc-300'>
-                  0 {currencyName}
+                  {summary.total} {currencyName}
                 </td>
               </tr>
             </tbody>

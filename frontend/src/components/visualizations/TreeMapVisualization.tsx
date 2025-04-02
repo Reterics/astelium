@@ -125,9 +125,8 @@ const TreeMapVisualization: React.FC<TreeMapProps> = ({
         .attr('font-size', '12px')
         .attr('pointer-events', 'none')
         .text((d) => d.data?.name);
-
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [svgRef.current]
   );
 
