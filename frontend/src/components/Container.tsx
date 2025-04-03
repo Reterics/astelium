@@ -15,7 +15,7 @@ import {
   FiFile,
   FiClipboard,
   FiColumns,
-  FiCalendar,
+  FiCalendar, FiMap,
 } from 'react-icons/fi';
 
 import {useState} from 'react';
@@ -74,6 +74,11 @@ const menu: MenuItem[] = [
     label: 'Reports',
     icon: FiFileText,
     path: '/reports',
+  },
+  {
+    label: 'Maps',
+    icon: FiMap,
+    path: '/maps',
   },
 
   {

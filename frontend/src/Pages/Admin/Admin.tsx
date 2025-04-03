@@ -23,6 +23,8 @@ import PrivateRoute from '../../components/PrivateRoute.tsx';
 import Board from './Board.tsx';
 import Appointments from '../Appointments.tsx';
 import Account from './Account.tsx';
+import Maps from "./Maps.tsx";
+import Map from "./Map.tsx";
 
 const AdminPanel = () => {
   return (
@@ -52,6 +54,8 @@ const AdminPanel = () => {
             <Route path='/transactions' element={<Transactions />} />
 
             <Route path='/appointments' element={<Appointments />} />
+            <Route path='/maps' element={<Maps />} />
+            <Route path='/map' element={<Map />} />
             <Route path='/account' element={<Account />} />
           </Route>
         </Routes>

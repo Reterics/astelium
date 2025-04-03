@@ -12,6 +12,8 @@ use App\Http\Controllers\ContractTemplateController;
 use App\Http\Controllers\DomainController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceUserController;
+use App\Http\Controllers\MapController;
+use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
@@ -56,6 +58,16 @@ Route::middleware(['auth:sanctum', EnsureAccountAccess::class])->group(function 
     Route::post('/comments', [CommentController::class, 'store']);
     Route::put('/comments/{comment}', [CommentController::class, 'update']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+
+    Route::get('/maps', [MapController::class, 'index']);
+    Route::post('/maps', [MapController::class, 'store']);
+    Route::put('/maps/{map}', [MapController::class, 'update']);
+    Route::delete('/maps/{map}', [MapController::class, 'destroy']);
+
+    Route::get('/maps/{map}/markers', [MarkerController::class, 'index']);
+    Route::post('/maps/{map}/markers', [MarkerController::class, 'store']);
+    Route::put('/markers/{marker}', [MarkerController::class, 'update']);
+    Route::delete('/markers/{marker}', [MarkerController::class, 'destroy']);
 
 
     Route::apiResource('users', UserController::class);

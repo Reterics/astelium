@@ -1,0 +1,7 @@
+.leaflet-popup-content, .leaflet-popup-content-wrapper {
+  margin: 0;
+  line-height: inherit;
+  font-size: inherit;
+  min-height: inherit;
+  padding: 0;
+}
