@@ -1,11 +1,17 @@
 import {useEffect, useRef, useState} from 'react';
 import {useSearchParams} from 'react-router-dom';
-import {MapContainer, TileLayer, Marker, Popup, useMapEvents} from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './Map.css';
 import L from 'leaflet';
-import {getFetchOptions} from "../../utils/utils.ts";
-import {FiArrowRight, FiCheck, FiTrash} from "react-icons/fi";
+import {getFetchOptions} from '../../utils/utils.ts';
+import {FiArrowRight, FiCheck, FiTrash} from 'react-icons/fi';
 
 interface MarkerData {
   id: number;
@@ -13,7 +19,7 @@ interface MarkerData {
   icon_type?: string;
   description?: string;
   image?: string;
-  gps: { lat: number; lng: number };
+  gps: {lat: number; lng: number};
   tags?: string[];
   isNew?: boolean;
 }
@@ -24,7 +30,11 @@ const defaultIcon = L.icon({
   iconAnchor: [12, 41],
 });
 
-const ClickHandler = ({ onClick }: { onClick: (latlng: { lat: number; lng: number }) => void }) => {
+const ClickHandler = ({
+  onClick,
+}: {
+  onClick: (latlng: {lat: number; lng: number}) => void;
+}) => {
   useMapEvents({
     click(e) {
       onClick(e.latlng);
@@ -43,7 +53,7 @@ const Map = () => {
     const fetchMarkers = async () => {
       if (!mapId) return;
       const response = await fetch(`/api/maps/${mapId}/markers`, {
-        ...getFetchOptions()
+        ...getFetchOptions(),
       });
       if (response.ok) {
         const data = await response.json();
@@ -54,7 +64,7 @@ const Map = () => {
     fetchMarkers();
   }, [mapId]);
 
-  const handleMapClick = (latlng: { lat: number; lng: number }) => {
+  const handleMapClick = (latlng: {lat: number; lng: number}) => {
     const newMarker: MarkerData = {
       id: Date.now(),
       name: '',
@@ -83,14 +93,16 @@ const Map = () => {
   };
 
   const handleDelete = async (id: number) => {
-    const response = await fetch(`/api/markers/${id}`, { ...getFetchOptions(), method: 'DELETE' });
+    const response = await fetch(`/api/markers/${id}`, {
+      ...getFetchOptions(),
+      method: 'DELETE',
+    });
     if (response.ok) {
       setMarkers((prev) => prev.filter((m) => m.id !== id));
     }
   };
 
-
-  const defaultPosition = markers[0]?.gps || { lat: 47.4979, lng: 19.0402 };
+  const defaultPosition = markers[0]?.gps || {lat: 47.4979, lng: 19.0402};
 
   return (
     <div className='w-full h-screen'>

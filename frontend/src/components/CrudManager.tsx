@@ -10,6 +10,7 @@ export type FieldType =
   | 'number'
   | 'select'
   | 'multiselect'
+  | 'autocomplete'
   | 'date'
   | 'password'
   | 'datetime-local'

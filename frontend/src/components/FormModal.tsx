@@ -6,6 +6,7 @@ import {CrudField} from './CrudManager.tsx';
 import FileComponent from './FileComponent.tsx';
 import DateComponent from './DateComponent.tsx';
 import {defaultModalButtons} from '../utils/reactUtils.tsx';
+import AutocompleteComponent from './AutocompleteComponent.tsx';
 
 export interface FormModalProps {
   title: string;
@@ -80,6 +81,20 @@ const FormModal: React.FC<FormModalProps> = ({
                   column={field}
                   filters={{
                     [field.key]: form[field.key] as string[],
+                  }}
+                  handleFilterChange={(_column, value) => {
+                    handleInputChange(field.key, value);
+                    if (field.props?.onChange) {
+                      field.props?.onChange(value, form);
+                    }
+                  }}
+                />
+              ) : field.type === 'autocomplete' ? (
+                <AutocompleteComponent
+                  defaultLabel={`Select option`}
+                  column={field}
+                  filters={{
+                    [field.key]: form[field.key] as string,
                   }}
                   handleFilterChange={(_column, value) => {
                     handleInputChange(field.key, value);

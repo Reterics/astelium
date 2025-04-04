@@ -23,8 +23,8 @@ import PrivateRoute from '../../components/PrivateRoute.tsx';
 import Board from './Board.tsx';
 import Appointments from '../Appointments.tsx';
 import Account from './Account.tsx';
-import Maps from "./Maps.tsx";
-import Map from "./Map.tsx";
+import Maps from './Maps.tsx';
+import Map from './Map.tsx';
 
 const AdminPanel = () => {
   return (

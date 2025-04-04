@@ -48,7 +48,7 @@ const Notes = () => {
         {
           key: 'related_client_id',
           label: 'Client ID',
-          type: 'select',
+          type: 'autocomplete',
           editable: true,
           options: clients,
         },

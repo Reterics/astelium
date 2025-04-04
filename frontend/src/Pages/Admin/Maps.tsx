@@ -1,7 +1,7 @@
 import CrudManager from '../../components/CrudManager';
 import {useApi} from '../../hooks/useApi.ts';
-import {FiEdit3} from "react-icons/fi";
-import {useNavigate} from "react-router-dom";
+import {FiEdit3} from 'react-icons/fi';
+import {useNavigate} from 'react-router-dom';
 
 const Maps = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -80,7 +80,7 @@ const Maps = () => {
             const id = row.id as number | undefined;
 
             if (id) {
-              navigate('/map?id=' + id)
+              navigate('/map?id=' + id);
             }
           },
         },
