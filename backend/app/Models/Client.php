@@ -31,6 +31,7 @@ class Client extends Model
     }
 
     protected $casts = [
+        'gps' => 'array',
         'type' => 'string',
         'vat_status' => 'string',
     ];

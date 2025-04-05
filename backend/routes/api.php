@@ -25,6 +25,8 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Api\ApiLoginController;
 use App\Http\Middleware\EnsureAccountAccess;
 use App\Http\Middleware\EnsureUserRole;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 
 Route::middleware(['auth:sanctum', EnsureAccountAccess::class])->group(function () {
@@ -93,3 +95,29 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::post('/register', [RegisterController::class, 'register']);
 
 Route::middleware('auth:sanctum')->get('/account', [AccountController::class, 'show']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('/address-autocomplete', function (\Illuminate\Http\Request $request) {
+        $query = $request->input('q');
+        Log::info('Address autocomplete query', ['query' => $query]);
+        if (!$query) {
+            return response()->json([]);
+        }
+
+        $response = Http::withHeaders([
+            'User-Agent' => 'AsteliumApp/1.0 (attila@reterics.com)',
+        ])->get('https://nominatim.openstreetmap.org/search', [
+            'q' => $query,
+            'format' => 'json',
+            'addressdetails' => 1,
+            'limit' => 5,
+        ]);
+
+        Log::info('Nominatim API response', ['response' => $response->json()]);
+
+        return $response->json();
+    });
+
+});
+

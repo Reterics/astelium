@@ -146,6 +146,19 @@ const Tasks = () => {
       type: 'number',
       editable: true,
     },
+    {
+      key: 'address',
+      label: 'Address',
+      type: 'text',
+      editable: true,
+    },
+    {
+      key: 'gps',
+      label: 'GPS (lat,lng)',
+      type: 'text',
+      editable: false,
+      visible: false,
+    },
   ];
 
   return (

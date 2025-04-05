@@ -1,12 +1,13 @@
 import Modal from './Modal';
 import React, {useState} from 'react';
-import SelectComponent from './SelectComponent.tsx';
+import SelectComponent, {SelectOption} from './SelectComponent.tsx';
 import MultiSelectComponent from './MultiSelectComponent.tsx';
 import {CrudField} from './CrudManager.tsx';
 import FileComponent from './FileComponent.tsx';
 import DateComponent from './DateComponent.tsx';
 import {defaultModalButtons} from '../utils/reactUtils.tsx';
 import AutocompleteComponent from './AutocompleteComponent.tsx';
+import {addressAutocomplete} from '../utils/utils.ts';
 
 export interface FormModalProps {
   title: string;
@@ -89,10 +90,27 @@ const FormModal: React.FC<FormModalProps> = ({
                     }
                   }}
                 />
-              ) : field.type === 'autocomplete' ? (
+              ) : field.type === 'autocomplete' || field.type === 'address' ? (
                 <AutocompleteComponent
                   defaultLabel={`Select option`}
                   column={field}
+                  filter={
+                    field.type === 'address'
+                      ? async (input: string) => {
+                          return await addressAutocomplete(input).then(
+                            (autoCompleteData) => {
+                              return autoCompleteData.map(
+                                (data) =>
+                                  ({
+                                    label: data.display_name,
+                                    value: `{"lat":${data.lat},"lng":${data.lng}, "name":"${data.display_name}"}`,
+                                  }) as SelectOption
+                              );
+                            }
+                          );
+                        }
+                      : undefined
+                  }
                   filters={{
                     [field.key]: form[field.key] as string,
                   }}

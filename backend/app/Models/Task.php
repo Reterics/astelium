@@ -11,7 +11,11 @@ class Task extends Model
 
     protected $fillable = [
         'title', 'description', 'status', 'type', 'project_id', 'assigned_to',
-        'start_time', 'expected_time', 'priority', 'story_points', 'order_index', 'account_id'];
+        'start_time', 'expected_time', 'priority', 'story_points', 'order_index', 'account_id', 'address'];
+
+    protected $casts = [
+        'gps' => 'array',
+    ];
 
     public function account()
     {

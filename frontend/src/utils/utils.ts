@@ -25,6 +25,32 @@ export const getFetchOptions = (noContentType?: boolean) => {
   return options as RequestInit;
 };
 
+export interface AutocompleteData
+  extends Record<string, string | number | null> {
+  place_id: number;
+  display_name: string;
+  lat: string;
+  lon: string;
+}
+export const addressAutocomplete = async (q: string) => {
+  if (!q.trim()) {
+    return [];
+  }
+  const response = await fetch(
+    `/api/address-autocomplete?q=${encodeURIComponent(q)}`,
+    {
+      ...getFetchOptions(),
+    }
+  );
+  if (response.ok) {
+    const data = await response.json();
+    if (Array.isArray(data)) {
+      return data as AutocompleteData[];
+    }
+  }
+  return [];
+};
+
 export function transformTransactionData(
   transactions: Record<string, any>[]
 ): TransactionChartData[] {

@@ -11,6 +11,7 @@ export type FieldType =
   | 'select'
   | 'multiselect'
   | 'autocomplete'
+  | 'address'
   | 'date'
   | 'password'
   | 'datetime-local'

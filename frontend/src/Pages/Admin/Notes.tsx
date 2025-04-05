@@ -52,6 +52,19 @@ const Notes = () => {
           editable: true,
           options: clients,
         },
+        {
+          key: 'address',
+          label: 'Address',
+          type: 'text',
+          editable: true,
+        },
+        {
+          key: 'gps',
+          label: 'GPS (lat,lng)',
+          type: 'address',
+          editable: false,
+          visible: false,
+        },
       ]}
     />
   );
