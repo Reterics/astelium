@@ -23,7 +23,10 @@ class Client extends Model
         'vat_status',
         'email',
         'phone',
-        'company', 'account_id'];
+        'company',
+        'lat',
+        'lng',
+        'account_id'];
 
     public function account()
     {
@@ -31,7 +34,6 @@ class Client extends Model
     }
 
     protected $casts = [
-        'gps' => 'array',
         'type' => 'string',
         'vat_status' => 'string',
     ];

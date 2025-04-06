@@ -33,6 +33,16 @@ const FormModal: React.FC<FormModalProps> = ({
 }) => {
   const [form, setForm] = useState<Record<string, unknown>>(data);
 
+  const handleInputChanges = (values: Record<string, string | string[]>) => {
+    setForm((prev) => {
+      const data = {...prev, ...values};
+      if (onInputChange) {
+        onInputChange(Object.keys(form).join(','), data);
+      }
+      return data;
+    });
+  };
+
   const handleInputChange = (key: string, value: string | string[]) => {
     setForm((prev) => {
       const data = {...prev, [key]: value};
@@ -90,27 +100,10 @@ const FormModal: React.FC<FormModalProps> = ({
                     }
                   }}
                 />
-              ) : field.type === 'autocomplete' || field.type === 'address' ? (
+              ) : field.type === 'autocomplete' ? (
                 <AutocompleteComponent
                   defaultLabel={`Select option`}
                   column={field}
-                  filter={
-                    field.type === 'address'
-                      ? async (input: string) => {
-                          return await addressAutocomplete(input).then(
-                            (autoCompleteData) => {
-                              return autoCompleteData.map(
-                                (data) =>
-                                  ({
-                                    label: data.display_name,
-                                    value: `{"lat":${data.lat},"lng":${data.lng}, "name":"${data.display_name}"}`,
-                                  }) as SelectOption
-                              );
-                            }
-                          );
-                        }
-                      : undefined
-                  }
                   filters={{
                     [field.key]: form[field.key] as string,
                   }}
@@ -118,6 +111,39 @@ const FormModal: React.FC<FormModalProps> = ({
                     handleInputChange(field.key, value);
                     if (field.props?.onChange) {
                       field.props?.onChange(value, form);
+                    }
+                  }}
+                />
+              ) : field.type === 'address' ? (
+                <AutocompleteComponent
+                  defaultLabel={
+                    (form[field.key] as string | undefined) || `Select option`
+                  }
+                  column={field}
+                  filter={async (input: string) => {
+                    return await addressAutocomplete(input).then(
+                      (autoCompleteData) => {
+                        return autoCompleteData.map(
+                          (data) =>
+                            ({
+                              label: data.display_name,
+                              value: `{"lat":${data.lat},"lng":${data.lon}, "address":"${data.display_name}"}`,
+                            }) as SelectOption
+                        );
+                      }
+                    );
+                  }}
+                  filters={{
+                    [field.key]: form[field.key] as string,
+                  }}
+                  handleFilterChange={(_column, value) => {
+                    if (!value) {
+                      return;
+                    }
+                    const data = JSON.parse(value);
+                    handleInputChanges(data);
+                    if (field.props?.onChange) {
+                      field.props?.onChange(data, form);
                     }
                   }}
                 />

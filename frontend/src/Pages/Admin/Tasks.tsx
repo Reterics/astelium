@@ -11,6 +11,7 @@ import {FiPlus, FiSearch} from 'react-icons/fi';
 import FormModal from '../../components/FormModal.tsx';
 import TaskModal from '../../components/TaskModal.tsx';
 import {Task} from '../../components/KanbanBoard.tsx';
+import mountComponent from '../../components/mounter.tsx';
 
 const Tasks = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -25,9 +26,6 @@ const Tasks = () => {
   const {t} = useTranslation();
   const translationPrefix = 'task.';
 
-  const [modalData, setModalData] = useState<
-    (Record<string, any> & {id?: number}) | false
-  >(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [groupedBy, setGroupedBy] = useState<string>('status');
@@ -75,7 +73,6 @@ const Tasks = () => {
       );
     }
 
-    setModalData(false);
     return true;
   };
 
@@ -149,13 +146,7 @@ const Tasks = () => {
     {
       key: 'address',
       label: 'Address',
-      type: 'text',
-      editable: true,
-    },
-    {
-      key: 'gps',
-      label: 'GPS (lat,lng)',
-      type: 'text',
+      type: 'address',
       editable: false,
       visible: false,
     },
@@ -206,7 +197,16 @@ const Tasks = () => {
         </div>
 
         <button
-          onClick={() => setModalData({})}
+          onClick={async () => {
+            const form = await mountComponent(FormModal, {
+              title: 'Create Task ',
+              fields: fields.filter((filter) => filter.creatable !== false),
+              data: {},
+            });
+            if (form) {
+              await saveData(form as Record<string, any>);
+            }
+          }}
           className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
         >
           <FiPlus className='mr-1' /> Add
@@ -217,18 +217,6 @@ const Tasks = () => {
         data={tasksRaw}
         groupedBy={groupedBy}
       />
-
-      {modalData && (
-        <FormModal
-          title={(modalData.id ? 'Edit ' : 'Create ') + 'Task'}
-          onClose={() => setModalData(false)}
-          fields={fields}
-          data={modalData}
-          onSave={(form) => {
-            return saveData(form as Record<string, any>);
-          }}
-        />
-      )}
 
       {selectedTask && (
         <TaskModal

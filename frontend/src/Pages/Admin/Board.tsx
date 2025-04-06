@@ -8,6 +8,8 @@ import {OPTIONS} from '../../constants.ts';
 import {getTranslatedList} from '../../i18n/utils.ts';
 import {useTranslation} from 'react-i18next';
 import TaskModal from '../../components/TaskModal.tsx';
+import mountComponent from '../../components/mounter.tsx';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 const Board = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -18,11 +20,7 @@ const Board = () => {
     updateMutation,
     createMutation,
   } = useApi('tasks');
-  const [modalData, setModalData] = useState<
-    (Record<string, any> & {id?: number}) | false
-  >(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const {t} = useTranslation();
   const translationPrefix = 'task.';
 
@@ -63,7 +61,6 @@ const Board = () => {
       );
     }
 
-    setModalData(false);
     return true;
   };
 
@@ -151,7 +148,16 @@ const Board = () => {
         </div>
 
         <button
-          onClick={() => setModalData({})}
+          onClick={async () => {
+            const form = await mountComponent(FormModal, {
+              title: 'Create Task',
+              fields: fields.filter((filter) => filter.creatable !== false),
+              data: {},
+            });
+            if (form) {
+              await saveData(form as Record<string, any>);
+            }
+          }}
           className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
         >
           <FiPlus className='mr-1' /> Add
@@ -166,28 +172,26 @@ const Board = () => {
             ) as Task[]
           }
           setTask={updateTask}
-          onTaskClick={setSelectedTask}
-        />
-      )}
-
-      {modalData && (
-        <FormModal
-          title={(modalData.id ? 'Edit ' : 'Create ') + 'Task'}
-          onClose={() => setModalData(false)}
-          fields={fields}
-          data={modalData}
-          onSave={(form) => {
-            return saveData(form as Record<string, any>);
+          onTaskClick={async (task: Task) => {
+            await mountComponent(
+              function ({users, task, onSave, onClose}) {
+                return (
+                  <QueryClientProvider client={new QueryClient()}>
+                    <TaskModal
+                      users={users}
+                      task={task}
+                      onSave={onSave as unknown as (task: Task) => void}
+                      onClose={onClose as () => void}
+                    />
+                  </QueryClientProvider>
+                );
+              },
+              {
+                users: users,
+                task: task || undefined,
+              }
+            );
           }}
-        />
-      )}
-
-      {selectedTask && (
-        <TaskModal
-          users={users}
-          task={selectedTask}
-          onClose={() => setSelectedTask(null)}
-          onSave={updateTask}
         />
       )}
     </div>

@@ -12,17 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->json('gps')->nullable(); // {lat, lng}
+            $table->decimal('lat', 10, 7)->nullable();
+            $table->decimal('lng', 10, 7)->nullable();
             $table->string('address')->nullable();
         });
 
         Schema::table('notes', function (Blueprint $table) {
-            $table->json('gps')->nullable();
+            $table->decimal('lat', 10, 7)->nullable();
+            $table->decimal('lng', 10, 7)->nullable();
             $table->string('address')->nullable();
         });
 
         Schema::table('clients', function (Blueprint $table) {
-            $table->json('gps')->nullable();
+            $table->decimal('lat', 10, 7)->nullable();
+            $table->decimal('lng', 10, 7)->nullable();
         });
     }
 
@@ -32,15 +35,15 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->dropColumn(['gps', 'address']);
+            $table->dropColumn(['lat', 'lng', 'address']);
         });
 
         Schema::table('notes', function (Blueprint $table) {
-            $table->dropColumn(['gps', 'address']);
+            $table->dropColumn(['lat', 'lng', 'address']);
         });
 
         Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn(['gps']);
+            $table->dropColumn(['lat', 'lng']);
         });
     }
 };
