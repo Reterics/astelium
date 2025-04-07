@@ -26,6 +26,9 @@ class TaskController extends Controller
             'expected_time' => 'nullable|integer',
             'priority' => 'required|in:low,medium,high',
             'story_points' => 'nullable|integer',
+            'lat' => 'nullable|numeric',
+            'lng' => 'nullable|numeric',
+            'address' => 'nullable|string',
         ]);
 
         $validated['type'] = $validated['type'] ?? 'task';
@@ -52,6 +55,9 @@ class TaskController extends Controller
             'expected_time' => 'nullable|integer',
             'priority' => 'sometimes|in:low,medium,high',
             'story_points' => 'nullable|integer',
+            'lat' => 'nullable|numeric',
+            'lng' => 'nullable|numeric',
+            'address' => 'nullable|string',
         ]);
 
         $validated['type'] = $validated['type'] ?? 'task';

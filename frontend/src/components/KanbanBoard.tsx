@@ -68,6 +68,9 @@ export interface Task {
   start_time?: string;
   expected_time?: string;
   story_points?: string;
+  address?: string;
+  lat?: number;
+  lng?: number;
 }
 
 const KanbanBoard = ({

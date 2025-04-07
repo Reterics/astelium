@@ -1,9 +1,14 @@
 import Modal from './Modal';
 import {useState} from 'react';
-import SelectComponent, {SelectOptions} from './SelectComponent.tsx';
+import SelectComponent, {
+  SelectOption,
+  SelectOptions,
+} from './SelectComponent.tsx';
 import {useApi} from '../hooks/useApi.ts';
 import {Task} from './KanbanBoard.tsx';
 import {FiMessageSquare} from 'react-icons/fi';
+import {addressAutocomplete} from '../utils/utils.ts';
+import AutocompleteComponent from './AutocompleteComponent.tsx';
 
 export interface TaskModalProps {
   task: Task;
@@ -32,6 +37,10 @@ const TaskModal = ({task, users, onClose, onSave}: TaskModalProps) => {
       created_at: new Date().toISOString(),
     });
     setNewComment('');
+  };
+
+  const handleChanges = (values: Record<keyof Task, unknown>) => {
+    setEditedTask((prev) => ({...prev, ...values}) as Task);
   };
 
   const handleChange = (key: keyof Task, value: Task[keyof Task]) => {
@@ -152,6 +161,44 @@ const TaskModal = ({task, users, onClose, onSave}: TaskModalProps) => {
               value={editedTask.story_points || ''}
               onChange={(e) => handleChange('story_points', e.target.value)}
               className='border border-zinc-300 p-1 rounded w-12 text-xs place-self-end'
+            />
+          </div>
+          <div className='grid grid-cols-[1fr_1fr] items-center'>
+            <div className='font-semibold'>
+              Address{' '}
+              <span className='font-light'>
+                ({(editedTask.lat || '') + ' - ' + (editedTask.lng || '')})
+              </span>
+              :
+            </div>
+            <AutocompleteComponent
+              defaultLabel={
+                (editedTask.address as string | undefined) || `Select option`
+              }
+              column={{key: 'address', label: 'Address', type: 'address'}}
+              filter={async (input: string) => {
+                return await addressAutocomplete(input).then(
+                  (autoCompleteData) => {
+                    return autoCompleteData.map(
+                      (data) =>
+                        ({
+                          label: data.display_name,
+                          value: `{"lat":${data.lat},"lng":${data.lon}, "address":"${data.display_name}"}`,
+                        }) as SelectOption
+                    );
+                  }
+                );
+              }}
+              filters={{
+                address: editedTask.address as string,
+              }}
+              handleFilterChange={(_column, value) => {
+                if (!value) {
+                  return;
+                }
+                const data = JSON.parse(value);
+                handleChanges(data);
+              }}
             />
           </div>
 

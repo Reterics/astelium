@@ -7,7 +7,7 @@ import {CrudField} from '../../components/CrudManager.tsx';
 import {OPTIONS} from '../../constants.ts';
 import {getTranslatedList} from '../../i18n/utils.ts';
 import {useTranslation} from 'react-i18next';
-import TaskModal from '../../components/TaskModal.tsx';
+import TaskModal, {TaskModalProps} from '../../components/TaskModal.tsx';
 import mountComponent from '../../components/mounter.tsx';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
@@ -173,8 +173,8 @@ const Board = () => {
           }
           setTask={updateTask}
           onTaskClick={async (task: Task) => {
-            await mountComponent(
-              function ({users, task, onSave, onClose}) {
+            const taskToSave = await mountComponent(
+              function ({users, task, onSave, onClose}: TaskModalProps) {
                 return (
                   <QueryClientProvider client={new QueryClient()}>
                     <TaskModal
@@ -191,6 +191,10 @@ const Board = () => {
                 task: task || undefined,
               }
             );
+
+            if (taskToSave) {
+              await updateTask(taskToSave);
+            }
           }}
         />
       )}
