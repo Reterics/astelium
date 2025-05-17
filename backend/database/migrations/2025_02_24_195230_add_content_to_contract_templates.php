@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('contract_templates', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('path')->nullable()->after('name'); // Stores file path
-            $table->text('content')->nullable()->after('path');
-            $table->text('fields')->nullable()->after('content');
-            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+            $table->string('path')->nullable(); // Stores file path
+            $table->text('content')->nullable();
+            $table->text('fields')->nullable();
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
             $table->timestamps();
         });
         Schema::create('contracts', function (Blueprint $table) {
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->date('created');
             $table->foreignId('template_id')->constrained('contract_templates')->onDelete('cascade');
             $table->json('data')->nullable();
-            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
 
             $table->timestamps();
         });

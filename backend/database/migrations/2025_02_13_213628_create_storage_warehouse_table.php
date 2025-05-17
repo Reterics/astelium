@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->text('comments')->nullable();
-            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
 
             $table->timestamps();
         });

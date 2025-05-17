@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import {getFetchOptions} from '../utils/utils.ts';
+import {baseURL, getFetchOptions} from '../utils/utils.ts';
 
 export interface UseApiProps {
   perPage: number;
@@ -14,7 +14,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
 
   const fetchData = async ({pageParam = 1}) => {
     const perPage = options?.perPage ?? 10;
-    const pageUrl = `/api/${endpoint}${endpoint.includes('?') ? '&' : '?'}page=${pageParam}&per_page=${perPage}`;
+    const pageUrl = `${baseURL}/api/${endpoint}${endpoint.includes('?') ? '&' : '?'}page=${pageParam}&per_page=${perPage}`;
     const response = await fetch(pageUrl, {
       ...getFetchOptions(),
     });
@@ -64,7 +64,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
         formData = JSON.stringify(newData);
       }
 
-      const response = await fetch(`/api/${endpoint}`, {
+      const response = await fetch(`${baseURL}/api/${endpoint}`, {
         ...getFetchOptions(fileUpload),
         method: 'POST',
         body: formData,
@@ -95,7 +95,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
         formData = JSON.stringify(props);
       }
 
-      const response = await fetch(`/api/${endpoint}/${props.id}`, {
+      const response = await fetch(`${baseURL}/api/${endpoint}/${props.id}`, {
         ...getFetchOptions(fileUpload),
         method: 'PUT',
         body: formData,
@@ -110,7 +110,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/${endpoint}/${id}`, {
+      const response = await fetch(`${baseURL}/api/${endpoint}/${id}`, {
         ...getFetchOptions(),
         method: 'DELETE',
       });

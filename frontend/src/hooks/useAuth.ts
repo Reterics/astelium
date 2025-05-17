@@ -1,4 +1,5 @@
 import {useState, useEffect} from 'react';
+import {baseURL} from "../utils/utils.ts";
 
 interface AuthResponse {
   access_token: string;
@@ -20,7 +21,7 @@ export const useAuth = () => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await fetch('/api/login', {
+    const response = await fetch(baseURL + '/api/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({email, password}),
@@ -37,7 +38,7 @@ export const useAuth = () => {
   };
 
   const logout = async () => {
-    await fetch('/api/logout', {
+    await fetch(baseURL + '/api/logout', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,

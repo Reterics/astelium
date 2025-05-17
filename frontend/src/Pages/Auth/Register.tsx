@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useAuth} from '../../hooks/useAuth.ts';
+import {baseURL} from "../../utils/utils.ts";
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -25,7 +26,7 @@ const Register = () => {
     setLoading(true);
     setError('');
 
-    const response = await fetch('/api/register', {
+    const response = await fetch(baseURL + '/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,7 +42,7 @@ const Register = () => {
       const data = await response.json();
       if (data.user) {
         await login(form.email, form.password);
-        //window.location.href = "/admin/dashboard"; // Redirect after success
+        //window.location.href = "./admin/dashboard"; // Redirect after success
       }
     } else {
       setError('Registration failed. Please check your details.');
@@ -50,7 +51,7 @@ const Register = () => {
 
   useEffect(() => {
     if (user) {
-      window.location.href = '/admin/dashboard';
+      window.location.href = './admin/dashboard';
     }
   }, [user]);
 

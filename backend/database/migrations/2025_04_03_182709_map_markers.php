@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('related_project_id')->nullable()->constrained('projects')->onDelete('cascade');
             $table->foreignId('related_task_id')->nullable()->constrained('tasks')->onDelete('cascade');
             $table->foreignId('related_client_id')->nullable()->constrained('clients')->onDelete('cascade');
-            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
             $table->timestamps();
         });
         Schema::create('markers', function (Blueprint $table) {
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->json('tags')->nullable();
             $table->boolean('private')->default(false);
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
             $table->timestamps();
         });
     }

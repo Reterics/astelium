@@ -1,5 +1,9 @@
 import {TransactionChartData} from '../components/visualizations/TransactionChartCard.tsx';
 
+export const baseURL =
+  ((window as Window & typeof globalThis & {APP_URL: string}).APP_URL || '')
+    .replace(window.location.origin, '');
+
 export const getCSRFToken = () => {
   const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
   return match

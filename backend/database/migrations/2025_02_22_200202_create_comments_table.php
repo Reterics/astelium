@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade'); // Links to tasks
             $table->string('author');
             $table->text('text');
-            $table->foreignId('account_id')->after('id')->constrained('accounts')->onDelete('cascade');
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
 
             $table->timestamps();
         });

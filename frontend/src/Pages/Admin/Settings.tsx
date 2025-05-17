@@ -1,10 +1,11 @@
 import {useEffect, useState} from 'react';
+import {baseURL} from "../../utils/utils.ts";
 
 const Settings = () => {
   const [settings, setSettings] = useState<any>({});
 
   useEffect(() => {
-    fetch('/api/settings')
+    fetch(baseURL + '/api/settings')
       .then((res) => res.json())
       .then(setSettings);
   }, []);

@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {getFetchOptions} from '../../utils/utils.ts';
+import {baseURL, getFetchOptions} from '../../utils/utils.ts';
 
 interface AccountData {
   name: string;
@@ -14,7 +14,7 @@ const Account = () => {
 
   useEffect(() => {
     const fetchAccount = async () => {
-      const response = await fetch('/api/account', {...getFetchOptions()});
+      const response = await fetch(baseURL + '/api/account', {...getFetchOptions()});
       const data = await response.json();
       setAccount(data.account);
       setIsAdmin(data.is_admin);

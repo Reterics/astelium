@@ -29,7 +29,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      window.location.href = '/admin/dashboard';
+      window.location.href = './admin/dashboard';
     }
   }, [user]);
 
