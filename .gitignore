@@ -5,3 +5,4 @@ dist
 node_modules
 backend/public/locales
 frontend/.env
+.tmp_build

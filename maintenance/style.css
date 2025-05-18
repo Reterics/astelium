@@ -1,0 +1,424 @@
+:root {
+  --bg: #f5f6fa;
+  --surface: #fff;
+  --panel: #f8fafc;
+  --text: #23272f;
+  --accent: #4065d8;
+  --accent-hover: #26449c;
+  --success: #3db47a;
+  --success-bg: #e6f6ee;
+  --danger: #e04e4e;
+  --danger-bg: #fff0f0;
+  --border: #d3d6dd;
+  --shadow: 0 1.5px 4px 0 rgba(44,56,85,0.07);
+  --radius: 5px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: var(--surface);
+  color: #222b3a;
+  padding: 0.6rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.08rem;
+  font-weight: 600;
+}
+
+.header .logo {
+  font-size: 1.13rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.main-wrapper {
+  display: flex;
+  flex: 1 1 0%;
+  min-height: 0;
+}
+
+.sidebar {
+  width: 170px;
+  background: var(--surface);
+  padding: 0.75rem 0.8rem;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-link {
+  display: block;
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.96rem;
+  margin-bottom: 0.1rem;
+  transition: background 0.12s;
+}
+.menu-link.active,
+.menu-link:hover {
+  background: var(--panel);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.2rem 2vw;
+}
+
+.panel {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.1rem 1.25rem 1.3rem 1.25rem;
+  margin: 1.3rem auto 0 auto;
+  box-sizing: border-box;
+  /* Remove max-width here */
+}
+
+/* Use a separate class for narrow forms */
+.panel.narrow {
+  max-width: 370px;
+}
+.panel-title {
+  font-size: 1.07rem;
+  font-weight: 600;
+  color: #23325b;
+  margin-bottom: 1rem;
+  letter-spacing: 0.01em;
+}
+
+.status {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: #384150;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.94rem;
+}
+.status-success {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--success);
+}
+.status-danger {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.form-group {
+  margin-bottom: 0.7rem;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-bottom: 0.15rem;
+  color: #26324d;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"] {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0.34rem 0.54rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.98rem;
+  background: var(--panel);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.11s;
+}
+
+input:focus {
+  border-color: var(--accent);
+  background: #fff;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+button,
+.button {
+  padding: 0.41rem 1.1rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.93rem;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: background 0.15s, box-shadow 0.15s;
+  min-width: 120px;
+  box-shadow: 0 1px 2px 0 rgba(44,56,85,0.06);
+  outline: none;
+}
+
+button:hover,
+.button:hover {
+  background: var(--accent-hover);
+}
+
+.button-secondary {
+  background: #e9ecef;
+  color: #23272f;
+  border: 1px solid var(--border);
+}
+
+.button-secondary:hover {
+  background: #d3d6dd;
+  color: #222b3a;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+pre {
+  background: #f2f3f5;
+  padding: 0.6rem 0.7rem;
+  border-radius: 4px;
+  font-size: 0.93rem;
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+@media (max-width: 700px) {
+  .main-wrapper {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 0.5rem;
+  }
+  .panel {
+    padding: 0.7rem 0.4rem;
+    max-width: 98vw;
+  }
+  .main {
+    padding: 0.8rem 1vw;
+  }
+}
+
+.dashboard-cards {
+  display: flex;
+  flex-wrap: wrap;
+  align-self: center;
+  gap: 1.1rem;
+  margin-bottom: 1.2rem;
+  width: 100%;
+}
+.dashboard-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem 1.1rem 1.1rem 1.1rem;
+  /*min-width: 220px;*/
+  width: 100%;
+  flex: 1 1 220px;
+  font-size: 0.97rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+}
+
+.dashboard-card-title {
+  font-weight: 600;
+  color: #23325b;
+  font-size: 0.98rem;
+  margin-bottom: 0.33rem;
+  letter-spacing: 0.01em;
+}
+
+.dashboard-card-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dashboard-card-table td {
+  padding: 0.16em 0.2em 0.16em 0;
+  color: #3b4255;
+  font-size: 0.95em;
+  word-break: break-all;
+  /* The key line above! */
+  white-space: pre-line; /* Also allows soft line breaks for long words/paths */
+  max-width: 240px; /* You can adjust as needed for the card size */
+}
+.dashboard-card-table td:first-child {
+  color: #8592ad;
+  min-width: 86px;
+}
+
+.dashboard-log-card {
+  max-height: 380px;
+  overflow: auto;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  background: #181d22;
+  color: #c1c9d4;
+  font-size: 0.89em;
+  border-radius: 4px;
+  padding: 0.7rem 0.9rem;
+  margin-top: 0.2rem;
+  border: 1px solid #282e35;
+  box-shadow: 0 2px 8px 0 rgba(25,25,35,0.08);
+}
+
+.log-actions {
+  display: flex;
+  gap: 0.7rem;
+  margin-bottom: 0.33rem;
+  align-items: center;
+}
+.log-actions button {
+  padding: 0.21rem 0.9rem;
+  font-size: 0.93em;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.log-actions button:hover {
+  background: var(--accent-hover);
+}
+@media (max-width: 950px) {
+  .dashboard-cards {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .dashboard-card {
+    min-width: 0;
+  }
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.97em;
+  margin: 0;
+}
+.log-table-row {
+  cursor: pointer;
+  transition: background 0.12s;
+  border-bottom: 1px solid #e3e6ea;
+}
+.log-table-row:hover, .log-table-row.active {
+  background: #f5f8fc;
+}
+.log-table-cell {
+  padding: 0.48em 0.7em 0.48em 0.7em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.log-level {
+  display: inline-block;
+  font-size: 0.92em;
+  font-weight: 600;
+  padding: 0.13em 0.7em;
+  border-radius: 2em;
+  margin-right: 0.45em;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+}
+.log-error   { background: #fff0f1; color: #d12e2e; border: 1px solid #f8b3b6; }
+.log-warning { background: #fff6e0; color: #cf8500; border: 1px solid #e1b763; }
+.log-info    { background: #e8f2fe; color: #4065d8; border: 1px solid #b2c6e9; }
+.log-debug   { background: #e6f6ee; color: #2ca36a; border: 1px solid #b7e3cc; }
+.log-details-row {
+  background: #23272f;
+}
+.log-details-cell {
+  padding: 0.85em 1.1em;
+  color: #dbe5f2;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  font-size: 0.97em;
+  white-space: pre-line;
+  border-bottom: 1px solid #e3e6ea;
+}
+
+.log-table, .log-details-cell pre {
+  width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  word-break: break-word;
+}
+
+/* Force stacktrace <pre> to wrap OR scroll horizontally */
+.log-details-cell pre {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  font-size: 0.97em;
+  white-space: pre-wrap;      /* wrap lines */
+  word-break: break-all;      /* break long words/paths */
+  overflow-x: auto;           /* allow horizontal scroll if necessary */
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+
+.log-table-cell, .log-details-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.log-details-row > .log-details-cell {
+  white-space: pre-line;
+  overflow-x: auto;
+  max-width: 0;
+  /* Remove max-width: 0 if it hides all content! */
+  /* Instead, use width: 100% and a max-width based on layout */
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85em 1.1em;
+}
+
+.log-details-cell {
+  white-space: pre-line;
+  overflow-x: auto;
+}

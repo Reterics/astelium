@@ -4,15 +4,14 @@ const path = require("path");
 const { createWriteStream } = require("fs");
 const archiver = require("archiver");
 
+const PUBLISH_ONLY = process.argv.includes('--publishOnly');
+
 const TMP_DIR = path.resolve(".tmp_build");
 const BUILD_DIR = path.resolve("build");
 const BACKEND_DIR = path.resolve("backend");
 const viteFolder = path.join(BACKEND_DIR, "public", "build", ".vite");
 const viteManifest = path.join(BACKEND_DIR, "public", "build", ".vite", "manifest.json");
 const publicBuildTarget = path.join(BUILD_DIR, "public", "build");
-
-const installerSource = path.resolve("install.php");
-const installerTarget = path.join(BUILD_DIR, "public", "install.php");
 
 function log(msg) {
   console.log("🛠️  " + msg);
@@ -66,17 +65,6 @@ function copyEnvFile() {
   }
 }
 
-function writeHtaccess() {
-  const htaccess = `
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule ^ index.php [QSA,L]
-</IfModule>
-`.trim();
-
-  fs.writeFileSync(path.join(TMP_DIR, "public", ".htaccess"), htaccess);
-}
 
 function createZip(sourceDir, zipPath, excludes = []) {
   return new Promise((resolve, reject) => {
@@ -101,26 +89,29 @@ function createZip(sourceDir, zipPath, excludes = []) {
 
 clean();
 cleanTmp();
-log("Running frontend build...");
 
-run("npm install", path.resolve("frontend"));
-run("npm run build", path.resolve("frontend"));
-if (!fs.existsSync(viteManifest)) {
-  throw new Error("❌ manifest.json not found. Did you forget to build the frontend?");
+if (!PUBLISH_ONLY) {
+  log("Running frontend build...");
+  run("npm install", path.resolve("frontend"));
+  run("npm run build", path.resolve("frontend"));
+  if (!fs.existsSync(viteManifest)) {
+    throw new Error("❌ manifest.json not found. Did you forget to build the frontend?");
+  }
 }
 
 log("Copying frontend build to public/build...");
 copyRecursive(viteFolder, publicBuildTarget);
 
-log("Installing Laravel dependencies...");
-run("composer install --optimize-autoloader --no-dev", BACKEND_DIR);
+if (!PUBLISH_ONLY) {
+  log("Installing Laravel dependencies...");
+  run("composer install --optimize-autoloader --no-dev", BACKEND_DIR);
 
-log("Caching Laravel config...");
-run("php artisan config:cache", BACKEND_DIR);
-run("php artisan route:cache", BACKEND_DIR);
-run("php artisan view:cache", BACKEND_DIR);
-run("php artisan storage:link", BACKEND_DIR);
-
+  log("Caching Laravel config...");
+  run("php artisan config:cache", BACKEND_DIR);
+  run("php artisan route:cache", BACKEND_DIR);
+  run("php artisan view:cache", BACKEND_DIR);
+  run("php artisan storage:link", BACKEND_DIR);
+}
 log("Copying Laravel structure...");
 copyRecursive(BACKEND_DIR, TMP_DIR, [
   "node_modules",
@@ -130,8 +121,6 @@ copyRecursive(BACKEND_DIR, TMP_DIR, [
   "storage/logs",
 ]);
 
-log("Copying vendor...");
-copyRecursive(path.join(BACKEND_DIR, "vendor"), path.join(TMP_DIR, "vendor"));
 
 log("Injecting environment file...");
 copyEnvFile();
@@ -153,13 +142,20 @@ console.log(`
 log("✅ DONE! Upload /build as-is to your hosting and point domain to /public.");
 
 (async () => {
-  const zipPath = path.join(BUILD_DIR, "astelium.zip");
+  const maintenanceSrc = path.resolve("maintenance");
+  const maintenanceDest = path.join(BUILD_DIR, "public", "maintenance");
+  fs.mkdirSync(maintenanceDest, { recursive: true });
+
+  const zipPath = path.join(BUILD_DIR, "public", "maintenance", "astelium.zip");
   log("📦 Creating astelium.zip...");
   await createZip(TMP_DIR, zipPath, ["install.php", "astelium.zip"]);
 
-  fs.mkdirSync(path.dirname(installerTarget), { recursive: true });
-  fs.copyFileSync(installerSource, installerTarget);
-  console.log("📄 install.php copied to build/");
+  copyRecursive(maintenanceSrc, maintenanceDest);
+  fs.writeFileSync(path.join(BUILD_DIR, "public", "index.php"),
+    '<?php\n' +
+    'header("Location: ./maintenance/");\n' +
+    'exit;')
+
 
 // Console instructions
   console.log(`
@@ -173,4 +169,5 @@ log("✅ DONE! Upload /build as-is to your hosting and point domain to /public."
 `);
 
   cleanTmp();
+  fs.rmdirSync(TMP_DIR);
 })()

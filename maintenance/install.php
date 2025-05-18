@@ -1,22 +1,18 @@
 <?php
 function showError($message) {
-  exit("<pre style='color: red;'>❌ $message</pre>");
+  exit("<pre class='error'>❌ $message</pre>");
 }
 
 function showSuccess($message) {
   echo "<pre style='color: green;'>✅ $message</pre>";
 }
 
-$appRoot = realpath(__DIR__ . '/..');
-$alreadyInstalled = false;//file_exists($appRoot . '/vendor/autoload.php');
+$appRoot = realpath(__DIR__ . '/../..');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if ($alreadyInstalled) {
-    showError("Astelium already installed.");
-  }
 
   $db = $_POST['db'];
-  $zipFile = $appRoot . '/astelium.zip';
+  $zipFile = realpath(__DIR__) . '/astelium.zip';
 
   if (!file_exists($zipFile)) {
     showError("Missing ZIP file: astelium.zip");
@@ -45,7 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   } else {
     showError("Failed to open ZIP archive.");
   }
-  $baseUrl = rtrim($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']), '/');
+  $scheme = $_SERVER['REQUEST_SCHEME'];
+  $host = $_SERVER['HTTP_HOST'];
+  $dir = dirname($_SERVER['SCRIPT_NAME']);
+  $baseDir = preg_replace('#/maintenance/?$#', '', $dir);
+  $baseUrl = rtrim("{$scheme}://{$host}{$baseDir}", '/');
+
+  // $baseUrl = rtrim($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']), '/');
 
   // ✅ Write .env
   $env = <<<ENV
@@ -67,6 +69,9 @@ SESSION_PATH=/
 SESSION_DOMAIN=null
 
 LOG_CHANNEL=stack
+LOG_STACK=single
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=warning
 ENV;
 
   if (!file_put_contents($appRoot . '/.env', $env)) {
@@ -97,48 +102,35 @@ ENV;
     showSuccess("Database seeded.");
   }
 
-  // ✅ Cleanup
-  unlink(__FILE__);
-  showSuccess("Installer removed.");
-
   exit("<pre>🎉 Astelium installed successfully. You may now log in.</pre>");
 }
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Astelium Installer</title>
-  <style>
-    body { font-family: sans-serif; background: #f9f9f9; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    form { background: white; padding: 2rem; border-radius: 10px; max-width: 400px; width: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
-    h2 { text-align: center; margin-bottom: 1rem; }
-    label { display: block; margin: 0.5rem 0 0.25rem; }
-    input { width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
-    button { background: #2563eb; color: white; padding: 0.75rem; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
-    button:hover { background: #1d4ed8; }
-  </style>
-</head>
-<body>
-<form method="POST">
-  <h2>Install Astelium</h2>
-
-  <label>DB Host</label>
-  <input name="db[host]" value="127.0.0.1" required>
-
-  <label>DB Port</label>
-  <input name="db[port]" value="3306" required>
-
-  <label>DB Name</label>
-  <input name="db[name]" required>
-
-  <label>DB Username</label>
-  <input name="db[user]" required>
-
-  <label>DB Password</label>
-  <input name="db[pass]" type="password">
-
-  <button type="submit">Install</button>
-</form>
-</body>
-</html>
+<div class="panel">
+  <div class="panel-title">Install / Reinstall</div>
+  <form method="post" autocomplete="off">
+    <div class="form-group">
+      <label for="db_host">Database Host</label>
+      <input type="text" name="db[host]" id="db_host" required autocomplete="database_host" value="127.0.0.1">
+    </div>
+    <div class="form-group">
+      <label for="db_port">Database Port</label>
+      <input type="number" name="db[port]" id="db_port" value="3306" required autocomplete="database_port">
+    </div>
+    <div class="form-group">
+      <label for="db_name">Database Name</label>
+      <input type="text" name="db[name]" id="db_name" required autocomplete="database_name" value="astelium">
+    </div>
+    <div class="form-group">
+      <label for="db_user">Database User</label>
+      <input type="text" name="db[user]" id="db_user" required autocomplete="database_user" value="root">
+    </div>
+    <div class="form-group">
+      <label for="db_pass">Database Password</label>
+      <input type="password" name="db[pass]" id="db_pass" autocomplete="database_password" value="">
+    </div>
+    <div class="button-row">
+      <button type="submit">Install</button>
+      <a href="?view=home" class="button button-secondary">Back</a>
+    </div>
+  </form>
+</div>

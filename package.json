@@ -8,7 +8,8 @@
     "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "start:backend": "node ./index.js --seed",
     "start:frontend": "cd frontend && npm install && npm run dev",
-    "build": "node build.js"
+    "build": "node build.js",
+    "build:publish": "node build.js --publishOnly"
   },
   "repository": {
     "type": "git",
