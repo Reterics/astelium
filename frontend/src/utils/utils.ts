@@ -1,8 +1,21 @@
 import {TransactionChartData} from '../components/visualizations/TransactionChartCard.tsx';
 
+function getAppBasePath(appUrl: string) {
+  try {
+    const app = new URL(appUrl);
+    let base = app.pathname;
+
+    if (!base || base === '/') return '';
+    if (base.endsWith('/')) base = base.slice(0, -1);
+
+    return base;
+  } catch {
+    return '';
+  }
+}
+
 export const baseURL =
-  ((window as Window & typeof globalThis & {APP_URL: string}).APP_URL || '')
-    .replace(window.location.origin, '');
+  getAppBasePath(((window as Window & typeof globalThis & {APP_URL: string}).APP_URL || ''))
 
 export const getCSRFToken = () => {
   const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
@@ -17,14 +30,14 @@ export const getFetchOptions = (noContentType?: boolean) => {
   const options = {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
+    } as Record<string, string>,
     credentials: 'include',
   };
 
   if (!noContentType) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     options.headers['Content-Type'] = 'application/json';
+    options.headers['Accept'] = 'application/json';
+    options.headers['X-Requested-With'] = 'X-Requested-With';
   }
   return options as RequestInit;
 };

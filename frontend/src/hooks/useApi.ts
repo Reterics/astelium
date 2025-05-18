@@ -9,6 +9,14 @@ export interface UseApiProps {
   perPage: number;
 }
 
+export class UseApiError extends Error {
+  code: number;
+  constructor(message:string, code: number) {
+    super(message);
+    this.code = code;
+  }
+}
+
 export const useApi = (endpoint: string, options?: UseApiProps) => {
   const queryClient = useQueryClient();
 
@@ -19,7 +27,17 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       ...getFetchOptions(),
     });
 
-    if (!response.ok) throw new Error(`Failed to fetch ${endpoint}`);
+    if (response.status === 401 && !location.pathname.endsWith('/login')) {
+      console.warn('Session expired, navigate to login page');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = baseURL + '/login';
+      return;
+    }
+
+    if (!response.ok) {
+      throw new UseApiError('Failed to fetch ${endpoint}', response.status);
+    }
 
     const data = await response.json();
 
@@ -44,6 +62,11 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       queryKey: [endpoint],
       queryFn: fetchData,
       getNextPageParam: (lastPage) => lastPage.next_page_url ?? undefined,
+      retry: (failureCount, error: any) => {
+        // Do not retry on 401 - Unauthorized
+        if (error?.code === 401) return false;
+        return failureCount < 3;
+      },
     });
 
   const createMutation = useMutation({

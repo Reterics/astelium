@@ -10,11 +10,17 @@ class OpenAIService
 
     public function __construct()
     {
-        $this->client = OpenAI::client(env('OPENAI_API_KEY'));
+        $apiKey = env('OPENAI_API_KEY');
+        if ($apiKey) {
+            $this->client = OpenAI::client(env('OPENAI_API_KEY'));
+        }
     }
 
-    public function generateResponse($message)
+    public function generateResponse($message): false|string
     {
+        if (!$this->client) {
+            return false;
+        }
         $response = $this->client->chat()->create([
             'model' => 'gpt-4', // Or 'gpt-3.5-turbo'
             'messages' => [

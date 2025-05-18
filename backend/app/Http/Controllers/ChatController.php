@@ -31,6 +31,10 @@ class ChatController extends Controller
         // Generate AI response
         $aiResponse = $this->openAI->generateResponse($request->text);
 
+        if ($aiResponse === false) {
+            return response(500);
+        }
+
         $botMessage = ChatMessage::create([
             'author' => 'AI Bot',
             'text' => $aiResponse,

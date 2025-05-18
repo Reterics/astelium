@@ -48,7 +48,7 @@ export const useAuth = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    window.location.href = '/login'; // Ensure redirection on logout
+    window.location.href = baseURL + '/login';
   };
 
   return {user, login, logout};
