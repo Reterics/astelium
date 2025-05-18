@@ -225,19 +225,22 @@ const KanbanBoard = ({
   }, [tasks]);
 
   return (
-    <div className='flex gap-4 overflow-x-auto p-2'>
+    <div className='flex gap-2 overflow-x-auto p-1'>
       {statuses.map((status) => (
         <div
           key={status.id}
-          className='w-1/5 min-w-[200px] border border-zinc-300 rounded'
+          className='w-1/5 min-w-[200px] border border-zinc-200 bg-zinc-50 rounded-none flex flex-col'
+          style={{borderRadius: 0}}
         >
           <h2
-            className={`p-2  ${status.color} text-left text-sm font-bold text-zinc-900`}
+            className={`px-2 py-1 border-b border-zinc-100 bg-zinc-50 text-left text-xs font-semibold text-zinc-700`}
+            style={{borderTopLeftRadius: 0, borderTopRightRadius: 0}}
           >
             {status.title}
           </h2>
+
           <div
-            className='bg-zinc-100 p-1 rounded-b-sm min-h-[400px] space-y-1'
+            className='bg-white p-1 min-h-[400px] flex flex-col gap-1'
             data-column-id={status.id}
             ref={(el) => {
               columnRefs.current[status.id] = el;
@@ -249,40 +252,43 @@ const KanbanBoard = ({
               .map((task) => (
                 <div
                   key={task.id}
-                  className='relative bg-white text-zinc-900 border border-white p-2 rounded-sm shadow flex flex-col space-y-2 hover:bg-zinc-50 hover:border-zinc-400 cursor-pointer'
+                  className='relative bg-white text-zinc-800 border border-zinc-200 px-2 py-1 rounded-none flex flex-col gap-1 hover:bg-zinc-50 hover:border-blue-200 cursor-pointer transition-colors duration-75'
                   data-task-id={task.id}
                   ref={(el) => {
                     taskRefs.current[task.id] = el;
                     return;
                   }}
                   onClick={() => onTaskClick(task)}
+                  style={{borderRadius: 0}}
                 >
                   {highlightedIndex === task.id && (
-                    <div className='absolute top-0 left-0 right-0 h-1 bg-blue-500'></div>
+                    <div className='absolute top-0 left-0 right-0 h-0.5 bg-blue-500'></div>
                   )}
-                  <div className='flex items-center space-x-1 text-sm'>
-                    <h4 className='font-semibold'>{task.title}</h4>
+                  <div className='flex items-center gap-1 text-xs font-medium'>
+                    <h4 className='truncate font-semibold'>{task.title}</h4>
                   </div>
 
                   {task.project && (
                     <div
-                      className={`text-zinc-100 text-xs font-semibold px-1 py-0.5 rounded-xs w-max ${getProjectColor(task.project.name)}`}
+                      className={`text-zinc-600 text-xs px-1 py-0 w-max ${getProjectColor(task.project.name)}`}
+                      style={{
+                        background: getProjectColor(task.project.name),
+                        borderRadius: 2,
+                      }}
                     >
                       {task.project.name}
                     </div>
                   )}
 
-                  <div>
-                    <div className='text-xs flex flex-row font-semibold'>
-                      {' '}
+                  <div className='flex items-center gap-2 text-xs'>
+                    <span className='flex flex-row items-center gap-1 font-semibold'>
                       {typeIcons[task.type]}{' '}
                       {`${task.type.charAt(0).toUpperCase()}-${task.id}`}
-                    </div>
-
+                    </span>
                     {task.priority && (
-                      <div className='absolute bottom-2 right-2'>
+                      <span className='ml-auto'>
                         {priorityIcons[task.priority]}
-                      </div>
+                      </span>
                     )}
                   </div>
                 </div>

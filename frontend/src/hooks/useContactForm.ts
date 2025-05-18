@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 
 export interface ContactFormData {
   name: string;
@@ -20,7 +20,7 @@ export const useContactForm = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (key: keyof ContactFormData, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setForm((prev) => ({...prev, [key]: value}));
   };
 
   const submit = async () => {
@@ -44,7 +44,7 @@ export const useContactForm = () => {
       }
 
       setSuccess('Your message has been sent!');
-      setForm({ name: '', email: '', phone: '', message: '' });
+      setForm({name: '', email: '', phone: '', message: ''});
     } catch (err: any) {
       setError(err.message || 'Something went wrong');
     } finally {

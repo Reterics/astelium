@@ -7,9 +7,9 @@
   "dashboard": {
     "title": "Dashboard",
     "total_users": "Total Users",
-    "total_projects": "Total Users",
-    "total_transactions": "Total Users",
-    "total_tasks": "Total Users",
+    "total_projects": "Total Projects",
+    "total_transactions": "Total Transactions",
+    "total_tasks": "Total Tasks",
     "bar_chart_title": "Task Status Breakdown",
     "line_chart_title": "Transaction Overview",
     "task_list_title": "Your Tasks",

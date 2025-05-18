@@ -11,7 +11,7 @@ export interface UseApiProps {
 
 export class UseApiError extends Error {
   code: number;
-  constructor(message:string, code: number) {
+  constructor(message: string, code: number) {
     super(message);
     this.code = code;
   }
@@ -27,7 +27,12 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       ...getFetchOptions(),
     });
 
-    if (response.status === 401 && !location.pathname.endsWith('/login')) {
+    if (
+      response.status === 401 &&
+      !location.pathname.endsWith('/login') &&
+      !location.pathname.endsWith('/register') &&
+      location.pathname !== baseURL + '/'
+    ) {
       console.warn('Session expired, navigate to login page');
       localStorage.removeItem('token');
       localStorage.removeItem('user');

@@ -428,7 +428,7 @@ const InvoiceModal = ({
         }}
       />
 
-      <div className='flex flex-row justify-between'>
+      <div className='flex flex-row justify-between max-w-full'>
         <div />
         <div className='p-3 pb-1 shadow-md bg-zinc-50 rounded-lg w-1/4'>
           <h2 className='text-lg font-semibold mb-2'>{t('Summary')}</h2>

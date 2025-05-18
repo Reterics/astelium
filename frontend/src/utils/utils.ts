@@ -14,8 +14,9 @@ function getAppBasePath(appUrl: string) {
   }
 }
 
-export const baseURL =
-  getAppBasePath(((window as Window & typeof globalThis & {APP_URL: string}).APP_URL || ''))
+export const baseURL = getAppBasePath(
+  (window as Window & typeof globalThis & {APP_URL: string}).APP_URL || ''
+);
 
 export const getCSRFToken = () => {
   const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);

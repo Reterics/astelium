@@ -153,18 +153,22 @@ const Tasks = () => {
   ];
 
   return (
-    <div className='pb-1 shadow-md bg-zinc-50'>
-      <div className='p-2 pb-0 flex items-center space-x-2'>
-        <div className='flex items-center space-x-2 flex-1'>
-          <FiSearch className='text-zinc-600' />
+    <div
+      className='pb-0 bg-white border border-zinc-200 rounded-none'
+      style={{boxShadow: 'none'}}
+    >
+      <div className='px-2 py-1 flex items-center gap-2'>
+        <div className='flex items-center gap-2 flex-1'>
+          <FiSearch className='text-zinc-600 w-4 h-4' />
           <input
             type='text'
             placeholder='Search...'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className='p-1 border border-zinc-300 rounded-xs bg-white text-zinc-900'
+            className='px-2 py-1 border border-zinc-200 text-xs font-medium rounded-none bg-white text-zinc-900 focus:outline-none focus:border-blue-500'
+            style={{borderRadius: 0, minWidth: 120}}
           />
-          <label className='ps-2 text-sm font-medium text-zinc-700'>
+          <label className='pl-2 text-xs font-medium text-zinc-700 select-none'>
             Group:
           </label>
           <SelectComponent
@@ -173,26 +177,13 @@ const Tasks = () => {
               label: 'Grouped by',
               type: 'select',
               options: [
-                {
-                  value: 'status',
-                  label: t('status'),
-                },
-                {
-                  value: 'priority',
-                  label: t('priority'),
-                },
-                {
-                  value: 'type',
-                  label: t('type'),
-                },
+                {value: 'status', label: t('status')},
+                {value: 'priority', label: t('priority')},
+                {value: 'type', label: t('type')},
               ],
             }}
-            filters={{
-              group: groupedBy,
-            }}
-            handleFilterChange={(_column, value) => {
-              setGroupedBy(value);
-            }}
+            filters={{group: groupedBy}}
+            handleFilterChange={(_column, value) => setGroupedBy(value)}
           />
         </div>
 
@@ -207,7 +198,8 @@ const Tasks = () => {
               await saveData(form as Record<string, any>);
             }
           }}
-          className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
+          className='flex items-center bg-zinc-800 text-white px-3 py-1 text-xs font-medium rounded-none hover:bg-zinc-700'
+          style={{borderRadius: 0}}
         >
           <FiPlus className='mr-1' /> Add
         </button>

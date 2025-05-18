@@ -79,12 +79,13 @@ const SelectComponent: React.FC<SelectProps> = ({
   return (
     <div
       key={column.key}
-      className='relative inline-block min-w-28 max-w-full float-end'
+      className='relative inline-block min-w-[6.5rem] max-w-full float-end align-top'
     >
       <button
         ref={buttonRef}
-        className='w-full border border-zinc-300 px-2 py-1 rounded-xs focus:outline-none flex justify-between items-center truncate bg-white'
+        className='w-full border border-zinc-200 px-2 py-1 text-xs font-medium bg-white focus:outline-none focus:border-blue-500 flex justify-between items-center truncate rounded-none'
         onClick={toggleDropdown}
+        style={{borderRadius: 0}}
       >
         {selectedOption
           ? typeof selectedOption === 'string'
@@ -97,8 +98,6 @@ const SelectComponent: React.FC<SelectProps> = ({
           ref={dropdownRef}
           style={{
             position: 'fixed',
-            // top: dropdownPosition?.top, // TODO: Test, and remove connected implementation
-            // left: dropdownPosition?.left,
             width: buttonRef?.current?.offsetWidth || 'unset',
             zIndex: 50,
           }}
@@ -106,13 +105,14 @@ const SelectComponent: React.FC<SelectProps> = ({
           <div
             style={{
               minWidth: buttonRef?.current?.offsetWidth || 'unset',
+              borderRadius: 0,
             }}
-            className='bg-white border border-zinc-300 shadow-lg rounded-xs overflow-hidden overflow-y-auto w-max justify-self-end'
+            className='bg-white border border-zinc-200 shadow-sm rounded-none overflow-y-auto w-max max-h-56'
           >
             {column.options?.map((option) => (
               <div
                 key={typeof option !== 'object' ? option : option.value}
-                className='cursor-pointer px-2 py-1 hover:bg-zinc-200 text-sm whitespace-nowrap'
+                className='cursor-pointer px-2 py-1 text-xs whitespace-nowrap hover:bg-zinc-100'
                 onClick={() => {
                   handleFilterChange(
                     column.key,
@@ -120,6 +120,7 @@ const SelectComponent: React.FC<SelectProps> = ({
                   );
                   setDropdownPosition(null);
                 }}
+                style={{fontWeight: 500}}
               >
                 {typeof option !== 'object' ? option : option.label}
               </div>

@@ -71,14 +71,15 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
   return (
     <div
       key={column.key}
-      className='relative inline-block min-w-16 max-w-full float-end'
+      className='relative inline-block min-w-[4rem] max-w-full float-end align-top'
     >
       <button
         ref={buttonRef}
-        className='max-w-full bg-white border border-zinc-300 p-1 rounded-xs focus:outline-none flex justify-end truncate'
+        className='max-w-full bg-white border border-zinc-200 px-2 py-1 text-xs font-medium focus:outline-none focus:border-blue-500 flex justify-end items-center truncate rounded-none'
         onClick={toggleDropdown}
+        style={{borderRadius: 0}}
       >
-        <div className='flex-1 text-nowrap'>
+        <div className='flex-1 whitespace-nowrap overflow-hidden text-ellipsis text-left'>
           {filters[column.key]?.length
             ? filters[column.key]
                 .map((value) => {
@@ -87,17 +88,14 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
                       option === value ||
                       (typeof option === 'object' && option.value === value)
                   );
-
-                  if (typeof option === 'object') {
-                    return option.label;
-                  }
+                  if (typeof option === 'object') return option.label;
                   return option || value;
                 })
                 .join(', ')
             : defaultLabel || column.label}
         </div>
-        <div className='self-center w-4'>
-          <FiChevronDown />
+        <div className='ml-2 w-4 flex items-center'>
+          <FiChevronDown className='w-4 h-4 text-zinc-500' />
         </div>
       </button>
       {dropdownPosition && (
@@ -114,13 +112,15 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
           <div
             style={{
               minWidth: buttonRef?.current?.offsetWidth || 'unset',
+              borderRadius: 0,
             }}
-            className='bg-white border border-zinc-300 shadow-lg rounded-xs overflow-hidden overflow-y-auto w-max justify-self-end'
+            className='bg-white border border-zinc-200 shadow-sm rounded-none overflow-y-auto w-max max-h-56'
           >
             {column.options?.map((option) => (
               <label
                 key={typeof option !== 'object' ? option : option.value}
-                className='flex items-center space-x-2 cursor-pointer px-2 py-1 hover:bg-zinc-200 text-sm whitespace-nowrap'
+                className='flex items-center gap-2 cursor-pointer px-2 py-1 text-xs hover:bg-zinc-100 whitespace-nowrap font-medium'
+                style={{fontWeight: 500}}
               >
                 <input
                   type='checkbox'
@@ -133,19 +133,20 @@ const MultiSelectComponent: React.FC<MultiSelectProps> = ({
                     const value =
                       typeof option !== 'object' ? option : option.value;
                     const selected = filters[column.key] || [];
-
                     flushSync(() => {
                       handleFilterChange(
                         column.key,
                         e.target.checked
                           ? [...selected, value]
-                          : selected.filter((item: string) => item !== value)
+                          : selected.filter((item) => item !== value)
                       );
                     });
                     setDropdownPosition(recalculateButtonPosition());
                   }}
+                  className='accent-blue-600 w-3.5 h-3.5'
+                  style={{borderRadius: 2}}
                 />
-                <span>
+                <span className='truncate'>
                   {typeof option !== 'object' ? option : option.label}
                 </span>
               </label>

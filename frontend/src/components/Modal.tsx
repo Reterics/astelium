@@ -39,35 +39,48 @@ const Modal: React.FC<ModalProps> = ({children, onClose, title, buttons}) => {
       handle='.title-bar'
       className='draggable-modal'
     >
-      <div className='relative bg-zinc-50 border border-zinc-400 text-zinc-700 p-3 rounded-md shadow-lg w-auto max-w-[98vw] max-h-[98vh] overflow-y-auto'>
-        <div className={`title-bar cursor-move`}>
-          <div className='flex items-center justify-between border-b border-zinc-300 pb-2 mb-1'>
-            <h2 className='text-lg font-semibold text-zinc-800'>{title}</h2>
+      <div
+        className='relative bg-white shadow-lg border border-zinc-200 text-zinc-700 px-4 py-3 rounded-none w-auto max-w-[98vw] max-h-[98vh] overflow-y-auto'
+        style={{borderRadius: 0, boxShadow: 'none'}}
+      >
+        <div className='title-bar cursor-move'>
+          <div className='flex items-center justify-between border-b border-zinc-100 pb-1 mb-2'>
+            <h2 className='text-base font-semibold text-zinc-800 m-0'>
+              {title}
+            </h2>
             <button
-              className='text-zinc-400 hover:text-zinc-600 transition cursor-pointer'
+              className='text-zinc-400 hover:text-zinc-700 transition-colors duration-100 px-1'
               onClick={onClose}
+              style={{border: 'none', background: 'none', borderRadius: 0}}
+              tabIndex={0}
             >
-              <FiX size={20} />
+              <FiX size={18} />
             </button>
           </div>
         </div>
-        <div className='flex flex-1 overflow-auto p-1 text-sm min-w-72'>
+
+        <div className='flex flex-1 overflow-auto p-0.5 text-sm min-w-72'>
           {children}
         </div>
+
         {!!(leftButtons.length || rightButtons.length) && (
-          <div className='flex min-w-72 justify-between pt-2'>
-            {[leftButtons, rightButtons].map((buttons) => (
-              <div>
-                {buttons.map((button) => (
+          <div className='flex min-w-72 justify-between pt-2 gap-2'>
+            {[leftButtons, rightButtons].map((buttons, idx) => (
+              <div key={idx} className='flex gap-1'>
+                {buttons.map((button, bIdx) => (
                   <button
+                    key={bIdx}
                     className={
                       button.type === 'primary'
-                        ? 'flex items-center bg-zinc-800 text-white border border-zinc-400 px-2 py-1 rounded-xs hover:bg-zinc-700'
-                        : 'flex items-center text-zinc-800 bg-white border border-zinc-400 px-2 py-1 rounded-xs hover:bg-zinc-200'
+                        ? 'flex items-center bg-zinc-800 text-white border border-zinc-200 px-2 py-1 rounded-none text-xs font-medium hover:bg-zinc-700'
+                        : 'flex items-center text-zinc-800 bg-white border border-zinc-200 px-2 py-1 rounded-none text-xs font-medium hover:bg-zinc-100'
                     }
                     onClick={() => button.onClick?.() || onClose()}
+                    style={{borderRadius: 0}}
+                    tabIndex={0}
                   >
-                    {button.icon} <div className='ms-1'>{button.text}</div>
+                    {button.icon}
+                    <div className='ml-1'>{button.text}</div>
                   </button>
                 ))}
               </div>

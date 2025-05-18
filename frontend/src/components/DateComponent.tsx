@@ -16,7 +16,8 @@ const DateComponent = ({
       type='date'
       value={value === undefined ? defaultValue : value}
       onChange={onChange}
-      className='p-1 bg-white border border-zinc-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
+      className='px-2 py-1 bg-white border border-zinc-200 text-xs font-medium rounded-none focus:outline-none focus:border-blue-500 focus:ring-0 transition-colors duration-100'
+      style={{borderRadius: 0}}
     />
   );
 };

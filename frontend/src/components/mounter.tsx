@@ -43,9 +43,12 @@ const mountComponent = <P, R = boolean>(
     };
 
     root.render(
-      <div className='fixed top-0 left-0'>
-        <Component {...(props as P)} onClose={handleClose} onSave={onSave} />
-      </div>
+      <>
+        <div className='backdrop bg-[#00000087] w-full h-full fixed top-0 left-0'></div>
+        <div className='fixed top-0 left-0'>
+          <Component {...(props as P)} onClose={handleClose} onSave={onSave} />
+        </div>
+      </>
     );
   });
 export default mountComponent;

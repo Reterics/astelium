@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {baseURL} from "../../utils/utils.ts";
+import {baseURL} from '../../utils/utils.ts';
 
 const Settings = () => {
   const [settings, setSettings] = useState<any>({});

@@ -97,7 +97,7 @@ const CrudManager = <T extends Record<string, any>>({
     : (data as Partial<T>[]);
 
   return (
-    <div className='p-2 bg-zinc-50'>
+    <div className='p-2'>
       {!childOnly && (
         <TableComponent
           columns={fields.filter((f) => f.visible !== false)}

@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useAuth} from '../../hooks/useAuth.ts';
-import {baseURL} from "../../utils/utils.ts";
+import {baseURL} from '../../utils/utils.ts';
 
 const Register = () => {
   const [form, setForm] = useState({

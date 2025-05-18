@@ -48,17 +48,15 @@ const GroupedTableComponent = ({
   return (
     <div>
       {Object.keys(groupedData).map((groupName) => (
-        <div className='p-2'>
-          <div className='pb-1 px-3 flex items-center space-x-2 border-t border-x border-zinc-300 w-fit'>
-            <div className='text-zinc-600 font-medium'>
-              {t(
-                (selectedGroupOptions.find((o) => o.value === groupName)
-                  ?.label as string) || groupName
-              )}
-            </div>
+        <div className='mb-2'>
+          <div className='flex items-center gap-2 px-2 py-1 border-t border-l border-r border-zinc-200 bg-zinc-50 text-xs font-semibold text-zinc-600 tracking-tight select-none'>
+            {t(
+              (selectedGroupOptions.find((o) => o.value === groupName)
+                ?.label as string) || groupName
+            )}
           </div>
           {!groupedData[groupName].length && (
-            <div className='bg-white px-4 py-2'>
+            <div className='bg-white px-4 py-2 text-xs text-zinc-500 border-l border-r border-b border-zinc-100'>
               There are no tasks for this group.
             </div>
           )}

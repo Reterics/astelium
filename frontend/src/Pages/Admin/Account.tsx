@@ -14,7 +14,9 @@ const Account = () => {
 
   useEffect(() => {
     const fetchAccount = async () => {
-      const response = await fetch(baseURL + '/api/account', {...getFetchOptions()});
+      const response = await fetch(baseURL + '/api/account', {
+        ...getFetchOptions(),
+      });
       const data = await response.json();
       setAccount(data.account);
       setIsAdmin(data.is_admin);

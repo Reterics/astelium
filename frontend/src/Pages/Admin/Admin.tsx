@@ -25,7 +25,7 @@ import Appointments from '../Appointments.tsx';
 import Account from './Account.tsx';
 import Maps from './Maps.tsx';
 import Map from './Map.tsx';
-import {baseURL} from "../../utils/utils.ts";
+import {baseURL} from '../../utils/utils.ts';
 
 const AdminPanel = () => {
   return (

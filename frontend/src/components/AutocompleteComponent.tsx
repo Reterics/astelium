@@ -103,12 +103,13 @@ const AutocompleteComponent: React.FC<AutocompleteProps> = ({
   return (
     <div
       key={column.key}
-      className='relative inline-block min-w-28 max-w-full float-end'
+      className='relative inline-block min-w-[7rem] max-w-full float-end align-top'
     >
       <button
         ref={buttonRef}
-        className='w-full border border-zinc-300 px-2 py-1 rounded-xs focus:outline-none flex justify-between items-center truncate bg-white'
+        className='w-full border border-zinc-200 px-2 py-1 text-xs font-medium rounded-none bg-white focus:outline-none focus:border-blue-500 flex justify-between items-center truncate'
         onClick={toggleDropdown}
+        style={{borderRadius: 0}}
       >
         {selectedOption
           ? typeof selectedOption === 'string'
@@ -126,19 +127,23 @@ const AutocompleteComponent: React.FC<AutocompleteProps> = ({
             zIndex: 50,
           }}
         >
-          <div className='bg-white border border-zinc-300 shadow-lg rounded-xs overflow-hidden overflow-y-auto w-max'>
+          <div
+            className='bg-white border border-zinc-200 shadow-sm rounded-none overflow-y-auto w-max max-h-60'
+            style={{borderRadius: 0}}
+          >
             <input
               type='text'
-              className='w-full p-2 border-b border-zinc-300 outline-none'
+              className='w-full px-2 py-1 border-b border-zinc-100 outline-none text-xs font-medium rounded-none focus:border-blue-500'
               placeholder='Type to search...'
               value={inputValue}
               onChange={handleInputChange}
               autoFocus
+              style={{borderRadius: 0}}
             />
             {options?.map((option) => (
               <div
                 key={typeof option !== 'object' ? option : option.value}
-                className='cursor-pointer px-2 py-1 hover:bg-zinc-200 text-sm whitespace-nowrap'
+                className='cursor-pointer px-2 py-1 text-xs font-medium whitespace-nowrap hover:bg-zinc-100'
                 onClick={() => {
                   handleFilterChange(
                     column.key,
@@ -147,6 +152,7 @@ const AutocompleteComponent: React.FC<AutocompleteProps> = ({
                   setDropdownPosition(null);
                   setInputValue('');
                 }}
+                style={{fontWeight: 500}}
               >
                 {typeof option !== 'object' ? option : option.label}
               </div>

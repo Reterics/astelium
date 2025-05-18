@@ -1,9 +1,6 @@
 import Modal from './Modal';
 import {useState} from 'react';
-import SelectComponent, {
-  SelectOption,
-  SelectOptions,
-} from './SelectComponent.tsx';
+import SelectComponent, {SelectOptions} from './SelectComponent.tsx';
 import {useApi} from '../hooks/useApi.ts';
 import {Task} from './KanbanBoard.tsx';
 import {FiMessageSquare} from 'react-icons/fi';
@@ -59,35 +56,43 @@ const TaskModal = ({task, users, onClose, onSave}: TaskModalProps) => {
       }
       onClose={onClose}
     >
-      <div className='grid grid-cols-[2fr_1fr] gap-2'>
-        <div className='space-y-3'>
+      <div className='grid grid-cols-[2fr_1fr] gap-3'>
+        <div className='flex flex-col gap-2'>
           <textarea
             value={editedTask.description || ''}
             onChange={(e) => handleChange('description', e.target.value)}
-            className='w-full h-20 border border-zinc-300 p-1 rounded text-sm'
+            className='w-full h-20 border border-zinc-200 bg-white px-2 py-1 text-xs font-medium rounded-none focus:outline-none focus:border-blue-500'
             placeholder='Task description...'
+            style={{borderRadius: 0}}
           />
 
-          <h4 className='text-lg font-bold'>Comments</h4>
+          <h4 className='text-xs font-bold text-zinc-800 mb-1 mt-2'>
+            Comments
+          </h4>
 
-          <div className='space-y-2 max-h-40 overflow-y-auto p-1 bg-zinc-50 rounded'>
+          <div
+            className='space-y-1 max-h-40 overflow-y-auto p-1 bg-zinc-50 border border-zinc-100 rounded-none'
+            style={{borderRadius: 0}}
+          >
             {commentsLoading ? (
-              <p>Loading comments...</p>
+              <p className='text-xs text-zinc-700'>Loading comments...</p>
             ) : (
               comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className='border-b pb-1 flex items-start space-x-2'
+                  className='border-b border-zinc-100 pb-1 flex items-start gap-2'
                 >
                   <div>
-                    <p className='text-sm font-semibold'>{comment.author}</p>
-                    <p className='text-sm'>{comment.text}</p>
-                    <p className='text-xs text-gray-500 flex items-center space-x-2'>
-                      <FiMessageSquare className='text-zinc-600' />
+                    <p className='text-xs font-semibold text-zinc-900 mb-0'>
+                      {comment.author}
+                    </p>
+                    <p className='text-xs text-zinc-800 mb-0'>{comment.text}</p>
+                    <div className='flex items-center gap-1 text-[11px] text-zinc-600 mt-0.5'>
+                      <FiMessageSquare className='w-3 h-3' />
                       <span>
                         {new Date(comment.created_at).toLocaleString()}
                       </span>
-                    </p>
+                    </div>
                   </div>
                 </div>
               ))
@@ -95,22 +100,27 @@ const TaskModal = ({task, users, onClose, onSave}: TaskModalProps) => {
           </div>
 
           <textarea
-            className='w-full h-16 border border-zinc-300 p-1 rounded text-sm mb-1 bg-zinc-50'
+            className='w-full h-14 border border-zinc-200 bg-zinc-50 px-2 py-1 text-xs font-medium rounded-none focus:outline-none focus:border-blue-500 mt-1'
             placeholder='Add a comment...'
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
+            style={{borderRadius: 0}}
           />
           <button
-            className='bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
+            className='bg-zinc-800 text-white px-3 py-1 rounded-none text-xs font-medium hover:bg-zinc-700 transition'
             onClick={handleAddComment}
+            style={{borderRadius: 0}}
           >
             Post Comment
           </button>
         </div>
 
-        <div className='bg-gray-100 p-2 rounded flex flex-col gap-1 text-sm space-y-1 w-full'>
-          <div className='grid grid-cols-[1fr_1fr] items-center'>
-            <span className='font-semibold'>Assigned to:</span>
+        <div
+          className='bg-zinc-50 border border-zinc-100 rounded-none flex flex-col gap-1 text-xs px-2 py-2 w-full'
+          style={{borderRadius: 0}}
+        >
+          <div className='grid grid-cols-[1fr_1fr] items-center gap-x-1'>
+            <span className='font-semibold text-zinc-700'>Assigned to:</span>
             <SelectComponent
               defaultLabel='Select User'
               column={{
@@ -125,26 +135,28 @@ const TaskModal = ({task, users, onClose, onSave}: TaskModalProps) => {
               }
             />
           </div>
-          <div className='grid grid-cols-[1fr_1fr] items-center'>
-            <span className='font-semibold'>Start:</span>
+          <div className='grid grid-cols-[1fr_1fr] items-center gap-x-1'>
+            <span className='font-semibold text-zinc-700'>Start:</span>
             <input
               type='datetime-local'
               value={editedTask.start_time || ''}
               onChange={(e) => handleChange('start_time', e.target.value)}
-              className='border border-zinc-300 p-1 rounded text-xs'
+              className='border border-zinc-200 px-2 py-1 bg-white rounded-none text-xs font-medium focus:outline-none focus:border-blue-500'
+              style={{borderRadius: 0}}
             />
           </div>
-          <div className='grid grid-cols-[1fr_1fr] items-center'>
-            <span className='font-semibold'>Expected:</span>
+          <div className='grid grid-cols-[1fr_1fr] items-center gap-x-1'>
+            <span className='font-semibold text-zinc-700'>Expected:</span>
             <input
               type='datetime-local'
               value={editedTask.expected_time || ''}
               onChange={(e) => handleChange('expected_time', e.target.value)}
-              className='border border-zinc-300 p-1 rounded text-xs'
+              className='border border-zinc-200 px-2 py-1 bg-white rounded-none text-xs font-medium focus:outline-none focus:border-blue-500'
+              style={{borderRadius: 0}}
             />
           </div>
-          <div className='grid grid-cols-[1fr_1fr] items-center'>
-            <span className='font-semibold'>Priority:</span>
+          <div className='grid grid-cols-[1fr_1fr] items-center gap-x-1'>
+            <span className='font-semibold text-zinc-700'>Priority:</span>
             <SelectComponent
               defaultLabel='Select Priority'
               column={{key: 'priority', label: 'Priority', type: 'select'}}
@@ -154,23 +166,24 @@ const TaskModal = ({task, users, onClose, onSave}: TaskModalProps) => {
               }
             />
           </div>
-          <div className='grid grid-cols-[1fr_1fr] items-center'>
-            <span className='font-semibold'>Story Pts:</span>
+          <div className='grid grid-cols-[1fr_1fr] items-center gap-x-1'>
+            <span className='font-semibold text-zinc-700'>Story Pts:</span>
             <input
               type='number'
               value={editedTask.story_points || ''}
               onChange={(e) => handleChange('story_points', e.target.value)}
-              className='border border-zinc-300 p-1 rounded w-12 text-xs place-self-end'
+              className='border border-zinc-200 px-2 py-1 bg-white rounded-none text-xs font-medium w-14 focus:outline-none focus:border-blue-500 place-self-end'
+              style={{borderRadius: 0}}
             />
           </div>
-          <div className='grid grid-cols-[1fr_1fr] items-center'>
-            <div className='font-semibold'>
+          <div className='grid grid-cols-[1fr_1fr] items-center gap-x-1'>
+            <span className='font-semibold text-zinc-700'>
               Address{' '}
               <span className='font-light'>
                 ({(editedTask.lat || '') + ' - ' + (editedTask.lng || '')})
               </span>
               :
-            </div>
+            </span>
             <AutocompleteComponent
               defaultLabel={
                 (editedTask.address as string | undefined) || `Select option`
@@ -178,35 +191,28 @@ const TaskModal = ({task, users, onClose, onSave}: TaskModalProps) => {
               column={{key: 'address', label: 'Address', type: 'address'}}
               filter={async (input: string) => {
                 return await addressAutocomplete(input).then(
-                  (autoCompleteData) => {
-                    return autoCompleteData.map(
-                      (data) =>
-                        ({
-                          label: data.display_name,
-                          value: `{"lat":${data.lat},"lng":${data.lon}, "address":"${data.display_name}"}`,
-                        }) as SelectOption
-                    );
-                  }
+                  (autoCompleteData) =>
+                    autoCompleteData.map((data) => ({
+                      label: data.display_name,
+                      value: `{"lat":${data.lat},"lng":${data.lon},"address":"${data.display_name}"}`,
+                    }))
                 );
               }}
-              filters={{
-                address: editedTask.address as string,
-              }}
+              filters={{address: editedTask.address as string}}
               handleFilterChange={(_column, value) => {
-                if (!value) {
-                  return;
-                }
+                if (!value) return;
                 const data = JSON.parse(value);
                 handleChanges(data);
               }}
             />
           </div>
 
-          <div className='flex flex-1'></div>
-          <div className='self-end justify-items-end flex justify-end'>
+          <div className='flex-1' />
+          <div className='flex justify-end pt-2'>
             <button
               onClick={() => onSave(editedTask)}
-              className='bg-zinc-800 text-white px-4 py-2 rounded-xs'
+              className='bg-zinc-800 text-white px-4 py-1 rounded-none text-xs font-medium hover:bg-zinc-700 transition'
+              style={{borderRadius: 0}}
             >
               Save
             </button>

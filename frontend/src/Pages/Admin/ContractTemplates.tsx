@@ -28,7 +28,7 @@ const ContractTemplates = () => {
   };
 
   return (
-    <div className='p-2 bg-zinc-50'>
+    <div className='p-2'>
       <TableComponent
         columns={[
           {key: 'name', label: 'Template Name', type: 'text', editable: true},

@@ -10,19 +10,13 @@ import HomeLineChart from '../components/visualizations/home/HomeLineChart.tsx';
 import ModernTable from '../components/visualizations/home/ModernTable.tsx';
 import ContractCard from '../components/visualizations/home/ContractCard.tsx';
 import BusinessD3BarChart from '../components/visualizations/home/BusinessD3BarChart.tsx';
-import {WaveBackground} from "./WaveBackground.tsx";
-import customerSupport from "./../assets/customer_support.png"
-import {useContactForm} from "../hooks/useContactForm.ts";
+import {WaveBackground} from './WaveBackground.tsx';
+import customerSupport from './../assets/customer_support.png';
+import {useContactForm} from '../hooks/useContactForm.ts';
 
 const LandingPage = () => {
-  const {
-    form,
-    isSubmitting,
-    success,
-    error,
-    handleChange,
-    submit,
-  } = useContactForm();
+  const {form, isSubmitting, success, error, handleChange, submit} =
+    useContactForm();
   return (
     <div className='min-h-screen text-black relative overflow-hidden'>
       <div className='min-h-screen bg-gradient-to-t from-[#eaf6fe] to-white text-black relative overflow-hidden flex items-center justify-center'>
@@ -93,10 +87,16 @@ const LandingPage = () => {
               animate={{opacity: 1}}
               transition={{delay: 0.5}}
             >
-              <a href='#contact' className='px-5 py-2 bg-[#cfe8ff] hover:bg-zinc-300 rounded text-black font-semibold cursor-pointer'>
+              <a
+                href='#contact'
+                className='px-5 py-2 bg-[#cfe8ff] hover:bg-zinc-300 rounded text-black font-semibold cursor-pointer'
+              >
                 Book a Demo
               </a>
-              <a href='#pricing' className='px-5 py-2 bg-[#cfe8ff] hover:bg-zinc-300 rounded font-semibold cursor-pointer'>
+              <a
+                href='#pricing'
+                className='px-5 py-2 bg-[#cfe8ff] hover:bg-zinc-300 rounded font-semibold cursor-pointer'
+              >
                 View Pricing
               </a>
             </motion.div>
@@ -110,7 +110,10 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <section id='features' className='py-20 pt-14 bg-white text-center relative z-10'>
+      <section
+        id='features'
+        className='py-20 pt-14 bg-white text-center relative z-10'
+      >
         <h2 className='text-3xl font-bold'>Why Choose Astelium?</h2>
         <div className='mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto'>
           {[
@@ -243,7 +246,10 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section id='pricing' className='py-20 pt-14 bg-[#e0f2ff] text-center relative z-10'>
+      <section
+        id='pricing'
+        className='py-20 pt-14 bg-[#e0f2ff] text-center relative z-10'
+      >
         <h2 className='text-3xl font-bold'>Pricing Plans</h2>
         <div className='mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto'>
           {[
@@ -304,69 +310,87 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section id="contact" className="relative pb-10 bg-[#e0f2ff] text-zinc-900 overflow-hidden">
-        <h2 className="text-3xl font-bold text-zinc-900 mb-2 text-center">Get in Touch</h2>
+      <section
+        id='contact'
+        className='relative pb-10 bg-[#e0f2ff] text-zinc-900 overflow-hidden'
+      >
+        <h2 className='text-3xl font-bold text-zinc-900 mb-2 text-center'>
+          Get in Touch
+        </h2>
 
-        <div className="relative z-10 max-w-5xl mx-auto bg-white/70 backdrop-blur-sm rounded-xl shadow-xl p-10 md:grid md:grid-cols-2 gap-8">
+        <div className='relative z-10 max-w-5xl mx-auto bg-white/70 backdrop-blur-sm rounded-xl shadow-xl p-10 md:grid md:grid-cols-2 gap-8'>
           <WaveBackground />
-          <div className="space-y-4">
-            <img src={customerSupport} className="max-h-2/3 place-self-center" alt="Support Image"/>
-            <p className="text-zinc-600">
-              We'd love to hear from you! Fill out the form and we’ll get back to you soon.
+          <div className='space-y-4'>
+            <img
+              src={customerSupport}
+              className='max-h-2/3 place-self-center'
+              alt='Support Image'
+            />
+            <p className='text-zinc-600'>
+              We'd love to hear from you! Fill out the form and we’ll get back
+              to you soon.
             </p>
           </div>
 
-          <form className="space-y-4 mt-8 md:mt-0">
+          <form className='space-y-4 mt-8 md:mt-0'>
             <div>
-              <label className="block text-sm font-medium text-zinc-700">Your Name</label>
+              <label className='block text-sm font-medium text-zinc-700'>
+                Your Name
+              </label>
               <input
-                type="text"
+                type='text'
                 value={form.name}
                 onChange={(e) => handleChange('name', e.target.value)}
-                className="mt-1 w-full bg-white border border-zinc-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500"
-                placeholder="Jane Doe"
+                className='mt-1 w-full bg-white border border-zinc-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
+                placeholder='Jane Doe'
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-700">Email Address</label>
+              <label className='block text-sm font-medium text-zinc-700'>
+                Email Address
+              </label>
               <input
-                type="email"
+                type='email'
                 value={form.email}
                 onChange={(e) => handleChange('email', e.target.value)}
-                className="mt-1 w-full bg-white border border-zinc-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500"
-                placeholder="you@example.com"
+                className='mt-1 w-full bg-white border border-zinc-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
+                placeholder='you@example.com'
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-700">Phone</label>
+              <label className='block text-sm font-medium text-zinc-700'>
+                Phone
+              </label>
               <input
-                type="tel"
+                type='tel'
                 value={form.phone}
                 onChange={(e) => handleChange('phone', e.target.value)}
-                className="mt-1 w-full bg-white border border-zinc-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500"
-                placeholder="+36 1 567 890"
+                className='mt-1 w-full bg-white border border-zinc-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
+                placeholder='+36 1 567 890'
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-700">Message</label>
+              <label className='block text-sm font-medium text-zinc-700'>
+                Message
+              </label>
               <textarea
-                className="mt-1 w-full bg-white border border-zinc-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                className='mt-1 w-full bg-white border border-zinc-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
                 rows={4}
                 value={form.message}
                 onChange={(e) => handleChange('message', e.target.value)}
-                placeholder="Write your message here..."
+                placeholder='Write your message here...'
               ></textarea>
             </div>
             {}
             <button
               disabled={isSubmitting}
               onClick={submit}
-              className="bg-zinc-800 text-white px-4 py-2 rounded hover:bg-zinc-700"
+              className='bg-zinc-800 text-white px-4 py-2 rounded hover:bg-zinc-700'
             >
               {isSubmitting ? 'Sending...' : 'Send Message'}
             </button>
-            {success && <p className="text-green-600">{success}</p>}
-            {error && <p className="text-red-600">{error}</p>}
+            {success && <p className='text-green-600'>{success}</p>}
+            {error && <p className='text-red-600'>{error}</p>}
           </form>
         </div>
       </section>
@@ -403,7 +427,12 @@ const LandingPage = () => {
             <div className='max-w-1/3'>
               <h3 className='text-xl font-semibold'>Get in Touch</h3>
               <p className='mt-2 text-zinc-600'>support@astelium.com</p>
-              <a href='#contact' className='mt-1 text-zinc-600 hover:text-black'>Contact Us</a>
+              <a
+                href='#contact'
+                className='mt-1 text-zinc-600 hover:text-black'
+              >
+                Contact Us
+              </a>
             </div>
           </div>
           <div className='mt-8 text-center text-zinc-600 text-sm'>

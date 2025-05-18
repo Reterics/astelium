@@ -259,22 +259,24 @@ const TableComponent: React.FC<TableProps> = ({
   const isResetEnabled = !!columns.filter((col) => col.editable).length;
 
   return (
-    <div className='bg-zinc-50 rounded'>
+    <div className='bg-zinc-50 border border-zinc-200'>
       {(!noSearch || (onCreate && !itemToAdd)) && (
-        <div className='flex items-center mb-2 space-x-2'>
-          <div className='flex items-center space-x-2 flex-1'>
-            <FiSearch className='text-zinc-600' />
+        <div className='flex items-center mb-1 space-x-2 px-2 pt-2'>
+          <div className='flex items-center space-x-1 flex-1'>
+            <FiSearch className='text-zinc-600 w-4 h-4' />
             <input
               ref={searchRef}
               onKeyDown={handleKeyPress}
               type='text'
               placeholder='Search...'
-              className='p-1 border border-zinc-300 rounded-xs bg-white text-zinc-900'
+              className='px-1 py-0.5 border border-zinc-300 bg-white text-zinc-900 text-xs focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none'
+              style={{borderRadius: 0, minWidth: 120}}
             />
           </div>
           {columns.map((col) =>
             col.type === 'multiselect' ? (
               <MultiSelectComponent
+                key={col.key}
                 defaultLabel={col.label || `All`}
                 column={col}
                 filters={filters as {[key: string]: string[]}}
@@ -282,6 +284,7 @@ const TableComponent: React.FC<TableProps> = ({
               />
             ) : col.type === 'select' ? (
               <SelectComponent
+                key={col.key}
                 defaultLabel={col.label || `All`}
                 column={col}
                 filters={filters as {[key: string]: string}}
@@ -291,8 +294,9 @@ const TableComponent: React.FC<TableProps> = ({
           )}
           {Object.keys(changes).length > 0 && (
             <button
-              className='flex items-center bg-zinc-800 text-white px-2 py-1 rounded-xs hover:bg-zinc-700'
+              className='flex items-center bg-zinc-800 text-white px-2 py-1 text-xs hover:bg-zinc-700 border-none'
               onClick={handleBulkUpdate}
+              style={{borderRadius: 0}}
             >
               <FiSave className='mr-1' /> Save
             </button>
@@ -300,44 +304,45 @@ const TableComponent: React.FC<TableProps> = ({
           {onCreate && !itemToAdd && (
             <button
               onClick={() => onCreate()}
-              className='flex items-center bg-zinc-800 text-white px-3 py-1 rounded-xs hover:bg-zinc-700'
+              className='flex items-center bg-zinc-800 text-white px-3 py-1 text-xs hover:bg-zinc-700 border-none'
+              style={{borderRadius: 0}}
             >
               <FiPlus className='mr-1' /> Add
             </button>
           )}
         </div>
       )}
-      <div className='overflow-auto rounded shadow-md mb-2'>
-        <table className='w-full border-collapse border border-zinc-300'>
+      <div className='overflow-auto border-t border-zinc-200'>
+        <table className='w-full border-collapse text-xs'>
           <thead>
-            <tr className='bg-zinc-200 text-left text-sm font-medium text-zinc-900'>
+            <tr className='bg-zinc-100 text-zinc-700'>
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className='border border-zinc-300 p-2 cursor-pointer'
+                  className='border-b border-zinc-200 px-2 py-1 font-semibold text-xs cursor-pointer whitespace-nowrap'
                   onClick={() =>
                     col.sortable && allowSort && handleSort(col.key)
                   }
+                  style={{fontWeight: 500}}
                 >
                   {col.label} {col.sortable && allowSort ? '⇅' : ''}
                 </th>
               ))}
-              <th className='border border-zinc-300 p-2 w-0'> </th>
+              <th className='border-b border-zinc-200 px-2 py-1 w-0'></th>
             </tr>
           </thead>
           <tbody>
             {filteredData.map((row, rowIndex) => (
               <tr
                 key={rowIndex + 'table'}
-                className={
-                  (editedRows[rowIndex] ? 'bg-yellow-100' : '') +
-                  'border-b border-zinc-300'
-                }
+                className={`${
+                  editedRows[rowIndex] ? 'bg-yellow-50' : ''
+                } border-b border-zinc-100`}
               >
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className='p-2 max-w-[150px] sm:max-w-[200px] md:max-w-[250px]'
+                    className='px-2 py-1 max-w-[160px] overflow-hidden whitespace-nowrap text-ellipsis'
                   >
                     {col.editable ? (
                       col.type === 'select' ? (
@@ -351,9 +356,7 @@ const TableComponent: React.FC<TableProps> = ({
                           }
                           handleFilterChange={(column, value) => {
                             handleEdit(row.rowIndex, column, value);
-                            if (col.props?.onChange) {
-                              col.props?.onChange(value, row);
-                            }
+                            col.props?.onChange?.(value, row);
                           }}
                         />
                       ) : col.type === 'multiselect' ? (
@@ -367,9 +370,7 @@ const TableComponent: React.FC<TableProps> = ({
                           }
                           handleFilterChange={(column, value) => {
                             handleEdit(row.rowIndex, column, value);
-                            if (col.props?.onChange) {
-                              col.props?.onChange(value, row);
-                            }
+                            col.props?.onChange?.(value, row);
                           }}
                         />
                       ) : (
@@ -379,11 +380,10 @@ const TableComponent: React.FC<TableProps> = ({
                           value={changes[rowIndex]?.[col.key] ?? row[col.key]}
                           onChange={(e) => {
                             handleEdit(row.rowIndex, col.key, e.target.value);
-                            if (col.props?.onChange) {
-                              col.props?.onChange(e, row);
-                            }
+                            col.props?.onChange?.(e, row);
                           }}
-                          className='w-full bg-transparent hover:border-b hover:border-zinc-300 focus:outline-none'
+                          className='w-full bg-transparent px-1 py-0.5 border-b border-zinc-200 focus:border-blue-500 focus:outline-none text-xs'
+                          style={{borderRadius: 0}}
                         />
                       )
                     ) : col.type === 'image' ? (
@@ -393,8 +393,8 @@ const TableComponent: React.FC<TableProps> = ({
                     )}
                   </td>
                 ))}
-                <td className='place-items-end'>
-                  <div className='flex space-x-1'>
+                <td className='px-2 py-1'>
+                  <div className='flex gap-1'>
                     {Array.isArray(actions) &&
                       actions.map(
                         ({onClick, icon, isActive}: TableAction) =>
@@ -402,7 +402,8 @@ const TableComponent: React.FC<TableProps> = ({
                             isActive(row, rowIndex)) && (
                             <button
                               onClick={() => onClick(row, rowIndex)}
-                              className='flex items-center bg-zinc-100 text-zinc-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
+                              className='bg-zinc-100 text-zinc-500 hover:bg-zinc-200 px-1 py-1 border-none'
+                              style={{borderRadius: 0}}
                             >
                               {icon}
                             </button>
@@ -411,28 +412,32 @@ const TableComponent: React.FC<TableProps> = ({
                     {isResetEnabled && changes[rowIndex] && (
                       <button
                         onClick={() => handleReset(rowIndex)}
-                        className='flex items-center bg-zinc-100 text-blue-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
+                        className='bg-zinc-100 text-blue-500 hover:bg-zinc-200 px-1 py-1 border-none'
+                        style={{borderRadius: 0}}
                       >
-                        <FiRefreshCw className='w-6 h-6' />
+                        <FiRefreshCw className='w-4 h-4' />
                       </button>
                     )}
                     {onDelete && (
                       <button
-                        className='flex items-center bg-zinc-100 text-red-500 cursor-pointer px-2.5 py-3 rounded-xs hover:bg-zinc-700'
+                        className='bg-zinc-100 text-red-500 hover:bg-zinc-200 px-1 py-1 border-none'
                         onClick={() => onDelete && onDelete(row.id)}
+                        style={{borderRadius: 0}}
                       >
-                        <FiTrash className='w-6 h-6' />
+                        <FiTrash className='w-4 h-4' />
                       </button>
                     )}
                   </div>
                 </td>
               </tr>
             ))}
-
             {itemToAdd && onCreate && (
               <tr key={'addRow'}>
                 {columns.map((col) => (
-                  <td key={col.key} className='p-2 border-b border-zinc-300'>
+                  <td
+                    key={col.key}
+                    className='px-2 py-1 border-b border-zinc-100'
+                  >
                     {col.type === 'select' ? (
                       <SelectComponent
                         defaultLabel={`Select option`}
@@ -458,19 +463,21 @@ const TableComponent: React.FC<TableProps> = ({
                         onChange={(e) =>
                           handleAddItemFilterChange(col, e.target.value)
                         }
-                        className='w-full bg-transparent border border-zinc-300 focus:outline-none p-1'
+                        className='w-full bg-transparent px-1 py-0.5 border border-zinc-200 focus:border-blue-500 focus:outline-none text-xs'
+                        style={{borderRadius: 0}}
                       />
                     )}
                   </td>
                 ))}
-                <td className='p-2 flex items-end w-fit space-x-2 h-fit border-b border-zinc-300'>
+                <td className='px-2 py-1 flex items-end w-fit space-x-1 h-fit border-b border-zinc-100'>
                   <button
-                    className='flex items-center bg-zinc-800 text-white px-3 py-1 rounded-xs hover:bg-zinc-700'
+                    className='flex items-center bg-zinc-800 text-white px-2 py-1 text-xs hover:bg-zinc-700'
                     onClick={() => {
                       if (onCreate && onCreate(itemToAdd)) {
                         setItemToAdd!({});
                       }
                     }}
+                    style={{borderRadius: 0}}
                   >
                     <FiPlus className='mr-1' /> Add
                   </button>

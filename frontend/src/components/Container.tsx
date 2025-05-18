@@ -109,7 +109,7 @@ const Container: React.FC<ContainerProps> = ({children}) => {
       .find((s) => s.path === location.pathname);
 
   return (
-    <div className='flex h-screen overflow-hidden bg-zinc-100 text-zinc-700'>
+    <div className='flex h-screen overflow-hidden bg-neutral-100 text-zinc-700'>
       <Sidebar menu={menu} collapsed={sidebarCollapsed} />
       <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto relative'>
         <Header

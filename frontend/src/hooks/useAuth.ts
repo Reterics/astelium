@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {baseURL} from "../utils/utils.ts";
+import {baseURL} from '../utils/utils.ts';
 
 interface AuthResponse {
   access_token: string;

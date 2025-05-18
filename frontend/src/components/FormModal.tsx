@@ -52,6 +52,16 @@ const FormModal: React.FC<FormModalProps> = ({
       return data;
     });
   };
+  const className =
+    fields.length > 5
+      ? 'grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3'
+      : fields.length > 4
+        ? 'grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3'
+        : fields.length > 3
+          ? 'grid sm:grid-cols-2 md:grid-cols-4 gap-3'
+          : fields.length > 2
+            ? 'grid sm:grid-cols-2 md:grid-cols-3 gap-3'
+            : 'grid sm:grid-cols-2 gap-3';
 
   return (
     <Modal
@@ -61,10 +71,10 @@ const FormModal: React.FC<FormModalProps> = ({
         onSave(form);
       })}
     >
-      <div className='space-y-3'>
+      <div className='space-y-3 max-w-full'>
         <div
           className={
-            cols === 4 ? 'grid grid-cols-4 gap-3' : 'grid grid-cols-2 gap-3'
+            cols === 4 ? className : 'grid sm:grid-cols-2 md:grid-cols-4 gap-3'
           }
         >
           {fields.map((field) => (
@@ -181,7 +191,8 @@ const FormModal: React.FC<FormModalProps> = ({
                       field.props?.onChange(e.target.value, form);
                     }
                   }}
-                  className='p-1 bg-white border border-zinc-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500'
+                  className='px-2 py-1 bg-white border border-zinc-200 text-xs font-medium rounded-none focus:outline-none focus:border-blue-500 focus:ring-0 transition-colors duration-100'
+                  style={{borderRadius: 0}}
                 />
               )}
             </div>

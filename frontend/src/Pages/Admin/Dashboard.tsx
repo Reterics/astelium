@@ -18,78 +18,89 @@ const Dashboard = () => {
   const {t} = useTranslation();
 
   return (
-    <div className='mt-1 p-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4'>
-      <div className='bg-white p-4 rounded-lg shadow flex items-center space-x-4'>
-        <FiUsers className='text-zinc-600 w-10 h-10' />
+    <div className='mt-1 p-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3'>
+      <div className='bg-white border border-zinc-200 p-3 rounded-none flex items-center gap-3'>
+        <FiUsers className='text-zinc-600 w-8 h-8' />
         <div>
-          <p className='text-xl font-semibold text-zinc-900'>
+          <p className='text-base font-semibold text-zinc-900 m-0'>
             {users?.length || 0}
           </p>
-          <p className='text-zinc-600'>{t('dashboard.total_users')}</p>
+          <p className='text-xs text-zinc-600 m-0'>
+            {t('dashboard.total_users')}
+          </p>
         </div>
       </div>
-      <div className='bg-white p-4 rounded-lg shadow flex items-center space-x-4'>
-        <FiClipboard className='text-zinc-600 w-10 h-10' />
+      <div className='bg-white border border-zinc-200 p-3 rounded-none flex items-center gap-3'>
+        <FiClipboard className='text-zinc-600 w-8 h-8' />
         <div>
-          <p className='text-xl font-semibold text-zinc-900'>
+          <p className='text-base font-semibold text-zinc-900 m-0'>
             {projects?.length || 0}
           </p>
-          <p className='text-zinc-600'>{t('dashboard.total_projects')}</p>
+          <p className='text-xs text-zinc-600 m-0'>
+            {t('dashboard.total_projects')}
+          </p>
         </div>
       </div>
-      <div className='bg-white p-4 rounded-lg shadow flex items-center space-x-4'>
-        <FiBarChart className='text-zinc-600 w-10 h-10' />
+      <div className='bg-white border border-zinc-200 p-3 rounded-none flex items-center gap-3'>
+        <FiBarChart className='text-zinc-600 w-8 h-8' />
         <div>
-          <p className='text-xl font-semibold text-zinc-900'>
+          <p className='text-base font-semibold text-zinc-900 m-0'>
             {transactions?.length || 0}
           </p>
-          <p className='text-zinc-600'>{t('dashboard.total_transactions')}</p>
+          <p className='text-xs text-zinc-600 m-0'>
+            {t('dashboard.total_transactions')}
+          </p>
         </div>
       </div>
-      <div className='bg-white p-4 rounded-lg shadow flex items-center space-x-4'>
-        <FiTrendingUp className='text-zinc-600 w-10 h-10' />
+      <div className='bg-white border border-zinc-200 p-3 rounded-none flex items-center gap-3'>
+        <FiTrendingUp className='text-zinc-600 w-8 h-8' />
         <div>
-          <p className='text-xl font-semibold text-zinc-900'>
+          <p className='text-base font-semibold text-zinc-900 m-0'>
             {tasks?.length || 0}
           </p>
-          <p className='text-zinc-600'>{t('dashboard.total_tasks')}</p>
+          <p className='text-xs text-zinc-600 m-0'>
+            {t('dashboard.total_tasks')}
+          </p>
         </div>
       </div>
 
-      <div className='col-span-4 flex space-x-4 w-full'>
+      <div className='col-span-4 flex gap-3 w-full'>
         <div className='w-1/2'>
           <TaskBarChartCard data={tasks} />
         </div>
-
-        <div className='bg-white p-2 rounded-lg shadow w-1/2'>
-          <h2 className='text-xl font-semibold text-zinc-900 mb-3'>
+        <div className='bg-white border border-zinc-200 p-3 rounded-none w-1/2 flex flex-col'>
+          <h2 className='text-base font-semibold text-zinc-900 mb-2'>
             {t('dashboard.task_list_title')}
           </h2>
-          <div className='divide-y divide-zinc-300'>
+          <div className='divide-y divide-zinc-200 flex-1'>
             {tasks
               ?.filter((t) => t.status === 'open' || t.status === 'in-progress')
               ?.map((task) => (
                 <div
                   key={task.id}
-                  className={`p-2 flex items-center justify-between text-sm ${statusIcons[task.status as 'open' | 'in-progress']}`}
+                  className={`py-2 flex items-center justify-between text-xs ${statusIcons[task.status as 'open' | 'in-progress']}`}
                 >
-                  <p className='text-zinc-900 font-medium truncate'>
+                  <p className='text-zinc-900 font-medium truncate m-0'>
                     {task.title}
                   </p>
-                  <button className='px-2 py-1 text-xs font-medium text-white bg-zinc-700 rounded hover:bg-zinc-800 transition'>
+                  <button
+                    className='px-2 py-1 text-xs font-medium text-white bg-zinc-700 hover:bg-zinc-800 rounded-none transition'
+                    style={{borderRadius: 0}}
+                  >
                     {t('dashboard.view')}
                   </button>
                 </div>
               ))
               .slice(0, 4) || (
-              <p className='text-zinc-600'>
+              <p className='text-zinc-600 text-xs m-0'>
                 {t('dashboard.no_open_tasks_available')}
               </p>
             )}
           </div>
         </div>
       </div>
-      <div className='col-span-4 flex space-x-4 w-full'>
+
+      <div className='col-span-4 flex gap-3 w-full'>
         <TransactionChartCard data={transactions} />
       </div>
     </div>
