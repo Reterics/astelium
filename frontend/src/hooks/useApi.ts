@@ -31,7 +31,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       response.status === 401 &&
       !location.pathname.endsWith('/login') &&
       !location.pathname.endsWith('/register') &&
-      location.pathname !== baseURL + '/'
+      location.pathname !== baseURL
     ) {
       console.warn('Session expired, navigate to login page');
       localStorage.removeItem('token');

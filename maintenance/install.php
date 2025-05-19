@@ -101,6 +101,8 @@ ENV;
   } else {
     showSuccess("Database seeded.");
   }
+  passthru("php {$appRoot}/artisan config:cache 2>&1");
+  passthru("php {$appRoot}/artisan storage:link 2>&1");
 
   exit("<pre>🎉 Astelium installed successfully. You may now log in.</pre>");
 }

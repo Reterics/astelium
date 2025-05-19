@@ -271,7 +271,7 @@ HTML;
                 <button type="submit" name="clear_log" value="1" style="background:#e04e4e;margin-left:0.5rem;">Clear Log</button>
               </form>
             </div>
-            <table class="log-table">
+            <table class="log-table" style="max-height: 40vh;overflow-y: scroll;display: block;">
               <?php foreach ($logEntries as $i => $entry):
                 $level = strtolower($entry['level']);
                 $levelClass = "log-level ";
@@ -339,19 +339,22 @@ HTML;
           </div>
         </form>
         <?php
+        $appRoot = realpath(__DIR__ . '/../..');
+
         if ($_POST['artisan'] ?? false) {
           echo "<pre>";
-          passthru('php artisan config:clear');
-          passthru('php artisan cache:clear');
-          passthru('php artisan route:clear');
-          passthru('php artisan view:clear');
-          passthru('php artisan config:cache');
+          passthru("php {$appRoot}/artisan config:clear 2>&1"); // ⬅ Add this line
+          passthru("php {$appRoot}/artisan cache:clear 2>&1"); // ⬅ Add this line
+          passthru("php {$appRoot}/artisan route:clear 2>&1"); // ⬅ Add this line
+          passthru("php {$appRoot}/artisan view:clear 2>&1"); // ⬅ Add this line
+          passthru("php {$appRoot}/artisan config:cache 2>&1"); // ⬅ Add this line
+
           echo "\n✅ Artisan reset completed.";
           echo "</pre>";
         }
         if ($_POST['dbreset'] ?? false) {
           echo "<pre>";
-          passthru('php artisan migrate:fresh --seed');
+          passthru("php {$appRoot}/artisan migrate:fresh --seed"); // ⬅ Add this line
           echo "\n✅ Database reset and seeded.";
           echo "</pre>";
         }
