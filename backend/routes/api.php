@@ -26,9 +26,10 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Api\ApiLoginController;
 use App\Http\Middleware\EnsureAccountAccess;
 use App\Http\Middleware\EnsureUserRole;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Artisan;
 
 Route::middleware(['auth:sanctum', EnsureAccountAccess::class])->group(function () {
     Route::apiResource('projects', ProjectController::class);
@@ -124,3 +125,66 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::post('/contact', [ContactController::class, 'store']);
 
+Route::prefix('maintenance')->group(function () {
+    Route::post('/clear', function () {
+        if (!env('MAINTENANCE')) {
+            abort(403, 'Maintenance mode not enabled.');
+        }
+        foreach ([
+                     'config:clear',
+                     'cache:clear',
+                     'route:clear',
+                     'view:clear',
+                     'optimize:clear',
+                     'config:cache'
+                 ] as $cmd) {
+            Artisan::call($cmd);
+        }
+
+        return response()->json([
+            'status' => 'cleared',
+            'output' => Artisan::output(),
+        ]);
+    });
+
+    Route::post('/migrate', function () {
+        if (!env('MAINTENANCE')) {
+            abort(403, 'Maintenance mode not enabled.');
+        }
+        Artisan::call('migrate', ['--force' => true]);
+        return response()->json([
+            'status' => 'migrated',
+            'output' => Artisan::output(),
+        ]);
+    });
+
+    Route::post('/migrate-fresh', function () {
+        if (!env('MAINTENANCE')) {
+            abort(403, 'Maintenance mode not enabled.');
+        }
+        Artisan::call('migrate:fresh', ['--force' => true]);
+        return response()->json([
+            'status' => 'fresh',
+            'output' => Artisan::output(),
+        ]);
+    });
+
+    Route::post('/stop', function () {
+        $envPath = base_path('.env');
+
+        if (!File::exists($envPath)) {
+            return response()->json(['error' => '.env file not found.'], 404);
+        }
+
+        $envContent = File::get($envPath);
+
+        if (!str_contains($envContent, 'MAINTENANCE=true')) {
+            return response()->json(['message' => 'MAINTENANCE is already disabled.']);
+        }
+
+        $updatedContent = str_replace('MAINTENANCE=true', 'MAINTENANCE=false', $envContent);
+        File::put($envPath, $updatedContent);
+
+        return response()->json(['status' => 'success', 'message' => 'MAINTENANCE mode disabled.']);
+    });
+});

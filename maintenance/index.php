@@ -334,11 +334,38 @@ HTML;
         <?php } ?>
         <form method="post" style="margin-top:1.5rem;">
           <div class="button-row">
-            <button name="artisan" value="1">Artisan Reset</button>
-            <button name="dbreset" value="1">DB Reset + Seed</button>
+            <button name="artisan" value="1">PHP: Artisan Reset</button>
+            <button name="dbreset" value="1">PHP: DB Reset + Seed</button>
+            <button onclick="runCommand('clear')">API: Clear Cache</button>
+            <button onclick="runCommand('migrate')">API: Migrate</button>
+            <button onclick="runCommand('migrate-fresh')">API: Migrate Fresh</button>
+            <button onclick="runCommand('stop')">API: Maintenance Off</button>
           </div>
         </form>
-        <?php
+
+      <pre id="output" style="white-space: pre-wrap; background: #eee; padding: 10px;"></pre>
+
+      <script>
+        async function runCommand(type) {
+          const res = await fetch(`/api/maintenance/${type}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-XSRF-TOKEN': getCookieValue('XSRF-TOKEN'),
+            },
+            credentials: 'same-origin',
+          });
+
+          const json = await res.json();
+          document.getElementById('output').textContent = json.output || json.message;
+        }
+
+        function getCookieValue(name) {
+          return document.cookie.split('; ').find(row => row.startsWith(name + '='))?.split('=')[1];
+        }
+      </script>
+
+      <?php
         $appRoot = realpath(__DIR__ . '/../..');
 
         if ($_POST['artisan'] ?? false) {
