@@ -127,17 +127,18 @@ Route::post('/contact', [ContactController::class, 'store']);
 
 Route::prefix('maintenance')->group(function () {
     Route::post('/clear', function () {
-        if (!env('MAINTENANCE')) {
-            abort(403, 'Maintenance mode not enabled.');
+        $list = ['config:clear'];
+        if (config('app.setup_mode')) {
+            $list = [
+                'config:clear',
+                'cache:clear',
+                'route:clear',
+                'view:clear',
+                'optimize:clear',
+                'config:cache'
+            ];
         }
-        foreach ([
-                     'config:clear',
-                     'cache:clear',
-                     'route:clear',
-                     'view:clear',
-                     'optimize:clear',
-                     'config:cache'
-                 ] as $cmd) {
+        foreach ($list as $cmd) {
             Artisan::call($cmd);
         }
 
@@ -148,8 +149,8 @@ Route::prefix('maintenance')->group(function () {
     });
 
     Route::post('/migrate', function () {
-        if (!env('MAINTENANCE')) {
-            abort(403, 'Maintenance mode not enabled.');
+        if (!config('app.setup_mode')) {
+            abort(403, 'Setup mode not enabled.');
         }
         Artisan::call('migrate', ['--force' => true]);
         return response()->json([
@@ -159,8 +160,8 @@ Route::prefix('maintenance')->group(function () {
     });
 
     Route::post('/migrate-fresh', function () {
-        if (!env('MAINTENANCE')) {
-            abort(403, 'Maintenance mode not enabled.');
+        if (!config('app.setup_mode')) {
+            abort(403, 'Setup mode not enabled.');
         }
         Artisan::call('migrate:fresh', ['--force' => true]);
         return response()->json([
@@ -178,13 +179,47 @@ Route::prefix('maintenance')->group(function () {
 
         $envContent = File::get($envPath);
 
-        if (!str_contains($envContent, 'MAINTENANCE=true')) {
-            return response()->json(['message' => 'MAINTENANCE is already disabled.']);
+        if (!str_contains($envContent, 'APP_SETUP_MODE=true')) {
+            return response()->json(['message' => 'APP_SETUP_MODE is already disabled.']);
         }
 
-        $updatedContent = str_replace('MAINTENANCE=true', 'MAINTENANCE=false', $envContent);
+        $updatedContent = str_replace('APP_SETUP_MODE=true', 'APP_SETUP_MODE=false', $envContent);
         File::put($envPath, $updatedContent);
 
-        return response()->json(['status' => 'success', 'message' => 'MAINTENANCE mode disabled.']);
+        return response()->json(['status' => 'success', 'message' => 'APP_SETUP_MODE mode disabled.']);
+    });
+
+    Route::post('/post-install', function () {
+        if (!config('app.setup_mode')) {
+            abort(403, 'Setup mode not enabled.');
+        }
+
+        $commands = [
+            ['migrate:fresh', ['--force' => true]],
+            ['db:seed', ['--force' => true]],
+            ['config:clear'],
+            ['cache:clear'],
+            ['route:clear'],
+            ['view:clear'],
+            ['optimize:clear'],
+            ['config:cache'],
+        ];
+
+        $outputs = [];
+
+        foreach ($commands as $command) {
+            $cmd = $command[0];
+            $args = $command[1] ?? [];
+            Artisan::call($cmd, $args);
+            $outputs[] = [
+                'command' => $cmd,
+                'output' => Artisan::output(),
+            ];
+        }
+
+        return response()->json([
+            'status' => 'post-install complete',
+            'commands' => $outputs,
+        ]);
     });
 });

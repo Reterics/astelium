@@ -334,12 +334,18 @@ HTML;
         <?php } ?>
         <form method="post" style="margin-top:1.5rem;">
           <div class="button-row">
-            <button name="artisan" value="1">PHP: Artisan Reset</button>
-            <button name="dbreset" value="1">PHP: DB Reset + Seed</button>
-            <button onclick="runCommand('clear')">API: Clear Cache</button>
-            <button onclick="runCommand('migrate')">API: Migrate</button>
-            <button onclick="runCommand('migrate-fresh')">API: Migrate Fresh</button>
-            <button onclick="runCommand('stop')">API: Maintenance Off</button>
+            <?php
+            if(function_exists('passthru')): ?>
+              <button type="submit" name="artisan" value="1">PHP: Artisan Reset</button>
+              <button type="submit" name="dbreset" value="1">PHP: DB Reset + Seed</button>
+            <?php
+            endif;
+            ?>
+
+            <button type="button" onclick="runCommand('clear')">API: Clear Cache</button>
+            <button type="button" onclick="runCommand('migrate')">API: Migrate</button>
+            <button type="button" onclick="runCommand('migrate-fresh')">API: Migrate Fresh</button>
+            <button type="button" onclick="runCommand('stop')">API: Maintenance Off</button>
           </div>
         </form>
 
@@ -347,7 +353,7 @@ HTML;
 
       <script>
         async function runCommand(type) {
-          const res = await fetch(`/api/maintenance/${type}`, {
+          const res = await fetch(`../api/maintenance/${type}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -358,6 +364,7 @@ HTML;
 
           const json = await res.json();
           document.getElementById('output').textContent = json.output || json.message;
+          return false;
         }
 
         function getCookieValue(name) {

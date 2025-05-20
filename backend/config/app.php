@@ -122,5 +122,6 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+    'setup_mode' => env('APP_SETUP_MODE', false),
 
 ];
