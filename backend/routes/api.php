@@ -189,6 +189,19 @@ Route::prefix('maintenance')->group(function () {
         return response()->json(['status' => 'success', 'message' => 'APP_SETUP_MODE mode disabled.']);
     });
 
+    Route::post('/seed-example', function () {
+        if (!config('app.setup_mode')) {
+            abort(403, 'Setup mode not enabled.');
+        }
+
+        Artisan::call('db:seed', ['--class' => 'ExampleDataSeeder']);
+
+        return response()->json([
+            'status' => 'success',
+            'output' => Artisan::output(),
+        ]);
+    });
+
     Route::post('/post-install', function () {
         if (!config('app.setup_mode')) {
             abort(403, 'Setup mode not enabled.');

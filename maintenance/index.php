@@ -83,6 +83,8 @@ function getStatusHTML() {
 </div>
 HTML;
 }
+$envExists = file_exists(__DIR__ . '/../../.env');
+$isMaintenanceOn = $envExists && str_contains(file_get_contents(__DIR__ . '/../../.env') ,'APP_SETUP_MODE=true')
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -170,7 +172,13 @@ HTML;
               <tr>
                 <td>.env File:</td>
                 <td>
-                  <?= file_exists(__DIR__ . '/../../.env') ? '<span style="color: var(--success);font-weight:500;">Present</span>' : '<span style="color: var(--danger);font-weight:500;">Missing</span>' ?>
+                  <?= $envExists ? '<span style="color: var(--success);font-weight:500;">Present</span>' : '<span style="color: var(--danger);font-weight:500;">Missing</span>' ?>
+                </td>
+              </tr>
+              <tr>
+                <td>Maintenance:</td>
+                <td>
+                  <?= $isMaintenanceOn ? 'ON':'Off' ?>
                 </td>
               </tr>
             </table>
@@ -342,10 +350,17 @@ HTML;
             endif;
             ?>
 
-            <button type="button" onclick="runCommand('clear')">API: Clear Cache</button>
-            <button type="button" onclick="runCommand('migrate')">API: Migrate</button>
-            <button type="button" onclick="runCommand('migrate-fresh')">API: Migrate Fresh</button>
-            <button type="button" onclick="runCommand('stop')">API: Maintenance Off</button>
+            <?php
+            if($isMaintenanceOn):
+            ?>
+              <button type="button" onclick="runCommand('clear')">Clear Cache</button>
+              <button type="button" onclick="runCommand('migrate')">Migrate</button>
+              <button type="button" onclick="runCommand('migrate-fresh')">Migrate Fresh</button>
+              <button type="button" onclick="runCommand('seed-example')">Example Data</button>
+              <button type="button" onclick="runCommand('stop')">Maintenance Off</button>
+            <?php
+            endif;
+            ?>
           </div>
         </form>
 

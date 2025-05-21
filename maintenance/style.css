@@ -167,7 +167,7 @@ input:focus {
 
 button,
 .button {
-  padding: 0.41rem 1.1rem;
+  padding: 0.41rem;
   background: var(--accent);
   color: #fff;
   border: none;
