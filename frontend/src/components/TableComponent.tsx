@@ -40,6 +40,16 @@ interface TableProps {
   setItemToAdd?: React.Dispatch<React.SetStateAction<TableRow>>;
   pagination?: boolean;
   actions?: TableAction[];
+  renderCell?: (
+    col: CrudField,
+    value: any,
+    row: TableRow,
+    rowIndex: number,
+    context: {
+      isEditing: boolean;
+      onChange: (val: any) => void;
+    }
+  ) => React.ReactNode | undefined;
 }
 
 const TableComponent: React.FC<TableProps> = ({
@@ -53,6 +63,7 @@ const TableComponent: React.FC<TableProps> = ({
   setItemToAdd,
   pagination,
   actions,
+  renderCell, // <-- new
 }) => {
   const [tableData, setTableData] = useState(data);
   const [sortConfig, setSortConfig] = useState<{
@@ -344,53 +355,76 @@ const TableComponent: React.FC<TableProps> = ({
                     key={col.key}
                     className='px-2 py-1 max-w-[160px] overflow-hidden whitespace-nowrap text-ellipsis'
                   >
-                    {col.editable ? (
-                      col.type === 'select' ? (
-                        <SelectComponent
-                          defaultLabel={`Select option`}
-                          column={col}
-                          filters={
-                            changes[rowIndex]?.[col.key]
-                              ? changes[rowIndex]
-                              : (row as {[key: string]: string})
-                          }
-                          handleFilterChange={(column, value) => {
-                            handleEdit(row.rowIndex, column, value);
-                            col.props?.onChange?.(value, row);
-                          }}
-                        />
-                      ) : col.type === 'multiselect' ? (
-                        <MultiSelectComponent
-                          defaultLabel={`Select option`}
-                          column={col}
-                          filters={
-                            changes[rowIndex]?.[col.key]
-                              ? changes[rowIndex]
-                              : (row as {[key: string]: string[]})
-                          }
-                          handleFilterChange={(column, value) => {
-                            handleEdit(row.rowIndex, column, value);
-                            col.props?.onChange?.(value, row);
-                          }}
-                        />
-                      ) : (
-                        <input
-                          title={changes[rowIndex]?.[col.key] ?? row[col.key]}
-                          type={col.type || 'text'}
-                          value={changes[rowIndex]?.[col.key] ?? row[col.key]}
-                          onChange={(e) => {
-                            handleEdit(row.rowIndex, col.key, e.target.value);
-                            col.props?.onChange?.(e, row);
-                          }}
-                          className='w-full bg-transparent px-1 py-0.5 border-b border-zinc-200 focus:border-blue-500 focus:outline-none text-xs'
-                          style={{borderRadius: 0}}
-                        />
-                      )
-                    ) : col.type === 'image' ? (
-                      <UserAvatar image={row[col.key]} name={row.name} />
-                    ) : (
-                      row[col.key]
-                    )}
+                    {(() => {
+                      const isEditing = !!col.editable;
+                      const value =
+                        changes[rowIndex]?.[col.key] ?? row[col.key];
+                      const onChange = (val: any) => {
+                        if (isEditing) handleEdit(row.rowIndex, col.key, val);
+                        col.props?.onChange?.(val, row);
+                      };
+                      const custom = renderCell?.(col, value, row, rowIndex, {
+                        isEditing,
+                        onChange,
+                      });
+                      if (custom !== undefined) return custom;
+
+                      if (isEditing) {
+                        if (col.type === 'select') {
+                          return (
+                            <SelectComponent
+                              defaultLabel={`Select option`}
+                              column={col}
+                              filters={
+                                changes[rowIndex]?.[col.key]
+                                  ? changes[rowIndex]
+                                  : (row as {[key: string]: string})
+                              }
+                              handleFilterChange={(column, value) => {
+                                handleEdit(row.rowIndex, column, value);
+                                col.props?.onChange?.(value, row);
+                              }}
+                            />
+                          );
+                        }
+                        if (col.type === 'multiselect') {
+                          return (
+                            <MultiSelectComponent
+                              defaultLabel={`Select option`}
+                              column={col}
+                              filters={
+                                changes[rowIndex]?.[col.key]
+                                  ? changes[rowIndex]
+                                  : (row as {[key: string]: string[]})
+                              }
+                              handleFilterChange={(column, value) => {
+                                handleEdit(row.rowIndex, column, value);
+                                col.props?.onChange?.(value, row);
+                              }}
+                            />
+                          );
+                        }
+                        return (
+                          <input
+                            title={changes[rowIndex]?.[col.key] ?? row[col.key]}
+                            type={col.type || 'text'}
+                            value={changes[rowIndex]?.[col.key] ?? row[col.key]}
+                            onChange={(e) => {
+                              handleEdit(row.rowIndex, col.key, e.target.value);
+                              col.props?.onChange?.(e, row);
+                            }}
+                            className='w-full bg-transparent px-1 py-0.5 border-b border-zinc-200 focus:border-blue-500 focus:outline-none text-xs'
+                            style={{borderRadius: 0}}
+                          />
+                        );
+                      }
+                      if (col.type === 'image') {
+                        return (
+                          <UserAvatar image={row[col.key]} name={row.name} />
+                        );
+                      }
+                      return row[col.key];
+                    })()}
                   </td>
                 ))}
                 <td className='px-2 py-1'>

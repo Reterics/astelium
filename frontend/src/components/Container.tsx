@@ -98,7 +98,6 @@ interface ContainerProps {
 }
 
 const Container: React.FC<ContainerProps> = ({children}) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
 
@@ -113,8 +112,6 @@ const Container: React.FC<ContainerProps> = ({children}) => {
       <Sidebar menu={menu} collapsed={sidebarCollapsed} />
       <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto relative'>
         <Header
-          theme={theme || 'light'}
-          toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           username={'Test'}
           selectedMenu={selectedMenu}
           toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}

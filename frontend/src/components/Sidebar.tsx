@@ -70,8 +70,8 @@ const Sidebar: React.FC<SidebarProps> = ({menu, collapsed = false}) => {
                       collapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'
                     }`}
                   >
-                  {item.label}
-                </span>
+                    {item.label}
+                  </span>
                 </div>
                 {!collapsed &&
                   item.submenu &&

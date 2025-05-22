@@ -1,19 +1,15 @@
-import {FiBell, FiSun, FiMoon, FiMenu} from 'react-icons/fi';
+import {FiBell, FiMenu} from 'react-icons/fi';
 import PageBreadcrumbs from './PageBreadcrumbs.tsx';
 import {MenuItem} from './Sidebar.tsx';
 
 interface HeaderProps {
   username: string;
-  theme: 'light' | 'dark';
-  toggleTheme: () => void;
   selectedMenu?: MenuItem;
   toggleSidebar: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   username,
-  theme,
-  toggleTheme,
   selectedMenu,
   toggleSidebar,
 }) => {
@@ -41,18 +37,13 @@ const Header: React.FC<HeaderProps> = ({
 
       <div className='flex items-center gap-3'>
         <button
-          onClick={toggleTheme}
+          onClick={() => null}
           className='p-1.5 bg-transparent border-none rounded-none hover:bg-zinc-100 focus:bg-zinc-100 focus:outline-none transition-colors duration-75'
           style={{borderRadius: 0}}
           tabIndex={0}
         >
-          {theme === 'light' ? (
-            <FiMoon className='w-5 h-5 text-zinc-700' />
-          ) : (
-            <FiSun className='w-5 h-5 text-zinc-700' />
-          )}
+          <FiBell className='w-5 h-5 text-zinc-500' />
         </button>
-        <FiBell className='w-5 h-5 text-zinc-500' />
         <span className='font-medium text-zinc-800 text-xs'>{username}</span>
       </div>
     </header>
