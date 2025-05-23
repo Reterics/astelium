@@ -7,7 +7,7 @@
   "scripts": {
     "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "start:backend": "node ./index.js --seed",
-    "start:frontend": "cd frontend && npm install && npm run dev",
+    "start:frontend": "cd frontend && npm install --legacy-peer-deps && npm run dev",
     "build": "node build.js",
     "build:publish": "node build.js --publishOnly"
   },
