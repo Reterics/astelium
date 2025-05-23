@@ -4,6 +4,7 @@ import {SelectOption, SelectOptions} from './SelectComponent.tsx';
 import {useApi} from '../hooks/useApi.ts';
 import {confirm} from './confirm';
 import mountComponent from './mounter.tsx';
+import {SkeletonTable} from './ui/Skeleton.tsx';
 
 export type FieldType =
   | 'text'
@@ -63,7 +64,24 @@ const CrudManager = <T extends Record<string, any>>({
     return true;
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) {
+    // Calculate the number of columns based on visible fields
+    const visibleColumns = fields.filter(f => f.visible !== false).length;
+
+    return (
+      <div className="p-2">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-zinc-800">{title}</h2>
+          <div className="w-24 h-8 bg-zinc-200 animate-pulse rounded-md"></div>
+        </div>
+        <SkeletonTable
+          rows={5}
+          columns={Math.min(visibleColumns, 6)}
+          className="border border-zinc-200 rounded-md p-4"
+        />
+      </div>
+    );
+  }
 
   const idFilters = fields.filter(
     (field) => field.options?.filter((f) => f && typeof f === 'object').length

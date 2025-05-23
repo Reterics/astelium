@@ -10,6 +10,8 @@ import {useTranslation} from 'react-i18next';
 import TaskModal, {TaskModalProps} from '../../components/TaskModal.tsx';
 import mountComponent from '../../components/mounter.tsx';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import KanbanBoardSkeleton from '../../components/KanbanBoardSkeleton.tsx';
+import Skeleton from '../../components/ui/Skeleton.tsx';
 
 const Board = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -24,7 +26,20 @@ const Board = () => {
   const {t} = useTranslation();
   const translationPrefix = 'task.';
 
-  if (projectsAreLoading || usersAreLoading) return <p>Loading...</p>;
+  if (projectsAreLoading || usersAreLoading) {
+    return (
+      <div className='pb-1 shadow-md bg-zinc-50'>
+        <div className='p-2 pb-0 flex items-center space-x-2'>
+          <div className='flex items-center space-x-2 flex-1'>
+            <Skeleton width={16} height={16} />
+            <Skeleton width={200} height={32} />
+          </div>
+          <Skeleton width={80} height={32} />
+        </div>
+        <KanbanBoardSkeleton />
+      </div>
+    );
+  }
 
   const projects = projectsRaw.map((d) => ({
     value: d.id,
@@ -164,7 +179,9 @@ const Board = () => {
         </button>
       </div>
 
-      {!tasksAreLoading && (
+      {tasksAreLoading ? (
+        <KanbanBoardSkeleton />
+      ) : (
         <KanbanBoard
           tasks={
             tasksRaw.sort(
