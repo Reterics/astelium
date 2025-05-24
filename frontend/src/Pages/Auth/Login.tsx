@@ -22,8 +22,14 @@ const Login: React.FC = () => {
     try {
       await login(data.email, data.password);
     } catch (error) {
-      console.log(error);
-      alert('Login failed');
+      console.error('Login error:', error);
+
+      // @ts-expect-error - Using global error boundary
+      window.errorBoundary?.addError({
+        title: 'Authentication Failed',
+        message: 'Unable to log in with the provided credentials. Please check your email and password and try again.',
+        details: error instanceof Error ? error.stack : String(error)
+      });
     }
   };
 

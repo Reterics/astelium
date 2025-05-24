@@ -46,7 +46,16 @@ export const useContactForm = () => {
       setSuccess('Your message has been sent!');
       setForm({name: '', email: '', phone: '', message: ''});
     } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+      const errorMessage = err.message || 'Something went wrong';
+      setError(errorMessage);
+
+      // Also add to global error handling for consistent UI
+      // @ts-expect-error - Using global error boundary
+      window.errorBoundary?.addError({
+        title: 'Contact Form Error',
+        message: 'There was a problem submitting your message. Please try again.',
+        details: err instanceof Error ? err.stack : String(err)
+      });
     } finally {
       setSubmitting(false);
     }

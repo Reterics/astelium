@@ -990,15 +990,25 @@ const TaskListTable: React.FC<TaskListTableProps> = ({
                 {/* Empty State */}
                 {groupTasks.length === 0 && (
                   <div className="p-6 text-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-zinc-100 mb-2">
-                      <FiInbox size={24} className="text-zinc-400" />
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-zinc-100 mb-3 animate-[pulse_3s_ease-in-out_infinite] overflow-hidden relative group">
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-zinc-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <FiInbox size={32} className="text-zinc-400 group-hover:text-blue-500 transition-colors duration-300 transform group-hover:scale-110 z-10" />
                     </div>
-                    <Typography variant="p" className="text-zinc-500 block">
-                      No tasks in this group yet.
+                    <Typography variant="h6" className="text-zinc-600 mb-2 animate-[fadeIn_0.5s_ease-in-out]">
+                      No tasks in this group yet
                     </Typography>
-                    <Typography variant="p" className="text-zinc-400 text-sm mt-1">
-                      Create a new task or change task status to see it here.
+                    <Typography variant="p" className="text-zinc-400 max-w-xs mx-auto animate-[fadeIn_0.7s_ease-in-out]">
+                      Create a new task or drag an existing task here to get started.
                     </Typography>
+                    {onCreate && (
+                      <Button
+                        variant="outline"
+                        className="mt-4 animate-[fadeIn_0.9s_ease-in-out]"
+                        onClick={() => onCreate()}
+                      >
+                        <FiPlus className="mr-1" /> Add a new task
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
@@ -1007,26 +1017,48 @@ const TaskListTable: React.FC<TaskListTableProps> = ({
             {/* Empty State */}
             {filteredTasks.length === 0 && (
               <div className="p-12 text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-zinc-100 mb-3">
-                  <FiAlertCircle size={32} className="text-zinc-400" />
+                <div className="relative inline-block mb-4">
+                  <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-r from-zinc-50 to-blue-50 mb-3 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-white/50 rounded-full animate-[pulse_3s_ease-in-out_infinite]"></div>
+                    <FiSearch size={40} className="text-blue-400 transform -rotate-12 relative z-10" />
+                  </div>
+                  <div className="absolute top-0 right-0 animate-[bounce_2s_ease-in-out_infinite]">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-amber-100 shadow-sm">
+                      <FiAlertCircle size={20} className="text-amber-500" />
+                    </div>
+                  </div>
                 </div>
-                <Typography variant="h6" className="text-zinc-600 mb-2">
-                  No tasks found
+                <Typography variant="h6" className="text-zinc-700 mb-3 animate-[fadeIn_0.5s_ease-in-out]">
+                  No matching tasks found
                 </Typography>
-                <Typography variant="p" className="text-zinc-400 max-w-md mx-auto">
+                <Typography variant="p" className="text-zinc-500 max-w-md mx-auto mb-2 animate-[fadeIn_0.7s_ease-in-out]">
+                  We couldn't find any tasks that match your current filters.
+                </Typography>
+                <Typography variant="small" className="text-zinc-400 block max-w-md mx-auto mb-4 animate-[fadeIn_0.9s_ease-in-out]">
                   Try adjusting your search criteria or clearing filters to see more results.
                 </Typography>
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setFilters({});
-                    setActiveFilterColumn(null);
-                  }}
-                >
-                  Clear all filters
-                </Button>
+                <div className="flex items-center justify-center gap-3 animate-[fadeIn_1.1s_ease-in-out]">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setFilters({});
+                      setActiveFilterColumn(null);
+                    }}
+                    className="group transition-all duration-300"
+                  >
+                    <FiX className="mr-1.5 group-hover:text-red-500 transition-colors duration-300" /> Clear all filters
+                  </Button>
+                  {onCreate && (
+                    <Button
+                      variant="primary"
+                      onClick={() => onCreate()}
+                      className="group transition-all duration-300"
+                    >
+                      <FiPlus className="mr-1.5 group-hover:scale-125 transition-transform duration-300" /> Create new task
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </div>

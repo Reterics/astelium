@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {cloneElement, useEffect, useRef, useState} from 'react';
 import {
   draggable,
   dropTargetForElements,
@@ -15,6 +15,8 @@ import {
   FiEdit,
   FiCheck,
   FiX,
+  FiPlus,
+  FiInbox,
 } from 'react-icons/fi';
 import {getFetchOptions} from '../utils/utils.ts';
 import {useQueryClient} from '@tanstack/react-query';
@@ -109,9 +111,18 @@ const KanbanBoard = ({
       if (response.ok) {
         await queryClient.invalidateQueries({queryKey: ['tasks']});
         console.log(`Task ${taskId} moved before ${beforeTaskId}`);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to update task order: ${response.status}`);
       }
     } catch (error) {
       console.error('Error updating task order:', error);
+      // @ts-expect-error - Using global error boundary
+      window.errorBoundary?.addError({
+        title: 'Task Order Update Failed',
+        message: 'Failed to update task order. Please try again.',
+        details: error instanceof Error ? error.stack : String(error)
+      });
     }
   };
 
@@ -138,10 +149,21 @@ const KanbanBoard = ({
       });
 
       if (!response.ok) {
-        console.error('Failed to update task title');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to update task title: ${response.status}`);
       }
     } catch (error) {
       console.error('Error updating task title:', error);
+
+      // @ts-expect-error - Using global error boundary
+      window.errorBoundary?.addError({
+        title: 'Task Update Failed',
+        message: 'Failed to update task title. Your changes have been reverted.',
+        details: error instanceof Error ? error.stack : String(error)
+      });
+
+      // Revert the optimistic update if there was an error
+      setTask(task);
     }
   };
 
@@ -347,9 +369,52 @@ const KanbanBoard = ({
               return;
             }}
           >
-            {tasks
-              .filter((task) => task.status === status.id)
-              .map((task) => (
+            {(() => {
+              const columnTasks = tasks.filter((task) => task.status === status.id);
+
+              if (columnTasks.length === 0) {
+                // Empty state for column with no tasks
+                return (
+                  <div className='flex flex-col items-center justify-center h-full text-center p-4'>
+                    <div className='relative mb-4'>
+                      <div className='w-16 h-16 rounded-full bg-gradient-to-r from-zinc-50 to-blue-50 flex items-center justify-center animate-[pulse_3s_ease-in-out_infinite]'>
+                        {status.icon ? cloneElement(status.icon, { size: 24, className: 'text-zinc-400' }) : <FiInbox size={24} className='text-zinc-400' />}
+                      </div>
+                      <div className='absolute -top-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-sm animate-[bounce_2s_ease-in-out_infinite]'>
+                        <FiPlus size={14} className='text-blue-500' />
+                      </div>
+                    </div>
+                    <h4 className='text-sm font-medium text-zinc-600 mb-2 animate-[fadeIn_0.5s_ease-in-out]'>
+                      No tasks in {status.title}
+                    </h4>
+                    <p className='text-xs text-zinc-400 max-w-[200px] mx-auto mb-4 animate-[fadeIn_0.7s_ease-in-out]'>
+                      Drag tasks here or create a new task for this status
+                    </p>
+                    <div
+                      className='text-xs text-blue-500 flex items-center gap-1 hover:text-blue-700 transition-colors cursor-pointer group animate-[fadeIn_0.9s_ease-in-out]'
+                      onClick={() => {
+                        // Create a new task with this status
+                        const newTask = {
+                          id: Date.now(), // Temporary ID
+                          title: 'New task',
+                          status: status.id,
+                          description: '',
+                          type: 'task',
+                          project: { name: 'Default' }
+                        } as Task;
+
+                        onTaskClick(newTask);
+                      }}
+                    >
+                      <FiPlus size={14} className='group-hover:scale-125 transition-transform' />
+                      <span>Add a task</span>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Render tasks if there are any
+              return columnTasks.map((task) => (
                 <div
                   key={task.id}
                   className='relative bg-white text-zinc-800 border border-zinc-200 p-3 rounded-md shadow-sm flex flex-col gap-2 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200'
@@ -433,7 +498,8 @@ const KanbanBoard = ({
                     )}
                   </div>
                 </div>
-              ))}
+              ));
+            })()}
           </div>
         </div>
       ))}
