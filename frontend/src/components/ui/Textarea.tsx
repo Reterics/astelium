@@ -96,7 +96,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const statusIcons = {
       success: <FiCheckCircle className="w-4 h-4 text-green-500" />,
       error: <FiAlertCircle className="w-4 h-4 text-red-500" />,
-      warning: <FiInfo className="w-4 h-4 text-amber-500" />
+      warning: <FiInfo className="w-4 h-4 text-amber-500" />,
+      default: <React.Fragment />
     };
 
     // Status messages

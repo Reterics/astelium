@@ -226,7 +226,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                   : 'text-green-600'
             }`}
           >
-            {/* @ts-ignore */}
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-expect-error */}
             {statusIcons[computedStatus]}
             <span>{statusMessage}</span>
           </div>

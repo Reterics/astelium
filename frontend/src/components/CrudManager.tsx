@@ -26,6 +26,7 @@ export interface CrudField {
   creatable?: boolean;
   sortable?: boolean;
   visible?: boolean;
+  filterable?: boolean;
   options?: SelectOptions;
   props?: {
     onChange?: (value: unknown, row: TableRow) => any;

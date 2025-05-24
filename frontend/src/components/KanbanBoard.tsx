@@ -23,6 +23,7 @@ import {
   ElementDragType,
 } from '@atlaskit/pragmatic-drag-and-drop/types';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const statuses = [
   {id: 'open', title: 'Open', color: 'bg-blue-100', icon: <FiAlertCircle className="text-blue-500" />},
   {id: 'in-progress', title: 'In Progress', color: 'bg-yellow-100', icon: <FiZap className="text-yellow-500" />},

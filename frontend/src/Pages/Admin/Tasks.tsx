@@ -3,15 +3,16 @@ import {useApi} from '../../hooks/useApi.ts';
 import {getTranslatedList} from '../../i18n/utils.ts';
 import {OPTIONS} from '../../constants.ts';
 import {useTranslation} from 'react-i18next';
-import GroupedTableComponent from '../../components/GroupedTableComponent.tsx';
-import SelectComponent from '../../components/SelectComponent.tsx';
 import {useState} from 'react';
 import UserAvatar from '../../components/UserAvatar.tsx';
-import {FiPlus, FiSearch} from 'react-icons/fi';
 import FormModal from '../../components/FormModal.tsx';
 import TaskModal from '../../components/TaskModal.tsx';
 import {Task} from '../../components/KanbanBoard.tsx';
 import mountComponent from '../../components/mounter.tsx';
+import TaskListTable from '../../components/TaskListTable.tsx';
+
+// Note: This component requires the following packages to be installed:
+// npm install react-dnd react-dnd-html5-backend
 
 const Tasks = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
@@ -26,9 +27,8 @@ const Tasks = () => {
   const {t} = useTranslation();
   const translationPrefix = 'task.';
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [groupedBy, setGroupedBy] = useState<string>('status');
+  const groupedBy = 'status';
 
   if (projectsAreLoading || usersAreLoading || tasksAreLoading)
     return <p>Loading...</p>;
@@ -157,57 +157,27 @@ const Tasks = () => {
       className='pb-0 bg-white border border-zinc-200 rounded-none'
       style={{boxShadow: 'none'}}
     >
-      <div className='px-2 py-1 flex items-center gap-2'>
-        <div className='flex items-center gap-2 flex-1'>
-          <FiSearch className='text-zinc-600 w-4 h-4' />
-          <input
-            type='text'
-            placeholder='Search...'
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className='px-2 py-1 border border-zinc-200 text-xs font-medium rounded-none bg-white text-zinc-900 focus:outline-none focus:border-blue-500'
-            style={{borderRadius: 0, minWidth: 120}}
-          />
-          <label className='pl-2 text-xs font-medium text-zinc-700 select-none'>
-            Group:
-          </label>
-          <SelectComponent
-            column={{
-              key: 'group',
-              label: 'Grouped by',
-              type: 'select',
-              options: [
-                {value: 'status', label: t('status')},
-                {value: 'priority', label: t('priority')},
-                {value: 'type', label: t('type')},
-              ],
-            }}
-            filters={{group: groupedBy}}
-            handleFilterChange={(_column, value) => setGroupedBy(value)}
-          />
-        </div>
-
-        <button
-          onClick={async () => {
-            const form = await mountComponent(FormModal, {
-              title: 'Create Task ',
-              fields: fields.filter((filter) => filter.creatable !== false),
-              data: {},
-            });
-            if (form) {
-              await saveData(form as Record<string, any>);
-            }
-          }}
-          className='flex items-center bg-zinc-800 text-white px-3 py-1 text-xs font-medium rounded-none hover:bg-zinc-700'
-          style={{borderRadius: 0}}
-        >
-          <FiPlus className='mr-1' /> Add
-        </button>
-      </div>
-      <GroupedTableComponent
+      <TaskListTable
         columns={fields}
         data={tasksRaw}
         groupedBy={groupedBy}
+        onEdit={async (updatedData) => {
+          // Process each item in the array individually
+          for (const item of updatedData) {
+            await updateMutation.mutateAsync(item as Record<string, any> & { id: number });
+          }
+          return true;
+        }}
+        onCreate={async () => {
+          const form = await mountComponent(FormModal, {
+            title: 'Create Task ',
+            fields: fields.filter((filter) => filter.creatable !== false),
+            data: {},
+          });
+          if (form) {
+            await saveData(form as Record<string, any>);
+          }
+        }}
       />
 
       {selectedTask && (

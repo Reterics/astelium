@@ -3,7 +3,7 @@ import React from 'react';
 interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'blockquote' | 'lead' | 'large' | 'small' | 'muted';
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
 }
 
 const Typography = React.forwardRef<HTMLElement, TypographyProps>(
