@@ -8,31 +8,40 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({
-    className = '',
-    children,
-    variant = 'default',
-    isHoverable = false,
-    isClickable = false,
-    ...props
-  }, ref) => {
+  (
+    {
+      className = '',
+      children,
+      variant = 'default',
+      isHoverable = false,
+      isClickable = false,
+      ...props
+    },
+    ref
+  ) => {
     // Base styles that apply to all variants
-    const baseStyles = "bg-white text-zinc-900 rounded-lg overflow-hidden transition-all duration-200";
+    const baseStyles =
+      'bg-white text-zinc-900 rounded-lg overflow-hidden transition-all duration-200';
 
     // Variant-specific styles
     const variantStyles = {
-      default: "border border-zinc-200 shadow-sm",
-      outlined: "border border-zinc-200",
-      elevated: "border border-zinc-100 shadow-md",
-      interactive: "border border-zinc-200 shadow-sm hover:shadow-md hover:border-zinc-300 cursor-pointer",
-      flat: "bg-zinc-50 border-none"
+      default: 'border border-zinc-200 shadow-sm',
+      outlined: 'border border-zinc-200',
+      elevated: 'border border-zinc-100 shadow-md',
+      interactive:
+        'border border-zinc-200 shadow-sm hover:shadow-md hover:border-zinc-300 cursor-pointer',
+      flat: 'bg-zinc-50 border-none',
     };
 
     // Hover effect (only if isHoverable is true)
-    const hoverStyles = isHoverable ? "hover:shadow-md hover:translate-y-[-2px]" : "";
+    const hoverStyles = isHoverable
+      ? 'hover:shadow-md hover:translate-y-[-2px]'
+      : '';
 
     // Clickable effect (only if isClickable is true)
-    const clickableStyles = isClickable ? "cursor-pointer active:shadow-inner active:translate-y-[1px]" : "";
+    const clickableStyles = isClickable
+      ? 'cursor-pointer active:shadow-inner active:translate-y-[1px]'
+      : '';
 
     return (
       <div
@@ -55,7 +64,10 @@ interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-  ({ className = '', children, bordered = false, compact = false, ...props }, ref) => {
+  (
+    {className = '', children, bordered = false, compact = false, ...props},
+    ref
+  ) => {
     const paddingClass = compact ? 'p-4' : 'p-6';
     const borderClass = bordered ? 'border-b border-zinc-200' : '';
 
@@ -79,11 +91,11 @@ interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
 }
 
 const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
-  ({ className = '', children, size = 'md', ...props }, ref) => {
+  ({className = '', children, size = 'md', ...props}, ref) => {
     const sizeClasses = {
       sm: 'text-lg',
       md: 'text-xl',
-      lg: 'text-2xl'
+      lg: 'text-2xl',
     };
 
     return (
@@ -100,23 +112,25 @@ const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
 
 CardTitle.displayName = 'CardTitle';
 
-interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+interface CardDescriptionProps
+  extends React.HTMLAttributes<HTMLParagraphElement> {
   children: React.ReactNode;
 }
 
-const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
-  ({ className = '', children, ...props }, ref) => {
-    return (
-      <p
-        ref={ref}
-        className={`text-sm text-zinc-500 leading-relaxed ${className}`}
-        {...props}
-      >
-        {children}
-      </p>
-    );
-  }
-);
+const CardDescription = React.forwardRef<
+  HTMLParagraphElement,
+  CardDescriptionProps
+>(({className = '', children, ...props}, ref) => {
+  return (
+    <p
+      ref={ref}
+      className={`text-sm text-zinc-500 leading-relaxed ${className}`}
+      {...props}
+    >
+      {children}
+    </p>
+  );
+});
 
 CardDescription.displayName = 'CardDescription';
 
@@ -130,22 +144,25 @@ interface CardMediaProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const CardMedia = React.forwardRef<HTMLDivElement, CardMediaProps>(
-  ({
-    className = '',
-    children,
-    src,
-    alt = '',
-    aspectRatio = '16/9',
-    overlay = false,
-    position = 'top',
-    ...props
-  }, ref) => {
+  (
+    {
+      className = '',
+      children,
+      src,
+      alt = '',
+      aspectRatio = '16/9',
+      overlay = false,
+      position = 'top',
+      ...props
+    },
+    ref
+  ) => {
     const aspectRatioClass = {
       '16/9': 'aspect-video',
       '4/3': 'aspect-[4/3]',
       '1/1': 'aspect-square',
       '2/3': 'aspect-[2/3]',
-      '3/4': 'aspect-[3/4]'
+      '3/4': 'aspect-[3/4]',
     };
 
     const positionClass = position === 'top' ? 'rounded-t-lg' : 'rounded-b-lg';
@@ -157,14 +174,10 @@ const CardMedia = React.forwardRef<HTMLDivElement, CardMediaProps>(
         {...props}
       >
         {src && (
-          <img
-            src={src}
-            alt={alt}
-            className="w-full h-full object-cover"
-          />
+          <img src={src} alt={alt} className='w-full h-full object-cover' />
         )}
         {overlay && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
+          <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent'>
             {children}
           </div>
         )}
@@ -183,7 +196,10 @@ interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
-  ({ className = '', children, compact = false, padded = true, ...props }, ref) => {
+  (
+    {className = '', children, compact = false, padded = true, ...props},
+    ref
+  ) => {
     const paddingClass = !padded ? '' : compact ? 'p-4' : 'p-6';
     const paddingTopClass = padded ? 'pt-0' : '';
 
@@ -209,23 +225,26 @@ interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
-  ({
-    className = '',
-    children,
-    bordered = false,
-    compact = false,
-    align = 'between',
-    ...props
-  }, ref) => {
+  (
+    {
+      className = '',
+      children,
+      bordered = false,
+      compact = false,
+      align = 'between',
+      ...props
+    },
+    ref
+  ) => {
     const paddingClass = compact ? 'p-4' : 'p-6';
     const borderClass = bordered ? 'border-t border-zinc-200' : '';
     const alignmentClass = {
-      'start': 'justify-start',
-      'center': 'justify-center',
-      'end': 'justify-end',
-      'between': 'justify-between',
-      'around': 'justify-around',
-      'evenly': 'justify-evenly'
+      start: 'justify-start',
+      center: 'justify-center',
+      end: 'justify-end',
+      between: 'justify-between',
+      around: 'justify-around',
+      evenly: 'justify-evenly',
     };
 
     return (
@@ -242,7 +261,15 @@ const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
 
 CardFooter.displayName = 'CardFooter';
 
-export { Card, CardHeader, CardTitle, CardDescription, CardMedia, CardContent, CardFooter };
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardMedia,
+  CardContent,
+  CardFooter,
+};
 export type {
   CardProps,
   CardHeaderProps,
@@ -250,5 +277,5 @@ export type {
   CardDescriptionProps,
   CardMediaProps,
   CardContentProps,
-  CardFooterProps
+  CardFooterProps,
 };

@@ -26,7 +26,7 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
   const [activeLines, setActiveLines] = useState({
     income: true,
     outgoing: true,
-    balance: true
+    balance: true,
   });
   const {t} = useTranslation();
 
@@ -74,8 +74,8 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
       return values;
     };
 
-    const yMax = d3.max(chartData, d => Math.max(...getActiveValues(d))) || 0;
-    const yMin = d3.min(chartData, d => Math.min(...getActiveValues(d))) || 0;
+    const yMax = d3.max(chartData, (d) => Math.max(...getActiveValues(d))) || 0;
+    const yMin = d3.min(chartData, (d) => Math.min(...getActiveValues(d))) || 0;
 
     // Add some padding to y domain
     const yDomainPadding = (yMax - yMin) * 0.1;
@@ -93,7 +93,8 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
     Object.entries(colorMap).forEach(([key, color]) => {
       // Line gradient
       const gradientId = `line-gradient-${key}`;
-      const gradient = defs.append('linearGradient')
+      const gradient = defs
+        .append('linearGradient')
         .attr('id', gradientId)
         .attr('gradientUnits', 'userSpaceOnUse')
         .attr('x1', 0)
@@ -101,19 +102,22 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
         .attr('x2', 0)
         .attr('y2', y(yMax));
 
-      gradient.append('stop')
+      gradient
+        .append('stop')
         .attr('offset', '0%')
         .attr('stop-color', color)
         .attr('stop-opacity', 0.8);
 
-      gradient.append('stop')
+      gradient
+        .append('stop')
         .attr('offset', '100%')
         .attr('stop-color', color)
         .attr('stop-opacity', 1);
 
       // Area gradient
       const areaGradientId = `area-gradient-${key}`;
-      const areaGradient = defs.append('linearGradient')
+      const areaGradient = defs
+        .append('linearGradient')
         .attr('id', areaGradientId)
         .attr('gradientUnits', 'userSpaceOnUse')
         .attr('x1', 0)
@@ -121,45 +125,51 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
         .attr('x2', 0)
         .attr('y2', chartHeight);
 
-      areaGradient.append('stop')
+      areaGradient
+        .append('stop')
         .attr('offset', '0%')
         .attr('stop-color', color)
         .attr('stop-opacity', 0.2);
 
-      areaGradient.append('stop')
+      areaGradient
+        .append('stop')
         .attr('offset', '100%')
         .attr('stop-color', color)
         .attr('stop-opacity', 0.05);
     });
 
     // Add grid lines
-    chart.append('g')
+    chart
+      .append('g')
       .attr('class', 'grid')
       .attr('opacity', 0.1)
-      .call(d3.axisLeft(y)
-        .tickSize(-chartWidth)
-        .tickFormat('')
-      );
+      .call(d3.axisLeft(y).tickSize(-chartWidth).tickFormat(''));
 
     // Add x-axis with styled labels
-    chart.append('g')
+    chart
+      .append('g')
       .attr('transform', `translate(0,${chartHeight})`)
-      .call(d3.axisBottom(x)
-        .ticks(5)
-        .tickFormat(d3.timeFormat('%b %d') as any))
+      .call(
+        d3
+          .axisBottom(x)
+          .ticks(5)
+          .tickFormat(d3.timeFormat('%b %d') as any)
+      )
       .selectAll('text')
       .attr('font-size', '12px')
       .attr('fill', '#4B5563');
 
     // Add y-axis with styled labels
-    chart.append('g')
+    chart
+      .append('g')
       .call(d3.axisLeft(y).ticks(5))
       .selectAll('text')
       .attr('font-size', '12px')
       .attr('fill', '#4B5563');
 
     // Add axis labels
-    chart.append('text')
+    chart
+      .append('text')
       .attr('text-anchor', 'middle')
       .attr('x', chartWidth / 2)
       .attr('y', chartHeight + margin.bottom - 5)
@@ -167,9 +177,13 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
       .attr('font-size', '14px')
       .text(t('dashboard.time_period'));
 
-    chart.append('text')
+    chart
+      .append('text')
       .attr('text-anchor', 'middle')
-      .attr('transform', `translate(${-margin.left + 15},${chartHeight/2}) rotate(-90)`)
+      .attr(
+        'transform',
+        `translate(${-margin.left + 15},${chartHeight / 2}) rotate(-90)`
+      )
       .attr('fill', '#4B5563')
       .attr('font-size', '14px')
       .text(t('dashboard.amount'));
@@ -178,8 +192,8 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
     const createLine = (key: keyof TransactionChartData) => {
       return d3
         .line<TransactionChartData>()
-        .x(d => x(new Date(d.time))!)
-        .y(d => y(d[key])!)
+        .x((d) => x(new Date(d.time))!)
+        .y((d) => y(d[key])!)
         .curve(d3.curveCatmullRom.alpha(0.5)); // Smoother curve
     };
 
@@ -187,9 +201,9 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
     const createArea = (key: keyof TransactionChartData) => {
       return d3
         .area<TransactionChartData>()
-        .x(d => x(new Date(d.time))!)
+        .x((d) => x(new Date(d.time))!)
         .y0(chartHeight)
-        .y1(d => y(d[key])!)
+        .y1((d) => y(d[key])!)
         .curve(d3.curveCatmullRom.alpha(0.5)); // Smoother curve
     };
 
@@ -201,7 +215,8 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
       const areaGenerator = createArea(key);
 
       // Draw area
-      chart.append('path')
+      chart
+        .append('path')
         .datum(chartData)
         .attr('fill', `url(#area-gradient-${key})`)
         .attr('d', areaGenerator)
@@ -211,7 +226,8 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
         .attr('opacity', 0.7);
 
       // Draw line with animation
-      const path = chart.append('path')
+      const path = chart
+        .append('path')
         .datum(chartData)
         .attr('fill', 'none')
         .attr('stroke', `url(#line-gradient-${key})`)
@@ -232,13 +248,14 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
         .attr('stroke-dashoffset', 0);
 
       // Add dots at data points
-      chart.selectAll(`.dot-${key}`)
+      chart
+        .selectAll(`.dot-${key}`)
         .data(chartData)
         .enter()
         .append('circle')
         .attr('class', `dot-${key}`)
-        .attr('cx', d => x(new Date(d.time))!)
-        .attr('cy', d => y(d[key])!)
+        .attr('cx', (d) => x(new Date(d.time))!)
+        .attr('cy', (d) => y(d[key])!)
         .attr('r', 0)
         .attr('fill', colorMap[key])
         .attr('stroke', '#fff')
@@ -255,12 +272,14 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
     drawLine('balance');
 
     // Create interactive tooltip
-    const focus = chart.append('g')
+    const focus = chart
+      .append('g')
       .attr('class', 'focus')
       .style('display', 'none');
 
     // Add vertical line for tooltip
-    focus.append('line')
+    focus
+      .append('line')
       .attr('class', 'tooltip-line')
       .attr('y1', 0)
       .attr('y2', chartHeight)
@@ -272,7 +291,8 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
     Object.entries(colorMap).forEach(([key, color]) => {
       if (!activeLines[key as keyof typeof activeLines]) return;
 
-      focus.append('circle')
+      focus
+        .append('circle')
         .attr('class', `focus-circle-${key}`)
         .attr('r', 5)
         .attr('fill', color)
@@ -281,7 +301,8 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
     });
 
     // Create overlay for mouse tracking
-    chart.append('rect')
+    chart
+      .append('rect')
       .attr('class', 'overlay')
       .attr('width', chartWidth)
       .attr('height', chartHeight)
@@ -298,31 +319,36 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
             .style('visibility', 'hidden');
         }
       })
-      .on('mousemove', function(event) {
+      .on('mousemove', function (event) {
         const [mouseX] = d3.pointer(event);
         const xDate = x.invert(mouseX);
 
         // Find closest data point
-        const bisect = d3.bisector((d: TransactionChartData) => new Date(d.time)).left;
+        const bisect = d3.bisector(
+          (d: TransactionChartData) => new Date(d.time)
+        ).left;
         const index = bisect(chartData, xDate);
         const d0 = chartData[index - 1];
         const d1 = chartData[index];
 
         if (!d0 || !d1) return;
 
-        const d = xDate.getTime() - new Date(d0.time).getTime() > new Date(d1.time).getTime() - xDate.getTime() ? d1 : d0;
+        const d =
+          xDate.getTime() - new Date(d0.time).getTime() >
+          new Date(d1.time).getTime() - xDate.getTime()
+            ? d1
+            : d0;
 
         // Update vertical line position
         const xPos = x(new Date(d.time));
-        focus.select('.tooltip-line')
-          .attr('x1', xPos)
-          .attr('x2', xPos);
+        focus.select('.tooltip-line').attr('x1', xPos).attr('x2', xPos);
 
         // Update tooltip dots positions
         Object.entries(colorMap).forEach(([key]) => {
           if (!activeLines[key as keyof typeof activeLines]) return;
 
-          focus.select(`.focus-circle-${key}`)
+          focus
+            .select(`.focus-circle-${key}`)
             .attr('cx', xPos)
             .attr('cy', y(d[key as keyof TransactionChartData]));
         });
@@ -334,7 +360,7 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
           const formattedDate = date.toLocaleDateString(undefined, {
             month: 'short',
             day: 'numeric',
-            year: 'numeric'
+            year: 'numeric',
           });
 
           let html = `<div class="font-medium text-gray-800 mb-1">${formattedDate}</div>`;
@@ -364,9 +390,8 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
 
           // Position tooltip
           const tooltipWidth = 180;
-          const tooltipX = xPos > chartWidth / 2
-            ? xPos - tooltipWidth - 10
-            : xPos + 10;
+          const tooltipX =
+            xPos > chartWidth / 2 ? xPos - tooltipWidth - 10 : xPos + 10;
 
           tooltip
             .style('left', `${tooltipX + margin.left}px`)
@@ -386,41 +411,43 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
         [0, 0],
         [chartWidth, chartHeight],
       ])
-      .extent([[0, 0], [chartWidth, chartHeight]])
+      .extent([
+        [0, 0],
+        [chartWidth, chartHeight],
+      ])
       .on('zoom', (event) => {
         // Update x-axis
         const newX = event.transform.rescaleX(x);
         chart.select('.x-axis').call(d3.axisBottom(newX));
 
         // Update lines and areas
-        Object.keys(activeLines).forEach(key => {
+        Object.keys(activeLines).forEach((key) => {
           const typedKey = key as keyof typeof activeLines;
           if (!activeLines[typedKey]) return;
 
           // Update line
           const newLine = d3
             .line<TransactionChartData>()
-            .x(d => newX(new Date(d.time))!)
-            .y(d => y(d[typedKey])!)
+            .x((d) => newX(new Date(d.time))!)
+            .y((d) => y(d[typedKey])!)
             .curve(d3.curveCatmullRom.alpha(0.5));
 
-          chart.selectAll(`path.line-${key}`)
-            .attr('d', newLine(chartData));
+          chart.selectAll(`path.line-${key}`).attr('d', newLine(chartData));
 
           // Update area
           const newArea = d3
             .area<TransactionChartData>()
-            .x(d => newX(new Date(d.time))!)
+            .x((d) => newX(new Date(d.time))!)
             .y0(chartHeight)
-            .y1(d => y(d[typedKey])!)
+            .y1((d) => y(d[typedKey])!)
             .curve(d3.curveCatmullRom.alpha(0.5));
 
-          chart.selectAll(`path.area-${key}`)
-            .attr('d', newArea(chartData));
+          chart.selectAll(`path.area-${key}`).attr('d', newArea(chartData));
 
           // Update dots
-          chart.selectAll(`.dot-${key}`)
-            .attr('cx', d => newX(new Date(d.time))!);
+          chart
+            .selectAll(`.dot-${key}`)
+            .attr('cx', (d) => newX(new Date(d.time))!);
         });
       });
 
@@ -429,19 +456,19 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
 
   // Toggle line visibility
   const toggleLine = (line: keyof typeof activeLines) => {
-    setActiveLines(prev => ({
+    setActiveLines((prev) => ({
       ...prev,
-      [line]: !prev[line]
+      [line]: !prev[line],
     }));
   };
 
   return (
     <div className='bg-white p-4 rounded-lg shadow-sm w-full h-full flex flex-col'>
       <motion.div
-        className="flex justify-between items-center mb-4"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        className='flex justify-between items-center mb-4'
+        initial={{opacity: 0, y: -10}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.5}}
       >
         <div>
           <h2 className='text-lg font-semibold text-gray-800 mb-1'>
@@ -452,7 +479,7 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           {Object.entries(colorMap).map(([key, color]) => (
             <button
               key={key}
@@ -464,8 +491,12 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
               onClick={() => toggleLine(key as keyof typeof activeLines)}
             >
               <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: activeLines[key as keyof typeof activeLines] ? color : '#D1D5DB' }}
+                className='w-3 h-3 rounded-full'
+                style={{
+                  backgroundColor: activeLines[key as keyof typeof activeLines]
+                    ? color
+                    : '#D1D5DB',
+                }}
               ></div>
               <span>{t(`dashboard.${key}`)}</span>
             </button>
@@ -478,7 +509,7 @@ const TransactionChartCard = ({data}: {data: Record<string, any>[]}) => {
         <div
           ref={tooltipRef}
           className='absolute bg-white p-3 rounded-md shadow-lg text-sm pointer-events-none transition-all duration-300 border border-gray-100'
-          style={{ opacity: 0, visibility: 'hidden', width: '180px' }}
+          style={{opacity: 0, visibility: 'hidden', width: '180px'}}
         ></div>
       </div>
     </div>

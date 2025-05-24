@@ -8,7 +8,17 @@ interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
-  ({ className = '', size = 'lg', padding = 'md', centered = true, children, ...props }, ref) => {
+  (
+    {
+      className = '',
+      size = 'lg',
+      padding = 'md',
+      centered = true,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const sizeClasses = {
       sm: 'max-w-screen-sm',
       md: 'max-w-screen-md',
@@ -40,5 +50,5 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
 
 Container.displayName = 'Container';
 
-export { Container };
-export type { ContainerProps };
+export {Container};
+export type {ContainerProps};

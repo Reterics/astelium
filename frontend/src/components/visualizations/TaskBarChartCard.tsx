@@ -5,12 +5,12 @@ import {motion} from 'framer-motion';
 
 // Status color mapping for a more visually appealing chart
 const statusColors = {
-  'open': '#3B82F6', // blue
+  open: '#3B82F6', // blue
   'in-progress': '#F59E0B', // amber
-  'completed': '#10B981', // green
-  'cancelled': '#EF4444', // red
+  completed: '#10B981', // green
+  cancelled: '#EF4444', // red
   'on-hold': '#8B5CF6', // purple
-  'default': '#6B7280', // gray
+  default: '#6B7280', // gray
 };
 
 const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
@@ -51,7 +51,9 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
       .map(([label, value]) => ({
         label,
         value,
-        color: statusColors[label as keyof typeof statusColors] || statusColors.default
+        color:
+          statusColors[label as keyof typeof statusColors] ||
+          statusColors.default,
       }))
       .sort((a, b) => b.value - a.value); // Sort by value descending
 
@@ -66,50 +68,52 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
     // Create scales
     const x = d3
       .scaleBand()
-      .domain(chartData.map(d => d.label))
+      .domain(chartData.map((d) => d.label))
       .range([0, chartWidth])
       .padding(0.3);
 
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(chartData, d => d.value) * 1.1]) // Add 10% padding at top
+      .domain([0, d3.max(chartData, (d) => d.value) * 1.1]) // Add 10% padding at top
       .nice()
       .range([chartHeight, 0]);
 
     // Add gradient definitions
     const defs = svg.append('defs');
 
-    chartData.forEach(d => {
+    chartData.forEach((d) => {
       const gradientId = `gradient-${d.label}`;
-      const gradient = defs.append('linearGradient')
+      const gradient = defs
+        .append('linearGradient')
         .attr('id', gradientId)
         .attr('x1', '0%')
         .attr('y1', '0%')
         .attr('x2', '0%')
         .attr('y2', '100%');
 
-      gradient.append('stop')
+      gradient
+        .append('stop')
         .attr('offset', '0%')
         .attr('stop-color', d.color)
         .attr('stop-opacity', 0.8);
 
-      gradient.append('stop')
+      gradient
+        .append('stop')
         .attr('offset', '100%')
         .attr('stop-color', d.color)
         .attr('stop-opacity', 0.5);
     });
 
     // Add grid lines
-    chart.append('g')
+    chart
+      .append('g')
       .attr('class', 'grid')
       .attr('opacity', 0.1)
-      .call(d3.axisLeft(y)
-        .tickSize(-chartWidth)
-        .tickFormat('')
-      );
+      .call(d3.axisLeft(y).tickSize(-chartWidth).tickFormat(''));
 
     // Add x-axis with styled labels
-    chart.append('g')
+    chart
+      .append('g')
       .attr('transform', `translate(0,${chartHeight})`)
       .call(d3.axisBottom(x))
       .selectAll('text')
@@ -119,14 +123,16 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
       .attr('fill', '#4B5563');
 
     // Add y-axis with styled labels
-    chart.append('g')
+    chart
+      .append('g')
       .call(d3.axisLeft(y).ticks(5))
       .selectAll('text')
       .attr('font-size', '12px')
       .attr('fill', '#4B5563');
 
     // Add axis labels
-    chart.append('text')
+    chart
+      .append('text')
       .attr('text-anchor', 'middle')
       .attr('x', chartWidth / 2)
       .attr('y', chartHeight + margin.bottom - 5)
@@ -134,15 +140,20 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
       .attr('font-size', '14px')
       .text(t('dashboard.task_status'));
 
-    chart.append('text')
+    chart
+      .append('text')
       .attr('text-anchor', 'middle')
-      .attr('transform', `translate(${-margin.left + 15},${chartHeight/2}) rotate(-90)`)
+      .attr(
+        'transform',
+        `translate(${-margin.left + 15},${chartHeight / 2}) rotate(-90)`
+      )
       .attr('fill', '#4B5563')
       .attr('font-size', '14px')
       .text(t('dashboard.task_count'));
 
     // Create a group for each bar
-    const bars = chart.selectAll('.bar')
+    const bars = chart
+      .selectAll('.bar')
       .data(chartData)
       .enter()
       .append('g')
@@ -150,32 +161,34 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
       .style('cursor', 'pointer');
 
     // Add the bars with animations
-    bars.append('rect')
-      .attr('x', d => x(d.label) || 0)
+    bars
+      .append('rect')
+      .attr('x', (d) => x(d.label) || 0)
       .attr('width', x.bandwidth())
       .attr('y', chartHeight)
       .attr('height', 0)
       .attr('rx', 4) // Rounded corners
-      .attr('fill', d => `url(#gradient-${d.label})`)
-      .attr('stroke', d => d.color)
+      .attr('fill', (d) => `url(#gradient-${d.label})`)
+      .attr('stroke', (d) => d.color)
       .attr('stroke-width', 1)
-      .attr('opacity', d => hoveredBar === d.label ? 1 : 0.9)
+      .attr('opacity', (d) => (hoveredBar === d.label ? 1 : 0.9))
       .transition()
       .duration(800)
       .delay((_, i) => i * 100)
-      .attr('y', d => y(d.value))
-      .attr('height', d => chartHeight - y(d.value));
+      .attr('y', (d) => y(d.value))
+      .attr('height', (d) => chartHeight - y(d.value));
 
     // Add value labels on top of bars
-    bars.append('text')
-      .attr('x', d => (x(d.label) || 0) + x.bandwidth() / 2)
-      .attr('y', d => y(d.value) - 5)
+    bars
+      .append('text')
+      .attr('x', (d) => (x(d.label) || 0) + x.bandwidth() / 2)
+      .attr('y', (d) => y(d.value) - 5)
       .attr('text-anchor', 'middle')
       .attr('font-size', '12px')
       .attr('font-weight', 'bold')
-      .attr('fill', d => d.color)
+      .attr('fill', (d) => d.color)
       .attr('opacity', 0)
-      .text(d => d.value)
+      .text((d) => d.value)
       .transition()
       .duration(800)
       .delay((_, i) => i * 100 + 400)
@@ -183,15 +196,16 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
 
     // Add hover effects
     bars
-      .on('mouseenter', function(event, d) {
+      .on('mouseenter', function (event, d) {
         setHoveredBar(d.label);
 
-        d3.select(this).select('rect')
+        d3.select(this)
+          .select('rect')
           .transition()
           .duration(300)
           .attr('opacity', 1)
-          .attr('y', y => y - 5)
-          .attr('height', h => h + 5);
+          .attr('y', (y) => y - 5)
+          .attr('height', (h) => h + 5);
 
         // Show tooltip
         if (tooltipRef.current) {
@@ -211,15 +225,16 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
             .style('visibility', 'visible');
         }
       })
-      .on('mouseleave', function() {
+      .on('mouseleave', function () {
         setHoveredBar(null);
 
-        d3.select(this).select('rect')
+        d3.select(this)
+          .select('rect')
           .transition()
           .duration(300)
           .attr('opacity', 0.9)
-          .attr('y', d => y(d.value))
-          .attr('height', d => chartHeight - y(d.value));
+          .attr('y', (d) => y(d.value))
+          .attr('height', (d) => chartHeight - y(d.value));
 
         // Hide tooltip
         if (tooltipRef.current) {
@@ -230,15 +245,14 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
             .style('visibility', 'hidden');
         }
       });
-
   }, [data, dimensions, hoveredBar, t]);
 
   return (
     <div className='bg-white p-4 rounded-lg shadow-sm w-full h-full flex flex-col'>
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={{opacity: 0, y: -10}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.5}}
       >
         <h2 className='text-lg font-semibold text-gray-800 mb-1'>
           {t('dashboard.bar_chart_title')}
@@ -253,7 +267,7 @@ const TaskBarChartCard = ({data}: {data: Record<string, any>[]}) => {
         <div
           ref={tooltipRef}
           className='absolute bg-white p-2 rounded-md shadow-lg text-sm pointer-events-none transition-all duration-300'
-          style={{ opacity: 0, visibility: 'hidden' }}
+          style={{opacity: 0, visibility: 'hidden'}}
         ></div>
       </div>
     </div>

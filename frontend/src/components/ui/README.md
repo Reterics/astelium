@@ -54,7 +54,7 @@ import { Button } from 'components/ui';
 A card component for displaying content in a contained area.
 
 ```tsx
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from 'components/ui';
+import {Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter} from 'components/ui';
 
 <Card>
   <CardHeader>
@@ -67,7 +67,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
   <CardFooter>
     <p>Card Footer</p>
   </CardFooter>
-</Card>
+</Card>;
 ```
 
 ### Input

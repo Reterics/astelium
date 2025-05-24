@@ -48,7 +48,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
             key={i}
             className={`${baseClass} ${radiusClass} ${inlineClass} ${className}`}
             style={style}
-            aria-hidden="true"
+            aria-hidden='true'
           />
         ))}
     </>
@@ -57,7 +57,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
 
 export default Skeleton;
 
-export const SkeletonText: React.FC<{ lines?: number; className?: string }> = ({
+export const SkeletonText: React.FC<{lines?: number; className?: string}> = ({
   lines = 3,
   className = '',
 }) => {
@@ -68,7 +68,7 @@ export const SkeletonText: React.FC<{ lines?: number; className?: string }> = ({
         .map((_, i) => (
           <Skeleton
             key={i}
-            height="1rem"
+            height='1rem'
             width={i === lines - 1 && lines > 1 ? '80%' : '100%'}
           />
         ))}
@@ -76,14 +76,16 @@ export const SkeletonText: React.FC<{ lines?: number; className?: string }> = ({
   );
 };
 
-export const SkeletonCard: React.FC<{ className?: string }> = ({ className = '' }) => {
+export const SkeletonCard: React.FC<{className?: string}> = ({
+  className = '',
+}) => {
   return (
     <div className={`border border-zinc-200 rounded-md p-4 ${className}`}>
-      <div className="flex items-center space-x-3 mb-4">
+      <div className='flex items-center space-x-3 mb-4'>
         <Skeleton circle width={40} height={40} />
-        <div className="space-y-2 flex-1">
-          <Skeleton height="0.875rem" width="60%" />
-          <Skeleton height="0.75rem" width="40%" />
+        <div className='space-y-2 flex-1'>
+          <Skeleton height='0.875rem' width='60%' />
+          <Skeleton height='0.75rem' width='40%' />
         </div>
       </div>
       <SkeletonText lines={3} />
@@ -91,19 +93,19 @@ export const SkeletonCard: React.FC<{ className?: string }> = ({ className = '' 
   );
 };
 
-export const SkeletonTable: React.FC<{ rows?: number; columns?: number; className?: string }> = ({
-  rows = 5,
-  columns = 4,
-  className = '',
-}) => {
+export const SkeletonTable: React.FC<{
+  rows?: number;
+  columns?: number;
+  className?: string;
+}> = ({rows = 5, columns = 4, className = ''}) => {
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="grid grid-cols-12 gap-4 mb-2">
+      <div className='grid grid-cols-12 gap-4 mb-2'>
         {Array(columns)
           .fill(0)
           .map((_, i) => (
             <div key={i} className={`col-span-${Math.floor(12 / columns)}`}>
-              <Skeleton height="1.25rem" width="80%" />
+              <Skeleton height='1.25rem' width='80%' />
             </div>
           ))}
       </div>
@@ -111,12 +113,18 @@ export const SkeletonTable: React.FC<{ rows?: number; columns?: number; classNam
       {Array(rows)
         .fill(0)
         .map((_, i) => (
-          <div key={i} className="grid grid-cols-12 gap-4 py-2 border-b border-zinc-100">
+          <div
+            key={i}
+            className='grid grid-cols-12 gap-4 py-2 border-b border-zinc-100'
+          >
             {Array(columns)
               .fill(0)
               .map((_, j) => (
                 <div key={j} className={`col-span-${Math.floor(12 / columns)}`}>
-                  <Skeleton height="1rem" width={`${Math.floor(Math.random() * 40) + 60}%`} />
+                  <Skeleton
+                    height='1rem'
+                    width={`${Math.floor(Math.random() * 40) + 60}%`}
+                  />
                 </div>
               ))}
           </div>

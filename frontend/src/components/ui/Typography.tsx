@@ -2,12 +2,24 @@ import React from 'react';
 
 interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'blockquote' | 'lead' | 'large' | 'small' | 'muted';
+  variant?:
+    | 'h1'
+    | 'h2'
+    | 'h3'
+    | 'h4'
+    | 'h5'
+    | 'h6'
+    | 'p'
+    | 'blockquote'
+    | 'lead'
+    | 'large'
+    | 'small'
+    | 'muted';
   as?: keyof React.JSX.IntrinsicElements;
 }
 
 const Typography = React.forwardRef<HTMLElement, TypographyProps>(
-  ({ className = '', variant = 'p', as, children, ...props }, ref) => {
+  ({className = '', variant = 'p', as, children, ...props}, ref) => {
     const variantClasses = {
       h1: 'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl',
       h2: 'scroll-m-20 text-3xl font-semibold tracking-tight',
@@ -40,18 +52,42 @@ const Typography = React.forwardRef<HTMLElement, TypographyProps>(
 Typography.displayName = 'Typography';
 
 // Convenience components
-const H1 = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="h1" {...props} />;
-const H2 = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="h2" {...props} />;
-const H3 = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="h3" {...props} />;
-const H4 = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="h4" {...props} />;
-const H5 = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="h5" {...props} />;
-const H6 = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="h6" {...props} />;
-const P = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="p" {...props} />;
-const Blockquote = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="blockquote" {...props} />;
-const Lead = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="lead" {...props} />;
-const Large = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="large" {...props} />;
-const Small = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="small" {...props} />;
-const Muted = (props: Omit<TypographyProps, 'variant'>) => <Typography variant="muted" {...props} />;
+const H1 = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='h1' {...props} />
+);
+const H2 = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='h2' {...props} />
+);
+const H3 = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='h3' {...props} />
+);
+const H4 = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='h4' {...props} />
+);
+const H5 = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='h5' {...props} />
+);
+const H6 = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='h6' {...props} />
+);
+const P = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='p' {...props} />
+);
+const Blockquote = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='blockquote' {...props} />
+);
+const Lead = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='lead' {...props} />
+);
+const Large = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='large' {...props} />
+);
+const Small = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='small' {...props} />
+);
+const Muted = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant='muted' {...props} />
+);
 
 export {
   Typography,
@@ -69,4 +105,4 @@ export {
   Muted,
 };
 
-export type { TypographyProps };
+export type {TypographyProps};

@@ -10,7 +10,19 @@ interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Grid = React.forwardRef<HTMLDivElement, GridProps>(
-  ({ className = '', cols = 1, gap = 'md', colsMd, colsLg, colsXl, children, ...props }, ref) => {
+  (
+    {
+      className = '',
+      cols = 1,
+      gap = 'md',
+      colsMd,
+      colsLg,
+      colsXl,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const colsClasses = {
       1: 'grid-cols-1',
       2: 'grid-cols-2',
@@ -41,7 +53,20 @@ const Grid = React.forwardRef<HTMLDivElement, GridProps>(
           11: 'md:grid-cols-11',
           12: 'md:grid-cols-12',
         }
-      : { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '', 11: '', 12: '' };
+      : {
+          1: '',
+          2: '',
+          3: '',
+          4: '',
+          5: '',
+          6: '',
+          7: '',
+          8: '',
+          9: '',
+          10: '',
+          11: '',
+          12: '',
+        };
 
     const colsLgClasses = colsLg
       ? {
@@ -58,7 +83,20 @@ const Grid = React.forwardRef<HTMLDivElement, GridProps>(
           11: 'lg:grid-cols-11',
           12: 'lg:grid-cols-12',
         }
-      : { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '', 11: '', 12: '' };
+      : {
+          1: '',
+          2: '',
+          3: '',
+          4: '',
+          5: '',
+          6: '',
+          7: '',
+          8: '',
+          9: '',
+          10: '',
+          11: '',
+          12: '',
+        };
 
     const colsXlClasses = colsXl
       ? {
@@ -75,7 +113,20 @@ const Grid = React.forwardRef<HTMLDivElement, GridProps>(
           11: 'xl:grid-cols-11',
           12: 'xl:grid-cols-12',
         }
-      : { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '', 11: '', 12: '' };
+      : {
+          1: '',
+          2: '',
+          3: '',
+          4: '',
+          5: '',
+          6: '',
+          7: '',
+          8: '',
+          9: '',
+          10: '',
+          11: '',
+          12: '',
+        };
 
     const gapClasses = {
       none: 'gap-0',
@@ -111,7 +162,7 @@ interface GridItemProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
-  ({ className = '', span, spanMd, spanLg, spanXl, children, ...props }, ref) => {
+  ({className = '', span, spanMd, spanLg, spanXl, children, ...props}, ref) => {
     const spanClasses = span
       ? {
           1: 'col-span-1',
@@ -127,7 +178,20 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
           11: 'col-span-11',
           12: 'col-span-12',
         }
-      : { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '', 11: '', 12: '' };
+      : {
+          1: '',
+          2: '',
+          3: '',
+          4: '',
+          5: '',
+          6: '',
+          7: '',
+          8: '',
+          9: '',
+          10: '',
+          11: '',
+          12: '',
+        };
 
     const spanMdClasses = spanMd
       ? {
@@ -144,7 +208,20 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
           11: 'md:col-span-11',
           12: 'md:col-span-12',
         }
-      : { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '', 11: '', 12: '' };
+      : {
+          1: '',
+          2: '',
+          3: '',
+          4: '',
+          5: '',
+          6: '',
+          7: '',
+          8: '',
+          9: '',
+          10: '',
+          11: '',
+          12: '',
+        };
 
     const spanLgClasses = spanLg
       ? {
@@ -161,7 +238,20 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
           11: 'lg:col-span-11',
           12: 'lg:col-span-12',
         }
-      : { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '', 11: '', 12: '' };
+      : {
+          1: '',
+          2: '',
+          3: '',
+          4: '',
+          5: '',
+          6: '',
+          7: '',
+          8: '',
+          9: '',
+          10: '',
+          11: '',
+          12: '',
+        };
 
     const spanXlClasses = spanXl
       ? {
@@ -178,7 +268,20 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
           11: 'xl:col-span-11',
           12: 'xl:col-span-12',
         }
-      : { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '', 11: '', 12: '' };
+      : {
+          1: '',
+          2: '',
+          3: '',
+          4: '',
+          5: '',
+          6: '',
+          7: '',
+          8: '',
+          9: '',
+          10: '',
+          11: '',
+          12: '',
+        };
 
     return (
       <div
@@ -196,5 +299,5 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
 
 GridItem.displayName = 'GridItem';
 
-export { Grid, GridItem };
-export type { GridProps, GridItemProps };
+export {Grid, GridItem};
+export type {GridProps, GridItemProps};

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { FiAlertCircle, FiCheckCircle, FiInfo } from 'react-icons/fi';
+import React, {useState, useEffect} from 'react';
+import {FiAlertCircle, FiCheckCircle, FiInfo} from 'react-icons/fi';
 
 type TextareaStatus = 'default' | 'success' | 'error' | 'warning';
 type TextareaSize = 'sm' | 'md' | 'lg';
 
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   error?: string;
   warning?: string;
   success?: string;
@@ -25,37 +26,47 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({
-    className = '',
-    error,
-    warning,
-    success,
-    label,
-    helperText,
-    id,
-    status = 'default',
-    size = 'md',
-    required = false,
-    fullWidth = true,
-    hideLabel = false,
-    labelClassName = '',
-    textareaClassName = '',
-    containerClassName = '',
-    rows = 4,
-    maxLength,
-    showCharacterCount = false,
-    autoResize = false,
-    onChange,
-    onFocus,
-    onBlur,
-    ...props
-  }, ref) => {
-    const textareaId = id || `textarea-${Math.random().toString(36).substring(2, 9)}`;
+  (
+    {
+      className = '',
+      error,
+      warning,
+      success,
+      label,
+      helperText,
+      id,
+      status = 'default',
+      size = 'md',
+      required = false,
+      fullWidth = true,
+      hideLabel = false,
+      labelClassName = '',
+      textareaClassName = '',
+      containerClassName = '',
+      rows = 4,
+      maxLength,
+      showCharacterCount = false,
+      autoResize = false,
+      onChange,
+      onFocus,
+      onBlur,
+      ...props
+    },
+    ref
+  ) => {
+    const textareaId =
+      id || `textarea-${Math.random().toString(36).substring(2, 9)}`;
     const [isFocused, setIsFocused] = useState(false);
     const [textValue, setTextValue] = useState(props.value || '');
 
     // Determine status based on props
-    const computedStatus = error ? 'error' : warning ? 'warning' : success ? 'success' : status;
+    const computedStatus = error
+      ? 'error'
+      : warning
+        ? 'warning'
+        : success
+          ? 'success'
+          : status;
 
     // Handle textarea value changes
     useEffect(() => {
@@ -67,7 +78,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     // Auto-resize functionality
     useEffect(() => {
       if (autoResize && typeof textValue === 'string') {
-        const textarea = document.getElementById(textareaId) as HTMLTextAreaElement;
+        const textarea = document.getElementById(
+          textareaId
+        ) as HTMLTextAreaElement;
         if (textarea) {
           // Reset height to auto to get the correct scrollHeight
           textarea.style.height = 'auto';
@@ -81,7 +94,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const sizeClasses = {
       sm: 'text-xs px-2 py-1.5',
       md: 'text-sm px-3 py-2',
-      lg: 'text-base px-4 py-2.5'
+      lg: 'text-base px-4 py-2.5',
     };
 
     // Status classes
@@ -89,15 +102,15 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       default: 'border-zinc-300 focus:border-blue-500 focus:ring-blue-500',
       success: 'border-green-500 focus:border-green-600 focus:ring-green-500',
       error: 'border-red-500 focus:border-red-600 focus:ring-red-500',
-      warning: 'border-amber-500 focus:border-amber-600 focus:ring-amber-500'
+      warning: 'border-amber-500 focus:border-amber-600 focus:ring-amber-500',
     };
 
     // Status icons
     const statusIcons = {
-      success: <FiCheckCircle className="w-4 h-4 text-green-500" />,
-      error: <FiAlertCircle className="w-4 h-4 text-red-500" />,
-      warning: <FiInfo className="w-4 h-4 text-amber-500" />,
-      default: <React.Fragment />
+      success: <FiCheckCircle className='w-4 h-4 text-green-500' />,
+      error: <FiAlertCircle className='w-4 h-4 text-red-500' />,
+      warning: <FiInfo className='w-4 h-4 text-amber-500' />,
+      default: <React.Fragment />,
     };
 
     // Status messages
@@ -124,17 +137,21 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     };
 
     return (
-      <div className={`${fullWidth ? 'w-full' : 'w-auto'} ${containerClassName}`}>
+      <div
+        className={`${fullWidth ? 'w-full' : 'w-auto'} ${containerClassName}`}
+      >
         {label && !hideLabel && (
           <label
             htmlFor={textareaId}
             className={`block text-sm font-medium text-zinc-700 mb-1.5 ${labelClassName}`}
           >
             {label}
-            {required && <span className="ml-1 text-red-500">*</span>}
+            {required && <span className='ml-1 text-red-500'>*</span>}
           </label>
         )}
-        <div className={`relative transition-all duration-200 ${isFocused ? 'scale-[1.01]' : ''}`}>
+        <div
+          className={`relative transition-all duration-200 ${isFocused ? 'scale-[1.01]' : ''}`}
+        >
           <textarea
             id={textareaId}
             ref={ref}
@@ -144,7 +161,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
-            style={autoResize ? { overflow: 'hidden' } : undefined}
+            style={autoResize ? {overflow: 'hidden'} : undefined}
             className={`
               w-full rounded-md border bg-white text-zinc-900
               transition-all duration-200
@@ -170,8 +187,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         </div>
 
         {/* Character count and status message container */}
-        <div className="mt-1.5 flex justify-between items-start">
-          <div className="flex-1">
+        <div className='mt-1.5 flex justify-between items-start'>
+          <div className='flex-1'>
             {/* Status or helper message */}
             {statusMessage && (
               <div
@@ -190,7 +207,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             )}
 
             {!statusMessage && helperText && (
-              <p id={`${textareaId}-helper`} className="text-xs text-zinc-500">
+              <p id={`${textareaId}-helper`} className='text-xs text-zinc-500'>
                 {helperText}
               </p>
             )}
@@ -198,8 +215,11 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
           {/* Character count */}
           {showCharacterCount && (
-            <div className={`text-xs ${maxLength && characterCount >= maxLength * 0.9 ? 'text-amber-600' : 'text-zinc-500'}`}>
-              {characterCount}{maxLength ? `/${maxLength}` : ''}
+            <div
+              className={`text-xs ${maxLength && characterCount >= maxLength * 0.9 ? 'text-amber-600' : 'text-zinc-500'}`}
+            >
+              {characterCount}
+              {maxLength ? `/${maxLength}` : ''}
             </div>
           )}
         </div>
@@ -210,5 +230,5 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
 Textarea.displayName = 'Textarea';
 
-export { Textarea };
-export type { TextareaProps, TextareaStatus, TextareaSize };
+export {Textarea};
+export type {TextareaProps, TextareaStatus, TextareaSize};

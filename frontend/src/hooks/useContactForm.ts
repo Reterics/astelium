@@ -53,8 +53,9 @@ export const useContactForm = () => {
       // @ts-expect-error - Using global error boundary
       window.errorBoundary?.addError({
         title: 'Contact Form Error',
-        message: 'There was a problem submitting your message. Please try again.',
-        details: err instanceof Error ? err.stack : String(err)
+        message:
+          'There was a problem submitting your message. Please try again.',
+        details: err instanceof Error ? err.stack : String(err),
       });
     } finally {
       setSubmitting(false);

@@ -27,11 +27,36 @@ import {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const statuses = [
-  {id: 'open', title: 'Open', color: 'bg-blue-100', icon: <FiAlertCircle className="text-blue-500" />},
-  {id: 'in-progress', title: 'In Progress', color: 'bg-yellow-100', icon: <FiZap className="text-yellow-500" />},
-  {id: 'review', title: 'Review', color: 'bg-purple-100', icon: <FiStar className="text-purple-500" />},
-  {id: 'completed', title: 'Completed', color: 'bg-green-100', icon: <FiCheckCircle className="text-green-500" />},
-  {id: 'closed', title: 'Closed', color: 'bg-gray-100', icon: <FiAlertTriangle className="text-gray-500" />},
+  {
+    id: 'open',
+    title: 'Open',
+    color: 'bg-blue-100',
+    icon: <FiAlertCircle className='text-blue-500' />,
+  },
+  {
+    id: 'in-progress',
+    title: 'In Progress',
+    color: 'bg-yellow-100',
+    icon: <FiZap className='text-yellow-500' />,
+  },
+  {
+    id: 'review',
+    title: 'Review',
+    color: 'bg-purple-100',
+    icon: <FiStar className='text-purple-500' />,
+  },
+  {
+    id: 'completed',
+    title: 'Completed',
+    color: 'bg-green-100',
+    icon: <FiCheckCircle className='text-green-500' />,
+  },
+  {
+    id: 'closed',
+    title: 'Closed',
+    color: 'bg-gray-100',
+    icon: <FiAlertTriangle className='text-gray-500' />,
+  },
 ];
 
 const pastelColors = [
@@ -113,7 +138,9 @@ const KanbanBoard = ({
         console.log(`Task ${taskId} moved before ${beforeTaskId}`);
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Failed to update task order: ${response.status}`);
+        throw new Error(
+          errorData.message || `Failed to update task order: ${response.status}`
+        );
       }
     } catch (error) {
       console.error('Error updating task order:', error);
@@ -121,7 +148,7 @@ const KanbanBoard = ({
       window.errorBoundary?.addError({
         title: 'Task Order Update Failed',
         message: 'Failed to update task order. Please try again.',
-        details: error instanceof Error ? error.stack : String(error)
+        details: error instanceof Error ? error.stack : String(error),
       });
     }
   };
@@ -137,7 +164,7 @@ const KanbanBoard = ({
 
     if (editingTitle.trim() === '') return; // Don't save empty titles
 
-    const updatedTask = { ...task, title: editingTitle };
+    const updatedTask = {...task, title: editingTitle};
     setTask(updatedTask);
     setEditingTaskId(null);
 
@@ -145,12 +172,14 @@ const KanbanBoard = ({
       const response = await fetch(`/api/tasks/${task.id}`, {
         ...getFetchOptions(),
         method: 'PUT',
-        body: JSON.stringify({ title: editingTitle }),
+        body: JSON.stringify({title: editingTitle}),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Failed to update task title: ${response.status}`);
+        throw new Error(
+          errorData.message || `Failed to update task title: ${response.status}`
+        );
       }
     } catch (error) {
       console.error('Error updating task title:', error);
@@ -158,8 +187,9 @@ const KanbanBoard = ({
       // @ts-expect-error - Using global error boundary
       window.errorBoundary?.addError({
         title: 'Task Update Failed',
-        message: 'Failed to update task title. Your changes have been reverted.',
-        details: error instanceof Error ? error.stack : String(error)
+        message:
+          'Failed to update task title. Your changes have been reverted.',
+        details: error instanceof Error ? error.stack : String(error),
       });
 
       // Revert the optimistic update if there was an error
@@ -187,7 +217,7 @@ const KanbanBoard = ({
       invariant(typeof sourceId === 'number');
 
       // Remove any animation classes from all tasks
-      document.querySelectorAll('[data-task-id]').forEach(task => {
+      document.querySelectorAll('[data-task-id]').forEach((task) => {
         task.classList.remove('scale-105', 'opacity-50', 'shadow-lg', 'z-10');
       });
 
@@ -209,7 +239,9 @@ const KanbanBoard = ({
           setTask(task);
 
           // Add success animation to the task element
-          const taskElement = document.querySelector(`[data-task-id="${sourceId}"]`);
+          const taskElement = document.querySelector(
+            `[data-task-id="${sourceId}"]`
+          );
           if (taskElement) {
             taskElement.classList.add('scale-105');
             setTimeout(() => {
@@ -242,9 +274,13 @@ const KanbanBoard = ({
         getData: () => ({taskId: Number(taskId)}),
         onDropTargetChange({location, source}) {
           // Reset all task highlights
-          document.querySelectorAll('[data-task-id]').forEach(task => {
+          document.querySelectorAll('[data-task-id]').forEach((task) => {
             if (task !== source?.element) {
-              task.classList.remove('scale-105', 'shadow-md', 'border-blue-400');
+              task.classList.remove(
+                'scale-105',
+                'shadow-md',
+                'border-blue-400'
+              );
             }
           });
 
@@ -253,14 +289,25 @@ const KanbanBoard = ({
             setHighlightedIndex(Number(targetTaskId));
 
             // Add highlight effect to the target task
-            const targetElement = document.querySelector(`[data-task-id="${targetTaskId}"]`);
+            const targetElement = document.querySelector(
+              `[data-task-id="${targetTaskId}"]`
+            );
             if (targetElement && targetElement !== source?.element) {
-              targetElement.classList.add('scale-105', 'shadow-md', 'border-blue-400');
+              targetElement.classList.add(
+                'scale-105',
+                'shadow-md',
+                'border-blue-400'
+              );
             }
 
             // Add effect to the dragged task
             if (source?.element) {
-              source.element.classList.add('opacity-80', 'shadow-lg', 'z-10', 'rotate-1');
+              source.element.classList.add(
+                'opacity-80',
+                'shadow-lg',
+                'z-10',
+                'rotate-1'
+              );
             }
           } else {
             setHighlightedIndex(null);
@@ -292,25 +339,34 @@ const KanbanBoard = ({
             const targetElement = location.current.dropTargets[0].element;
             if (targetElement.hasAttribute('data-column-id')) {
               // Add highlight effect to the target column
-              targetElement.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+              targetElement.classList.add(
+                'ring-2',
+                'ring-blue-500',
+                'bg-blue-50'
+              );
 
               // Add a subtle animation to show the column is ready to receive the task
               targetElement.animate(
                 [
-                  { transform: 'translateY(0)' },
-                  { transform: 'translateY(-2px)' },
-                  { transform: 'translateY(0)' }
+                  {transform: 'translateY(0)'},
+                  {transform: 'translateY(-2px)'},
+                  {transform: 'translateY(0)'},
                 ],
                 {
                   duration: 300,
-                  easing: 'ease-in-out'
+                  easing: 'ease-in-out',
                 }
               );
             }
 
             // Add effect to the dragged task
             if (source?.element) {
-              source.element.classList.add('opacity-80', 'shadow-lg', 'z-10', 'rotate-1');
+              source.element.classList.add(
+                'opacity-80',
+                'shadow-lg',
+                'z-10',
+                'rotate-1'
+              );
             }
           }
         },
@@ -356,8 +412,8 @@ const KanbanBoard = ({
           >
             {status.icon}
             {status.title}
-            <span className="ml-auto bg-white text-xs py-0.5 px-2 rounded-full text-zinc-600 font-normal">
-              {tasks.filter(task => task.status === status.id).length}
+            <span className='ml-auto bg-white text-xs py-0.5 px-2 rounded-full text-zinc-600 font-normal'>
+              {tasks.filter((task) => task.status === status.id).length}
             </span>
           </h2>
 
@@ -370,7 +426,9 @@ const KanbanBoard = ({
             }}
           >
             {(() => {
-              const columnTasks = tasks.filter((task) => task.status === status.id);
+              const columnTasks = tasks.filter(
+                (task) => task.status === status.id
+              );
 
               if (columnTasks.length === 0) {
                 // Empty state for column with no tasks
@@ -378,7 +436,14 @@ const KanbanBoard = ({
                   <div className='flex flex-col items-center justify-center h-full text-center p-4'>
                     <div className='relative mb-4'>
                       <div className='w-16 h-16 rounded-full bg-gradient-to-r from-zinc-50 to-blue-50 flex items-center justify-center animate-[pulse_3s_ease-in-out_infinite]'>
-                        {status.icon ? cloneElement(status.icon, { size: 24, className: 'text-zinc-400' }) : <FiInbox size={24} className='text-zinc-400' />}
+                        {status.icon ? (
+                          cloneElement(status.icon, {
+                            size: 24,
+                            className: 'text-zinc-400',
+                          })
+                        ) : (
+                          <FiInbox size={24} className='text-zinc-400' />
+                        )}
                       </div>
                       <div className='absolute -top-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-sm animate-[bounce_2s_ease-in-out_infinite]'>
                         <FiPlus size={14} className='text-blue-500' />
@@ -400,13 +465,16 @@ const KanbanBoard = ({
                           status: status.id,
                           description: '',
                           type: 'task',
-                          project: { name: 'Default' }
+                          project: {name: 'Default'},
                         } as Task;
 
                         onTaskClick(newTask);
                       }}
                     >
-                      <FiPlus size={14} className='group-hover:scale-125 transition-transform' />
+                      <FiPlus
+                        size={14}
+                        className='group-hover:scale-125 transition-transform'
+                      />
                       <span>Add a task</span>
                     </div>
                   </div>
@@ -455,7 +523,9 @@ const KanbanBoard = ({
                       </div>
                     ) : (
                       <>
-                        <h4 className='text-sm font-semibold line-clamp-2'>{task.title}</h4>
+                        <h4 className='text-sm font-semibold line-clamp-2'>
+                          {task.title}
+                        </h4>
                         <div className='flex items-center gap-1'>
                           {task.priority && (
                             <div className='flex-shrink-0'>
@@ -478,7 +548,12 @@ const KanbanBoard = ({
                       <div
                         className='text-white text-xs px-2 py-0.5 rounded-full font-medium'
                         style={{
-                          backgroundColor: task.project.name ? getProjectColor(task.project.name).replace('bg-', '') : '#6366f1',
+                          backgroundColor: task.project.name
+                            ? getProjectColor(task.project.name).replace(
+                                'bg-',
+                                ''
+                              )
+                            : '#6366f1',
                         }}
                       >
                         {task.project.name}

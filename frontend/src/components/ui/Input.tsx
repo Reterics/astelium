@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { FiAlertCircle, FiCheckCircle, FiInfo, FiX, FiEye, FiEyeOff } from 'react-icons/fi';
+import React, {useState, useEffect} from 'react';
+import {
+  FiAlertCircle,
+  FiCheckCircle,
+  FiInfo,
+  FiX,
+  FiEye,
+  FiEyeOff,
+} from 'react-icons/fi';
 
 type InputStatus = 'default' | 'success' | 'error' | 'warning';
 type InputSize = 'sm' | 'md' | 'lg';
@@ -26,38 +33,47 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({
-    className = '',
-    error,
-    warning,
-    success,
-    label,
-    helperText,
-    id,
-    leftIcon,
-    rightIcon,
-    status = 'default',
-    size = 'md',
-    showPasswordToggle = false,
-    required = false,
-    fullWidth = true,
-    hideLabel = false,
-    labelClassName = '',
-    inputClassName = '',
-    containerClassName = '',
-    type = 'text',
-    onChange,
-    onFocus,
-    onBlur,
-    ...props
-  }, ref) => {
+  (
+    {
+      className = '',
+      error,
+      warning,
+      success,
+      label,
+      helperText,
+      id,
+      leftIcon,
+      rightIcon,
+      status = 'default',
+      size = 'md',
+      showPasswordToggle = false,
+      required = false,
+      fullWidth = true,
+      hideLabel = false,
+      labelClassName = '',
+      inputClassName = '',
+      containerClassName = '',
+      type = 'text',
+      onChange,
+      onFocus,
+      onBlur,
+      ...props
+    },
+    ref
+  ) => {
     const inputId = id || `input-${Math.random().toString(36).substring(2, 9)}`;
     const [isFocused, setIsFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [inputValue, setInputValue] = useState(props.value || '');
 
     // Determine status based on props
-    const computedStatus = error ? 'error' : warning ? 'warning' : success ? 'success' : status;
+    const computedStatus = error
+      ? 'error'
+      : warning
+        ? 'warning'
+        : success
+          ? 'success'
+          : status;
 
     // Handle password visibility toggle
     const actualType = type === 'password' && showPassword ? 'text' : type;
@@ -73,7 +89,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const sizeClasses = {
       sm: 'h-8 text-xs px-2',
       md: 'h-10 text-sm px-3',
-      lg: 'h-12 text-base px-4'
+      lg: 'h-12 text-base px-4',
     };
 
     // Status classes
@@ -81,14 +97,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       default: 'border-zinc-300 focus:border-blue-500 focus:ring-blue-500',
       success: 'border-green-500 focus:border-green-600 focus:ring-green-500',
       error: 'border-red-500 focus:border-red-600 focus:ring-red-500',
-      warning: 'border-amber-500 focus:border-amber-600 focus:ring-amber-500'
+      warning: 'border-amber-500 focus:border-amber-600 focus:ring-amber-500',
     };
 
     // Status icons
     const statusIcons = {
-      success: <FiCheckCircle className="w-4 h-4 text-green-500" />,
-      error: <FiAlertCircle className="w-4 h-4 text-red-500" />,
-      warning: <FiInfo className="w-4 h-4 text-amber-500" />
+      success: <FiCheckCircle className='w-4 h-4 text-green-500' />,
+      error: <FiAlertCircle className='w-4 h-4 text-red-500' />,
+      warning: <FiInfo className='w-4 h-4 text-amber-500' />,
     };
 
     // Status messages
@@ -117,19 +133,23 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     };
 
     return (
-      <div className={`${fullWidth ? 'w-full' : 'w-auto'} ${containerClassName}`}>
+      <div
+        className={`${fullWidth ? 'w-full' : 'w-auto'} ${containerClassName}`}
+      >
         {label && !hideLabel && (
           <label
             htmlFor={inputId}
             className={`block text-sm font-medium text-zinc-700 mb-1.5 ${labelClassName}`}
           >
             {label}
-            {required && <span className="ml-1 text-red-500">*</span>}
+            {required && <span className='ml-1 text-red-500'>*</span>}
           </label>
         )}
-        <div className={`relative transition-all duration-200 ${isFocused ? 'scale-[1.01]' : ''}`}>
+        <div
+          className={`relative transition-all duration-200 ${isFocused ? 'scale-[1.01]' : ''}`}
+        >
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-500">
+            <div className='absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-500'>
               {leftIcon}
             </div>
           )}
@@ -151,7 +171,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               ${sizeClasses[size]}
               ${statusClasses[computedStatus]}
               ${leftIcon ? 'pl-10' : ''}
-              ${(rightIcon || showPasswordToggle || computedStatus !== 'default') ? 'pr-10' : ''}
+              ${rightIcon || showPasswordToggle || computedStatus !== 'default' ? 'pr-10' : ''}
               ${inputClassName}
               ${className}
             `}
@@ -167,49 +187,61 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
 
           {/* Right side icons (status, password toggle, or custom) */}
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
+          <div className='absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1'>
             {computedStatus !== 'default' && statusIcons[computedStatus]}
 
             {showPasswordToggle && type === 'password' && (
               <button
-                type="button"
+                type='button'
                 onClick={togglePasswordVisibility}
-                className="text-zinc-500 hover:text-zinc-700 focus:outline-none"
+                className='text-zinc-500 hover:text-zinc-700 focus:outline-none'
                 tabIndex={-1}
               >
-                {showPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
+                {showPassword ? (
+                  <FiEyeOff className='w-4 h-4' />
+                ) : (
+                  <FiEye className='w-4 h-4' />
+                )}
               </button>
             )}
 
-            {rightIcon && !showPasswordToggle && computedStatus === 'default' && rightIcon}
+            {rightIcon &&
+              !showPasswordToggle &&
+              computedStatus === 'default' &&
+              rightIcon}
           </div>
 
           {/* Clear button - only show when input has value and is focused */}
           {isFocused && inputValue && props.readOnly !== true && (
             <button
-              type="button"
+              type='button'
               onClick={() => {
-                const input = document.getElementById(inputId) as HTMLInputElement;
+                const input = document.getElementById(
+                  inputId
+                ) as HTMLInputElement;
                 if (input) {
-                  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-                    window.HTMLInputElement.prototype,
-                    "value"
-                  )?.set;
+                  const nativeInputValueSetter =
+                    Object.getOwnPropertyDescriptor(
+                      window.HTMLInputElement.prototype,
+                      'value'
+                    )?.set;
                   if (nativeInputValueSetter) {
                     nativeInputValueSetter.call(input, '');
-                    const event = new Event('input', { bubbles: true });
+                    const event = new Event('input', {bubbles: true});
                     input.dispatchEvent(event);
                     setInputValue('');
                     if (onChange) {
-                      onChange(event as unknown as React.ChangeEvent<HTMLInputElement>);
+                      onChange(
+                        event as unknown as React.ChangeEvent<HTMLInputElement>
+                      );
                     }
                   }
                 }
               }}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 hover:text-zinc-600 focus:outline-none"
+              className='absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 hover:text-zinc-600 focus:outline-none'
               tabIndex={-1}
             >
-              <FiX className="w-4 h-4" />
+              <FiX className='w-4 h-4' />
             </button>
           )}
         </div>
@@ -234,7 +266,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {!statusMessage && helperText && (
-          <p id={`${inputId}-helper`} className="mt-1.5 text-xs text-zinc-500">
+          <p id={`${inputId}-helper`} className='mt-1.5 text-xs text-zinc-500'>
             {helperText}
           </p>
         )}
@@ -245,5 +277,5 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = 'Input';
 
-export { Input };
-export type { InputProps };
+export {Input};
+export type {InputProps};

@@ -143,15 +143,26 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const loadingElement = isLoading ? (
       <span className={size === 'icon' ? '' : 'mr-2'}>
         <svg
-          className="animate-spin text-current"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
+          className='animate-spin text-current'
+          xmlns='http://www.w3.org/2000/svg'
+          fill='none'
+          viewBox='0 0 24 24'
           width={size === 'xs' || size === 'sm' ? 16 : 20}
           height={size === 'xs' || size === 'sm' ? 16 : 20}
         >
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <circle
+            className='opacity-25'
+            cx='12'
+            cy='12'
+            r='10'
+            stroke='currentColor'
+            strokeWidth='4'
+          ></circle>
+          <path
+            className='opacity-75'
+            fill='currentColor'
+            d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+          ></path>
         </svg>
       </span>
     ) : null;
@@ -189,7 +200,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {size === 'icon' ? null : children}
         {!isLoading && rightIcon && (
-          <span className={size === 'icon' ? '' : `ml-${iconSpacing[size].substring(3)}`}>
+          <span
+            className={
+              size === 'icon' ? '' : `ml-${iconSpacing[size].substring(3)}`
+            }
+          >
             {rightIcon}
           </span>
         )}
@@ -201,5 +216,5 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
 Button.displayName = 'Button';
 
-export { Button };
-export type { ButtonProps, ButtonVariant, ButtonSize };
+export {Button};
+export type {ButtonProps, ButtonVariant, ButtonSize};

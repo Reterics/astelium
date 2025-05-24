@@ -5,7 +5,7 @@ import {
   FiLogOut,
   FiHome,
   FiSettings,
-  FiMenu
+  FiMenu,
 } from 'react-icons/fi';
 import {Link, useLocation} from 'react-router-dom';
 import {useAuth} from '../hooks/useAuth.ts';
@@ -28,21 +28,24 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({
   menu,
   collapsed = false,
-  toggleCollapsed
+  toggleCollapsed,
 }) => {
   const [openSubmenus, setOpenSubmenus] = useState<Record<number, boolean>>({});
   const {logout} = useAuth();
   const location = useLocation();
 
   // Group menu items by category
-  const categorizedMenu = menu.reduce((acc, item) => {
-    const category = item.category || 'General';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(item);
-    return acc;
-  }, {} as Record<string, MenuItem[]>);
+  const categorizedMenu = menu.reduce(
+    (acc, item) => {
+      const category = item.category || 'General';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(item);
+      return acc;
+    },
+    {} as Record<string, MenuItem[]>
+  );
 
   // Categories order (customize as needed)
   const categoryOrder = ['General', 'Management', 'Settings', 'Other'];
@@ -59,8 +62,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
 
     if (item.submenu) {
-      return item.submenu.some(subItem =>
-        subItem.path && location.pathname === subItem.path
+      return item.submenu.some(
+        (subItem) => subItem.path && location.pathname === subItem.path
       );
     }
 
@@ -72,14 +75,17 @@ const Sidebar: React.FC<SidebarProps> = ({
     const newOpenSubmenus: Record<number, boolean> = {};
 
     menu.forEach((item, index) => {
-      if (item.submenu && item.submenu.some(subItem =>
-        subItem.path && location.pathname === subItem.path
-      )) {
+      if (
+        item.submenu &&
+        item.submenu.some(
+          (subItem) => subItem.path && location.pathname === subItem.path
+        )
+      ) {
         newOpenSubmenus[index] = true;
       }
     });
 
-    setOpenSubmenus(prev => ({...prev, ...newOpenSubmenus}));
+    setOpenSubmenus((prev) => ({...prev, ...newOpenSubmenus}));
   }, [location.pathname, menu]);
 
   const toggleSubmenu = (key: number) => {
@@ -98,38 +104,42 @@ const Sidebar: React.FC<SidebarProps> = ({
       }}
     >
       {/* Sidebar header with logo and collapse toggle */}
-      <div className="flex items-center justify-between p-4 border-b border-zinc-800">
-        <div className={`flex items-center ${collapsed ? 'justify-center w-full' : ''}`}>
-          <span className={`text-lg font-bold text-white ${collapsed ? 'hidden' : 'block'}`}>
+      <div className='flex items-center justify-between p-4 border-b border-zinc-800'>
+        <div
+          className={`flex items-center ${collapsed ? 'justify-center w-full' : ''}`}
+        >
+          <span
+            className={`text-lg font-bold text-white ${collapsed ? 'hidden' : 'block'}`}
+          >
             Astelium
           </span>
-          {collapsed && <FiHome className="w-6 h-6 text-white" />}
+          {collapsed && <FiHome className='w-6 h-6 text-white' />}
         </div>
 
         {!collapsed && (
           <button
             onClick={toggleCollapsed}
-            className="p-1 rounded-md hover:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition-colors"
-            aria-label="Collapse sidebar"
+            className='p-1 rounded-md hover:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition-colors'
+            aria-label='Collapse sidebar'
           >
-            <FiMenu className="w-5 h-5 text-zinc-400" />
+            <FiMenu className='w-5 h-5 text-zinc-400' />
           </button>
         )}
       </div>
 
       <nav className='flex-1 py-4 overflow-y-auto'>
         {sortedCategories.map((category, categoryIndex) => (
-          <div key={categoryIndex} className="mb-4">
+          <div key={categoryIndex} className='mb-4'>
             {/* Category header (only show when not collapsed) */}
             {!collapsed && (
-              <div className="px-4 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+              <div className='px-4 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider'>
                 {category}
               </div>
             )}
 
             {/* Menu items in this category */}
             {categorizedMenu[category].map((item, index) => {
-              const globalIndex = menu.findIndex(m => m.label === item.label);
+              const globalIndex = menu.findIndex((m) => m.label === item.label);
               const active = isActive(item);
 
               return (
@@ -145,18 +155,22 @@ const Sidebar: React.FC<SidebarProps> = ({
                       tabIndex={0}
                     >
                       {active && (
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r"></div>
+                        <div className='absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r'></div>
                       )}
 
                       <div className={`${collapsed ? 'mx-auto' : ''}`}>
                         {item.icon && (
-                          <item.icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-blue-400' : 'text-zinc-400'}`} />
+                          <item.icon
+                            className={`w-5 h-5 flex-shrink-0 ${active ? 'text-blue-400' : 'text-zinc-400'}`}
+                          />
                         )}
                       </div>
 
                       <span
                         className={`transition-all duration-200 truncate font-medium text-sm ${
-                          collapsed ? 'opacity-0 w-0 absolute' : 'opacity-100 w-auto'
+                          collapsed
+                            ? 'opacity-0 w-0 absolute'
+                            : 'opacity-100 w-auto'
                         }`}
                       >
                         {item.label}
@@ -164,7 +178,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                       {/* Tooltip for collapsed mode */}
                       {collapsed && (
-                        <div className="absolute left-full ml-2 px-2 py-1 bg-zinc-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity duration-150">
+                        <div className='absolute left-full ml-2 px-2 py-1 bg-zinc-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity duration-150'>
                           {item.label}
                         </div>
                       )}
@@ -180,19 +194,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                       type='button'
                     >
                       {active && (
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r"></div>
+                        <div className='absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r'></div>
                       )}
 
-                      <div className="flex items-center gap-3">
+                      <div className='flex items-center gap-3'>
                         <div className={`${collapsed ? 'mx-auto' : ''}`}>
                           {item.icon && (
-                            <item.icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-blue-400' : 'text-zinc-400'}`} />
+                            <item.icon
+                              className={`w-5 h-5 flex-shrink-0 ${active ? 'text-blue-400' : 'text-zinc-400'}`}
+                            />
                           )}
                         </div>
 
                         <span
                           className={`truncate font-medium text-sm transition-all duration-200 ${
-                            collapsed ? 'opacity-0 w-0 absolute' : 'opacity-100 w-auto'
+                            collapsed
+                              ? 'opacity-0 w-0 absolute'
+                              : 'opacity-100 w-auto'
                           }`}
                         >
                           {item.label}
@@ -200,7 +218,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       </div>
 
                       {!collapsed && item.submenu && (
-                        <div className="flex-shrink-0">
+                        <div className='flex-shrink-0'>
                           {openSubmenus[globalIndex] ? (
                             <FiChevronDown className='w-4 h-4 text-zinc-400' />
                           ) : (
@@ -215,21 +233,25 @@ const Sidebar: React.FC<SidebarProps> = ({
                   {item.submenu && openSubmenus[globalIndex] && !collapsed && (
                     <div className='ml-7 pl-4 border-l border-zinc-700 bg-zinc-900/50 rounded-sm my-1'>
                       {item.submenu.map((sub, subIndex) => {
-                        const subActive = sub.path && location.pathname === sub.path;
+                        const subActive =
+                          sub.path && location.pathname === sub.path;
 
                         return (
                           <Link
                             key={subIndex}
                             to={sub.path ?? '#'}
                             className={`flex items-center gap-3 px-3 py-2 my-0.5 w-full rounded-md
-                              ${subActive
-                                ? 'bg-zinc-800 text-white'
-                                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                              ${
+                                subActive
+                                  ? 'bg-zinc-800 text-white'
+                                  : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
                               }
                               focus:outline-none focus:bg-zinc-800 text-sm transition-colors duration-150`}
                           >
                             {sub.icon && (
-                              <sub.icon className={`w-4 h-4 flex-shrink-0 ${subActive ? 'text-blue-400' : ''}`} />
+                              <sub.icon
+                                className={`w-4 h-4 flex-shrink-0 ${subActive ? 'text-blue-400' : ''}`}
+                              />
                             )}
                             <span className='truncate'>{sub.label}</span>
                           </Link>
@@ -245,14 +267,18 @@ const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Sidebar footer */}
-      <div className="mt-auto border-t border-zinc-800 pt-2 pb-4">
+      <div className='mt-auto border-t border-zinc-800 pt-2 pb-4'>
         {!collapsed && (
-          <div className="px-4 py-2 mb-2">
-            <div className="flex items-center gap-3 p-2 bg-zinc-800/50 rounded-md">
-              <FiSettings className="w-5 h-5 text-zinc-400" />
-              <div className="flex-1">
-                <div className="text-sm font-medium text-zinc-300">Settings</div>
-                <div className="text-xs text-zinc-500">Configure your workspace</div>
+          <div className='px-4 py-2 mb-2'>
+            <div className='flex items-center gap-3 p-2 bg-zinc-800/50 rounded-md'>
+              <FiSettings className='w-5 h-5 text-zinc-400' />
+              <div className='flex-1'>
+                <div className='text-sm font-medium text-zinc-300'>
+                  Settings
+                </div>
+                <div className='text-xs text-zinc-500'>
+                  Configure your workspace
+                </div>
               </div>
             </div>
           </div>
@@ -275,10 +301,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       {collapsed && (
         <button
           onClick={toggleCollapsed}
-          className="mx-auto mb-4 p-2 rounded-md hover:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition-colors"
-          aria-label="Expand sidebar"
+          className='mx-auto mb-4 p-2 rounded-md hover:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition-colors'
+          aria-label='Expand sidebar'
         >
-          <FiChevronRight className="w-5 h-5 text-zinc-400" />
+          <FiChevronRight className='w-5 h-5 text-zinc-400' />
         </button>
       )}
     </aside>

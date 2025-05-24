@@ -164,7 +164,9 @@ const Tasks = () => {
         onEdit={async (updatedData) => {
           // Process each item in the array individually
           for (const item of updatedData) {
-            await updateMutation.mutateAsync(item as Record<string, any> & { id: number });
+            await updateMutation.mutateAsync(
+              item as Record<string, any> & {id: number}
+            );
           }
           return true;
         }}
