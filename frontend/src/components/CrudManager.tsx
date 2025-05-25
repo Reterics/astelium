@@ -16,7 +16,12 @@ export type FieldType =
   | 'date'
   | 'password'
   | 'datetime-local'
-  | 'image';
+  | 'image'
+  | 'section'
+  | 'checkbox'
+  | 'textarea'
+  | 'workingSchedule'
+  | 'json';
 
 export interface CrudField {
   key: string;
@@ -25,9 +30,17 @@ export interface CrudField {
   editable?: boolean;
   creatable?: boolean;
   sortable?: boolean;
-  visible?: boolean;
+  visible?: boolean | ((form: Record<string, unknown>) => boolean);
   filterable?: boolean;
   options?: SelectOptions;
+  required?: boolean;
+  placeholder?: string;
+  defaultValue?: unknown;
+  min?: number;
+  max?: number;
+  rows?: number;
+  help?: string;
+  validate?: (value: unknown) => {isValid: boolean; message: string};
   props?: {
     onChange?: (value: unknown, row: TableRow) => any;
   };

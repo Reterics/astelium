@@ -27,7 +27,10 @@ class User extends Authenticatable
         'password',
         'account_id',
         'role',
-        'image'
+        'image',
+        'workingSchedule',
+        'bio',
+        'title'
     ];
 
     /**
@@ -51,6 +54,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => 'string',
+            'workingSchedule' => 'json',
         ];
     }
 
@@ -81,6 +85,32 @@ class User extends Authenticatable
         return $value
             ? asset('storage/' . $value)
             : null;
+    }
+
+    /**
+     * Get the notification preferences for the user.
+     */
+    public function notificationPreferences()
+    {
+        return $this->hasMany(NotificationPreference::class);
+    }
+
+    /**
+     * Check if the user has enabled a specific notification type and channel.
+     *
+     * @param string $type
+     * @param string $channel
+     * @return bool
+     */
+    public function hasNotificationEnabled($type, $channel)
+    {
+        $preference = $this->notificationPreferences()
+            ->where('type', $type)
+            ->where('channel', $channel)
+            ->first();
+
+        // If no preference is set, default to enabled
+        return $preference ? $preference->enabled : true;
     }
 
     protected static function booted()

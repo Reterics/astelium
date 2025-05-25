@@ -76,11 +76,14 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
 
   const createMutation = useMutation({
     mutationFn: async (newData: Record<string, any>) => {
-      const fileUpload = newData.image instanceof File;
+      // Check if any field contains a File object
+      const hasFileUpload = Object.values(newData).some(
+        (value) => value instanceof File
+      );
 
       let formData: FormData | string;
 
-      if (fileUpload) {
+      if (hasFileUpload) {
         formData = new FormData();
 
         Object.entries(newData).forEach(([key, value]) => {
@@ -93,7 +96,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       }
 
       const response = await fetch(`${baseURL}/api/${endpoint}`, {
-        ...getFetchOptions(fileUpload),
+        ...getFetchOptions(hasFileUpload),
         method: 'POST',
         body: formData,
       });
@@ -107,11 +110,14 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
 
   const updateMutation = useMutation({
     mutationFn: async (props: Record<string, any> & {id: number}) => {
-      const fileUpload = props.image instanceof File;
+      // Check if any field contains a File object
+      const hasFileUpload = Object.values(props).some(
+        (value) => value instanceof File
+      );
 
       let formData: FormData | string;
 
-      if (fileUpload) {
+      if (hasFileUpload) {
         formData = new FormData();
 
         Object.entries(props).forEach(([key, value]) => {
@@ -124,7 +130,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       }
 
       const response = await fetch(`${baseURL}/api/${endpoint}/${props.id}`, {
-        ...getFetchOptions(fileUpload),
+        ...getFetchOptions(hasFileUpload),
         method: 'PUT',
         body: formData,
       });

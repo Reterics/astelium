@@ -82,7 +82,23 @@ Route::middleware(['auth:sanctum', EnsureAccountAccess::class, EnsureUserRole::c
     Route::put('settings', [SettingsController::class, 'update']);
 });
 
-Route::apiResource('appointments', AppointmentController::class);
+// Public appointment routes
+Route::get('appointments', [AppointmentController::class, 'index']);
+Route::get('appointments/{appointment}', [AppointmentController::class, 'show']);
+Route::post('public-appointments', [AppointmentController::class, 'publicStore']);
+Route::post('available-time-slots', [AppointmentController::class, 'getAvailableTimeSlots']);
+
+// Protected appointment routes
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Routes for authenticated users
+    Route::post('appointments', [AppointmentController::class, 'store']);
+
+    // Routes that require user to own the appointment or be an admin
+    Route::middleware('role:admin')->group(function () {
+        Route::put('appointments/{appointment}', [AppointmentController::class, 'update']);
+        Route::delete('appointments/{appointment}', [AppointmentController::class, 'destroy']);
+    });
+});
 
 
 Route::post('/login', [ApiLoginController::class, 'login']);

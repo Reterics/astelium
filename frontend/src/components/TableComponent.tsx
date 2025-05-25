@@ -404,6 +404,13 @@ const TableComponent: React.FC<TableProps> = ({
                             />
                           );
                         }
+                        if (col.type === 'image') {
+                          return (
+                            <img
+                              src={changes[rowIndex]?.[col.key] ?? row[col.key]}
+                            />
+                          );
+                        }
                         return (
                           <input
                             title={changes[rowIndex]?.[col.key] ?? row[col.key]}

@@ -10,4 +10,9 @@ class HomeController extends Controller
     {
         return Inertia::render('Index');
     }
+
+    public function appointments(): \Inertia\Response
+    {
+        return Inertia::render('Appointments');
+    }
 }

@@ -42,7 +42,10 @@ class UserController extends Controller
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:admin,member,viewer', // Allow only specific roles
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'workingSchedule' => 'nullable|json',
+            'bio' => 'nullable|string',
+            'title' => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -55,6 +58,9 @@ class UserController extends Controller
             'password' => Hash::make($request['password']),
             'account_id' => $user->account_id,
             'role' => $request->role,
+            'workingSchedule' => $request->workingSchedule,
+            'bio' => $request->bio,
+            'title' => $request->title
         ];
 
         if ($request->hasFile('image')) {
@@ -70,18 +76,39 @@ class UserController extends Controller
     }
 
     /**
+     * Get a specific user.
+     * GET /api/users/{user}
+     */
+    public function show(User $user): \Illuminate\Http\JsonResponse
+    {
+        // Add any additional user data or relationships you need
+        return response()->json($user);
+    }
+
+    /**
      * Update an existing user.
      * PUT /api/users/{user}
      */
     public function update(Request $request, User $user): \Illuminate\Http\JsonResponse
     {
-        $data = $request->validate([
+        Log::debug('Update user attempt with data:', $request->all());
+
+        $validator = Validator::make($request->all(), [
             'name'     => 'sometimes|required|string|max:255',
             'email'    => "sometimes|required|email|max:255|unique:users,email,{$user->id}",
             'password' => 'sometimes|nullable|string|min:8',
-            'role' => 'required|in:admin,member,viewer', // Allow only specific roles
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'role' => 'sometimes|required|in:admin,member,viewer', // Allow only specific roles
+            'image' => 'nullable|string|max:2048',
+            'workingSchedule' => 'nullable|json',
+            'bio' => 'nullable|string',
+            'title' => 'nullable|string'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $data = $validator->validated();
 
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
@@ -95,11 +122,37 @@ class UserController extends Controller
             }
 
             $path = $request->file('image')->store('users', 'public');
-
             $data['image'] = $path;
         }
 
         $user->update($data);
+
+        return response()->json($user, 200);
+    }
+
+    /**
+     * Update user avatar.
+     * POST /user/avatar
+     */
+    public function updateAvatar(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = auth()->user();
+
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        if ($user->image) {
+            Storage::disk('public')->delete($user->image);
+        }
+
+        $path = $request->file('image')->store('users', 'public');
+        $user->image = $path;
+        $user->save();
 
         return response()->json($user, 200);
     }

@@ -14,8 +14,24 @@ class EnsureUserRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        return $next($request);
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized: No user'], 401);
+        }
+
+        // If no roles are specified, or user is admin, allow access
+        if (empty($roles) || $user->isAdmin()) {
+            return $next($request);
+        }
+
+        // Check if user has any of the specified roles
+        if (in_array($user->role, $roles)) {
+            return $next($request);
+        }
+
+        return response()->json(['error' => 'Unauthorized: Insufficient permissions'], 403);
     }
 }

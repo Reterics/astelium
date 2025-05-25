@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Route;
 // Public index page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Public appointments page
+Route::get('/appointments', [HomeController::class, 'appointments'])->name('appointments');
+
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 
@@ -26,5 +29,3 @@ Route::post('/users', [UserController::class, 'store']);
 Route::get('/admin/{any?}', [AdminController::class, 'index'])
     ->where('any', '.*')
     ->name('admin');
-
-

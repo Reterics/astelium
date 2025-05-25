@@ -1,22 +1,31 @@
 import {useState, useEffect} from 'react';
 import {baseURL} from '../utils/utils.ts';
+import {UserDetails} from '../components/UserProfileCard.tsx';
 
 interface AuthResponse {
   access_token: string;
   user: any;
 }
 
+function getSavedUser() {
+  let user: UserDetails | null = null;
+  try {
+    user = JSON.parse(localStorage.getItem('user') || '');
+    if (typeof user?.workingSchedule === 'string') {
+      user.workingSchedule = JSON.parse(user.workingSchedule);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  return user;
+}
 export const useAuth = () => {
-  const [user, setUser] = useState<any>(
-    localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!)
-      : null
-  );
+  const [user, setUser] = useState<any>(getSavedUser());
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = getSavedUser();
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(storedUser);
     }
   }, []);
 

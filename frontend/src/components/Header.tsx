@@ -10,9 +10,9 @@ import PageBreadcrumbs from './PageBreadcrumbs.tsx';
 import {MenuItem} from './Sidebar.tsx';
 import UserAvatar from './UserAvatar.tsx';
 import React, {useRef, useState, useEffect} from 'react';
+import {useAuth} from '../hooks/useAuth.ts';
 
 interface HeaderProps {
-  username: string;
   selectedMenu?: MenuItem;
   toggleSidebar: () => void;
 }
@@ -25,11 +25,8 @@ interface Notification {
   read: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({
-  username,
-  selectedMenu,
-  toggleSidebar,
-}) => {
+const Header: React.FC<HeaderProps> = ({selectedMenu, toggleSidebar}) => {
+  const {user} = useAuth();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotificationsDropdown, setShowNotificationsDropdown] =
     useState(false);
@@ -204,9 +201,9 @@ const Header: React.FC<HeaderProps> = ({
             tabIndex={0}
             aria-label='User profile'
           >
-            <UserAvatar name={username} />
+            <UserAvatar name={user?.name} image={user?.image} />
             <span className='font-medium text-zinc-800 text-sm hidden sm:inline'>
-              {username}
+              {user?.name}
             </span>
           </button>
 
@@ -214,12 +211,14 @@ const Header: React.FC<HeaderProps> = ({
             <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-zinc-200'>
               <div className='p-3 border-b border-zinc-200'>
                 <div className='flex items-center gap-2'>
-                  <UserAvatar name={username} />
+                  <UserAvatar name={user?.name} image={user?.image} />
                   <div>
                     <h3 className='text-sm font-semibold text-zinc-800'>
-                      {username}
+                      {user?.name}
                     </h3>
-                    <p className='text-xs text-zinc-500'>Administrator</p>
+                    <p className='text-xs text-zinc-500'>
+                      {user?.role || 'User'}
+                    </p>
                   </div>
                 </div>
               </div>
