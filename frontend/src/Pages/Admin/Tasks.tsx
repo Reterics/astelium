@@ -11,8 +11,6 @@ import {Task} from '../../components/KanbanBoard.tsx';
 import mountComponent from '../../components/mounter.tsx';
 import TaskListTable from '../../components/TaskListTable.tsx';
 
-// Note: This component requires the following packages to be installed:
-// npm install react-dnd react-dnd-html5-backend
 
 const Tasks = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
