@@ -15,6 +15,8 @@ import {baseURL, getFetchOptions} from '../../../utils/utils.ts';
 import {useSearchParams} from 'react-router-dom';
 import UserProfileCard, {UserDetails} from '../../UserProfileCard';
 
+const shiftStart = '08:00';
+const shiftEnd = '18:00';
 const defaultTimeSlots = generateTimeSlots([], ['08:00', '18:00']).map(
   (slot) => slot.time
 );
@@ -131,6 +133,8 @@ const ClientAppointmentCalendar = ({
         body: JSON.stringify({
           service_type: service,
           day: day,
+          shift_start: shiftStart,
+          shift_end: shiftEnd
         }),
       });
 
@@ -334,11 +338,11 @@ const ClientAppointmentCalendar = ({
                     fullDate < new Date(new Date().setHours(0, 0, 0, 0));
                   const isWeekend =
                     fullDate.getDay() === 0 || fullDate.getDay() === 6;
-                  // Check if the day has any appointments
-                  // This is now user-specific due to backend filtering
-                  const isFullyBooked = appointments?.some(
-                    (appt) => appt.day === getFormattedDate(0, fullDate)
-                  );
+                  // Check if the day has any available slots
+                  // A day is fully booked only if all slots are taken
+                  const formattedDate = getFormattedDate(0, fullDate);
+                  const bookedSlotsForDay = appointments?.filter(appt => appt.day === formattedDate) || [];
+                  const isFullyBooked = bookedSlotsForDay.length >= defaultTimeSlots.length;
                   return (
                     <div
                       key={index}
@@ -352,7 +356,7 @@ const ClientAppointmentCalendar = ({
                         handleSelect(getFormattedDate(0, fullDate))
                       }
                     >
-                      {day !== null ? day + 1 : ''}
+                      {day !== null ? day : ''}
                     </div>
                   );
                 })}

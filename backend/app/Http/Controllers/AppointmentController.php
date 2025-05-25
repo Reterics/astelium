@@ -26,7 +26,7 @@ class AppointmentController extends Controller
         $serviceType = $validated['service_type'];
         $day = $validated['day'];
         $shiftStart = $validated['shift_start'] ?? '09:00';
-        $shiftEnd = $validated['shift_end'] ?? '17:00';
+        $shiftEnd = $validated['shift_end'] ?? '18:00';
 
         // Get all appointments for the specified day and service type
         $appointments = Appointment::where('day', $day)
