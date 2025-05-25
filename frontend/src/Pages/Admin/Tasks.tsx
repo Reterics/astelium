@@ -11,7 +11,6 @@ import {Task} from '../../components/KanbanBoard.tsx';
 import mountComponent from '../../components/mounter.tsx';
 import TaskListTable from '../../components/TaskListTable.tsx';
 
-
 const Tasks = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
   const {data: usersRaw, isLoading: usersAreLoading} = useApi('users');
@@ -35,13 +34,11 @@ const Tasks = () => {
     value: d.id,
     label: d.name,
   }));
-
   const users = usersRaw.map((d) => ({
     value: d.id,
     label: (
       <div className='h-6 space-x-2 flex flex-row w-full'>
         <UserAvatar image={d.image} name={d.name} />
-        <div>{d.name}</div>
       </div>
     ),
   }));
@@ -76,6 +73,14 @@ const Tasks = () => {
 
   const fields: CrudField[] = [
     {
+      key: 'id',
+      label: t('id'),
+      type: 'text',
+      editable: false,
+      sortable: false,
+      visible: true,
+    },
+    {
       key: 'title',
       label: t('title'),
       type: 'text',
@@ -87,6 +92,7 @@ const Tasks = () => {
       label: t('description'),
       type: 'text',
       editable: true,
+      visible: false,
     },
     {
       key: 'status',
@@ -140,6 +146,7 @@ const Tasks = () => {
       label: t('story_points'),
       type: 'number',
       editable: true,
+      visible: false,
     },
     {
       key: 'address',

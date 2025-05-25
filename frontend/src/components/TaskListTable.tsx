@@ -82,43 +82,50 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
 
   return (
     <div
-      className='flex items-center justify-between px-3 py-2 bg-zinc-50 border-b border-zinc-200 cursor-pointer hover:bg-zinc-100 transition-all duration-200 hover:shadow-sm group'
-      onClick={() => onSort(column.key)}
+      key={column.key}
+      className='flex-1 max-w-[300px] px-3 py-2 flex items-center overflow-hidden bg-zinc-50 border-b border-zinc-200 cursor-pointer hover:bg-zinc-100 transition-all duration-200 hover:shadow-sm'
     >
-      <div className='flex items-center gap-2'>
-        <Typography
-          variant='small'
-          className='font-medium text-zinc-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-full group-hover:text-blue-600 transition-colors duration-200'
-          title={column.label} // Add tooltip on hover
-        >
-          {column.label}
-        </Typography>
-        {isSorted ? (
-          <span
-            className={`text-blue-500 transition-all duration-300 transform ${sortDirection === 'asc' ? 'rotate-0' : 'rotate-180'} scale-110`}
+      <div
+        className='flex items-center justify-between w-full group'
+        onClick={() => onSort(column.key)}
+      >
+        <div className='flex items-center gap-2'>
+          <Typography
+            variant='small'
+            className='font-medium text-zinc-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-full group-hover:text-blue-600 transition-colors duration-200'
+            title={column.label} // Add tooltip on hover
           >
-            ↑
-          </span>
-        ) : (
-          <span className='text-zinc-300 opacity-0 group-hover:opacity-50 transition-opacity duration-200'>
-            ↑
-          </span>
+            {column.label}
+          </Typography>
+          {isSorted ? (
+            <span
+              className={`text-blue-500 transition-all duration-300 transform ${sortDirection === 'asc' ? 'rotate-0' : 'rotate-180'} scale-110`}
+            >
+              ↑
+            </span>
+          ) : (
+            <span className='text-zinc-300 opacity-0 group-hover:opacity-50 transition-opacity duration-200'>
+              ↑
+            </span>
+          )}
+        </div>
+        {column.filterable !== false && (
+          <button
+            className='text-zinc-400 hover:text-blue-500 transition-all duration-200 hover:scale-110 transform p-1 rounded-full hover:bg-blue-50'
+            onClick={(e) => {
+              e.stopPropagation();
+              onFilter(column.key);
+            }}
+          >
+            <FiFilter
+              size={14}
+              className={
+                activeFilterColumn === column.key ? 'text-blue-500' : ''
+              }
+            />
+          </button>
         )}
       </div>
-      {column.filterable !== false && (
-        <button
-          className='text-zinc-400 hover:text-blue-500 transition-all duration-200 hover:scale-110 transform p-1 rounded-full hover:bg-blue-50'
-          onClick={(e) => {
-            e.stopPropagation();
-            onFilter(column.key);
-          }}
-        >
-          <FiFilter
-            size={14}
-            className={activeFilterColumn === column.key ? 'text-blue-500' : ''}
-          />
-        </button>
-      )}
     </div>
   );
 };
@@ -291,7 +298,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
       {columns.map((column) => (
         <div
           key={column.key}
-          className='flex-1 min-w-[120px] max-w-[300px] px-3 py-2 flex items-center overflow-hidden'
+          className='flex-1 max-w-[300px] px-3 py-2 flex items-center overflow-hidden'
         >
           {column.editable &&
           column.type === 'select' &&
@@ -357,15 +364,16 @@ const TaskItem: React.FC<TaskItemProps> = ({
               className={`flex items-center px-2 py-1 rounded ${column.editable ? 'cursor-pointer hover:bg-zinc-50 hover:shadow-md hover:scale-[1.02]' : ''} transition-all duration-200 transform`}
               onClick={() => column.editable && setEditingField(column.key)}
             >
-              <div className='transition-transform duration-200 hover:scale-110'>
+              {(
+                column.options?.find(
+                  (opt) => (opt as SelectOption).value === task[column.key]
+                ) as SelectOption
+              )?.label || (
                 <UserAvatar
                   image={task.assigned_to_image}
                   name={task[column.key]}
                 />
-              </div>
-              <span className='ml-2 text-zinc-800 transition-colors duration-200 group-hover:text-blue-600'>
-                {task[column.key]}
-              </span>
+              )}
             </div>
           ) : column.type === 'datetime-local' ? (
             <div className='w-full'>
@@ -519,14 +527,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 </div>
               )}
             </div>
-          ) : column.editable ? (
-            <div className='w-full'>
-              <Input
-                value={task[column.key] || ''}
-                onChange={(e) => onEdit(task.id, column.key, e.target.value)}
-                className='w-full h-8 text-sm border-transparent hover:border-zinc-300 focus:border-blue-500 transition-colors duration-150'
-              />
-            </div>
           ) : (
             <div className='w-full px-2 py-1'>
               <Typography variant='p' className='text-zinc-800 truncate'>
@@ -563,7 +563,7 @@ const TaskListTable: React.FC<TaskListTableProps> = ({
     null
   );
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
-    columns.map((col) => col.key)
+    columns.filter((col) => col.visible !== false).map((col) => col.key)
   );
   const [savedViews, setSavedViews] = useState<SavedView[]>([
     {
@@ -1453,7 +1453,7 @@ const TaskListTable: React.FC<TaskListTableProps> = ({
           <div className='overflow-auto'>
             {/* Table Header */}
             <div className='flex border-b border-zinc-200 bg-white sticky top-0 z-10 shadow-sm'>
-              <div className='w-12 px-2 py-2 bg-zinc-50 border-b border-zinc-200 flex items-center justify-center'>
+              <div className='w-16 px-2 py-2 bg-zinc-50 border-b border-zinc-200 flex'>
                 <div className='relative flex items-center'>
                   <input
                     type='checkbox'
@@ -1477,18 +1477,13 @@ const TaskListTable: React.FC<TaskListTableProps> = ({
               {columns
                 .filter((col) => visibleColumns.includes(col.key))
                 .map((column) => (
-                  <div
-                    key={column.key}
-                    className='flex-1 min-w-[120px] max-w-[300px] overflow-hidden'
-                  >
-                    <ColumnHeader
-                      column={column}
-                      onSort={handleSort}
-                      sortConfig={sortConfig}
-                      onFilter={handleFilter}
-                      activeFilterColumn={activeFilterColumn}
-                    />
-                  </div>
+                  <ColumnHeader
+                    column={column}
+                    onSort={handleSort}
+                    sortConfig={sortConfig}
+                    onFilter={handleFilter}
+                    activeFilterColumn={activeFilterColumn}
+                  />
                 ))}
             </div>
 

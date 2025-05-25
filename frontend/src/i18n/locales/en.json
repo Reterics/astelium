@@ -29,6 +29,7 @@
     "completed": "Completed",
     "closed": "Closed"
   },
+  "id": "ID",
   "title": "Title",
   "description": "Description",
   "status": "Status",
