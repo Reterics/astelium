@@ -15,7 +15,11 @@ class AccountScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         if (auth()->check()) {
-            $builder->where('account_id', auth()->user()->account_id);
+            // For authenticated users, filter by their account_id
+            $builder->where(function($query) {
+                $query->where('account_id', auth()->user()->account_id)
+                      ->orWhereNull('account_id'); // Also include records with null account_id (guest appointments)
+            });
         }
     }
 }

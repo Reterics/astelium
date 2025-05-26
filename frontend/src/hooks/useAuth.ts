@@ -4,7 +4,7 @@ import {UserDetails} from '../components/UserProfileCard.tsx';
 
 interface AuthResponse {
   access_token: string;
-  user: any;
+  user: UserDetails;
 }
 
 function getSavedUser() {
@@ -20,7 +20,7 @@ function getSavedUser() {
   return user;
 }
 export const useAuth = () => {
-  const [user, setUser] = useState<any>(getSavedUser());
+  const [user, setUser] = useState<UserDetails | null>(getSavedUser());
 
   useEffect(() => {
     const storedUser = getSavedUser();

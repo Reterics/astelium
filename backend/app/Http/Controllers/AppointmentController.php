@@ -2,8 +2,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\User;
+use App\Mail\AppointmentConfirmation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\AppointmentResource;
 
 class AppointmentController extends Controller
@@ -97,6 +101,8 @@ class AppointmentController extends Controller
             'comments' => 'nullable|string',
             'service_type' => 'nullable|string',
             'location' => 'nullable|string',
+            'user_id' => 'required|integer',
+            'password' => 'nullable|string|min:6',
         ]);
 
         // Check for double-booking
@@ -116,12 +122,60 @@ class AppointmentController extends Controller
         // Set default status for public appointments
         $validated['status'] = 'pending';
 
+        // Get the target user by user_id
+        $targetUser = User::find($validated['user_id']);
+        if ($targetUser && $targetUser->account_id) {
+            // Copy account_id from the target user
+            $validated['account_id'] = $targetUser->account_id;
+        } else {
+            return response()->json([
+                'message' => 'User ID must be valid',
+                'errors' => [
+                    'time' => ['User ID must be valid']
+                ]
+            ], 422)->getData(true);
+        }
+
+        // Get the first account in the system for guest appointment
+
+        // Check if a user with this email already exists
+        $existingUser = User::where('email', $validated['email'])->first();
+
+        // If user doesn't exist and password is provided, create a new user with client role
+        if (!$existingUser && isset($validated['password'])) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'client',
+                'account_id' => $validated['account_id'],
+            ]);
+
+            // Associate the appointment with the new user as the creator
+            $validated['created_by_user_id'] = $user->id;
+        }
+        // If user exists, associate the appointment with the existing user as the creator
+        elseif ($existingUser) {
+            $validated['created_by_user_id'] = $existingUser->id;
+        }
+
+        // Remove password from validated data before creating appointment
+        if (isset($validated['password'])) {
+            unset($validated['password']);
+        }
+
         $appointment = Appointment::create($validated);
+
+        // Send appointment confirmation email
+        if ($appointment->email) {
+            Mail::to($appointment->email)->send(new AppointmentConfirmation($appointment));
+        }
+
         return (new AppointmentResource($appointment))->toArray($request);
     }
     public function index(Request $request)
     {
-        // If user is authenticated, filter appointments by user_id
+        // If user is authenticated, filter appointments by user_id or role
         if (Auth::check()) {
             $user = Auth::user();
 
@@ -130,12 +184,13 @@ class AppointmentController extends Controller
                 $appointments = Appointment::all();
             } else {
                 // For regular users, only return their appointments
-                $appointments = Appointment::where('user_id', $user->id)->get();
+                $appointments = Appointment::where('created_by_user_id', $user->id)
+                    ->orWhere('email', $user->email)
+                    ->get();
             }
         } else {
-            // For unauthenticated users, return all appointments
-            // This is needed for availability checking
-            $appointments = Appointment::all();
+            // If no email is provided, return empty collection
+            $appointments = collect([]);
         }
 
         return AppointmentResource::collection($appointments)->toArray($request);
@@ -156,6 +211,7 @@ class AppointmentController extends Controller
             'location' => 'nullable|string',
             'recurrence' => 'nullable|array',
             'assigned_to' => 'nullable|integer',
+            'user_id' => 'nullable|integer',
         ]);
 
         // Check for double-booking
@@ -172,12 +228,30 @@ class AppointmentController extends Controller
             ], 422)->getData(true);
         }
 
-        // Associate the appointment with the authenticated user
+        // Set the creator of the appointment to the authenticated user
         if (Auth::check()) {
-            $validated['user_id'] = Auth::id();
+            $validated['created_by_user_id'] = Auth::id();
+
+            // If user_id is not provided, set it to the authenticated user
+            if (!isset($validated['user_id'])) {
+                $validated['user_id'] = Auth::id();
+            }
+
+            // Get the target user by user_id
+            $targetUser = User::find($validated['user_id']);
+            if ($targetUser && $targetUser->account_id) {
+                // Copy account_id from the target user
+                $validated['account_id'] = $targetUser->account_id;
+            }
         }
 
         $appointment = Appointment::create($validated);
+
+        // Send appointment confirmation email
+        if ($appointment->email) {
+            Mail::to($appointment->email)->send(new AppointmentConfirmation($appointment));
+        }
+
         return (new AppointmentResource($appointment))->toArray($request);
     }
 

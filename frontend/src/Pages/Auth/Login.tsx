@@ -35,7 +35,9 @@ const Login: React.FC = () => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user?.role === 'client') {
+      window.location.href = './appointments';
+    } else if (user?.role) {
       window.location.href = './admin/dashboard';
     }
   }, [user]);

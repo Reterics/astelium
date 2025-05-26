@@ -28,7 +28,14 @@ class LoginController extends Controller
             Log::info('Login successful for user: ' . $request->input('email'));
 
             $request->session()->regenerate();
-            return redirect()->intended('/admin/dashboard');
+
+            // Redirect based on user role
+            $user = Auth::user();
+            if ($user->isClient()) {
+                return redirect()->intended('/appointments');
+            } else {
+                return redirect()->intended('/admin/dashboard');
+            }
         }
         Log::warning('Login failed for user: ' . $request->input('email'));
 

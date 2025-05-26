@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+    public function isClient(): bool
+    {
+        return $this->role === 'client';
+    }
+
     public function isOwner()
     {
         return $this->id === $this->account->admin_user_id;
@@ -75,7 +80,8 @@ class User extends Authenticatable
 
     public function setRoleAttribute($value)
     {
-        if (auth()->check() && auth()->user()->isAdmin()) {
+        // Allow setting role to 'client' during public appointment booking
+        if ($value === 'client' || (auth()->check() && auth()->user()->isAdmin())) {
             $this->attributes['role'] = $value;
         }
     }

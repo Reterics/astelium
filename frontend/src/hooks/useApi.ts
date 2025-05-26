@@ -31,6 +31,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       response.status === 401 &&
       !location.pathname.endsWith('/login') &&
       !location.pathname.endsWith('/register') &&
+      !location.pathname.endsWith('/appointments') &&
       location.pathname !== baseURL
     ) {
       console.warn('Session expired, navigate to login page');
@@ -95,7 +96,13 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
         formData = JSON.stringify(newData);
       }
 
-      const response = await fetch(`${baseURL}/api/${endpoint}`, {
+      // For appointments, use the authenticated endpoint if a token exists
+      let apiEndpoint = endpoint;
+      if (endpoint === 'appointments' && localStorage.getItem('token')) {
+        apiEndpoint = 'appointments/authenticated';
+      }
+
+      const response = await fetch(`${baseURL}/api/${apiEndpoint}`, {
         ...getFetchOptions(hasFileUpload),
         method: 'POST',
         body: formData,

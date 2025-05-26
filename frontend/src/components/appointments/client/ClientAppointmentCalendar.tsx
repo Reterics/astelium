@@ -35,6 +35,7 @@ export interface TimeSlot {
   id?: number;
   time?: string;
   day?: string;
+  timezone?: string;
   length?: string;
   name?: string;
   phone?: string;
@@ -42,6 +43,8 @@ export interface TimeSlot {
   comments?: string;
   service_type?: string;
   user_id?: number;
+  created_by_user_id?: number;
+  password?: string;
 }
 
 /**
@@ -74,6 +77,13 @@ const ClientAppointmentCalendar = ({
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [isLoadingUserDetails, setIsLoadingUserDetails] =
     useState<boolean>(false);
+  const [formData, setFormData] = useState<TimeSlot>({
+    name: '',
+    email: '',
+    phone: '',
+    comments: '',
+    password: '',
+  });
   const {t} = useTranslation();
   const [searchParams] = useSearchParams();
 
@@ -89,7 +99,7 @@ const ClientAppointmentCalendar = ({
   const fetchUserDetails = async (userId: number) => {
     setIsLoadingUserDetails(true);
     try {
-      const response = await fetch(`${baseURL}/api/users/${userId}`, {
+      const response = await fetch(`${baseURL}/api/public/users/${userId}`, {
         ...getFetchOptions(),
       });
 
@@ -134,7 +144,7 @@ const ClientAppointmentCalendar = ({
           service_type: service,
           day: day,
           shift_start: shiftStart,
-          shift_end: shiftEnd
+          shift_end: shiftEnd,
         }),
       });
 
@@ -166,11 +176,19 @@ const ClientAppointmentCalendar = ({
   };
 
   const saveAppointment = async () => {
-    // Add service type to the form data
+    // Get authenticated user from localStorage if available
+    const authenticatedUser = localStorage.getItem('user')
+      ? JSON.parse(localStorage.getItem('user') || '{}')
+      : null;
+
+    // Add service type and timezone to the form data
     const appointmentData: TimeSlot = {
-      user_id: userDetails?.id,
+      // Use userDetails?.id if available, otherwise use authenticated user's id, or fallback to 1 (default user)
+      user_id: userDetails?.id || authenticatedUser?.id || 1,
       ...selectedSlot,
+      ...formData, // Ensure form data is included directly
       service_type: serviceType,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Get user's timezone
       length:
         serviceType === 'consultation'
           ? '30'
@@ -179,9 +197,15 @@ const ClientAppointmentCalendar = ({
             : '45',
     };
 
+    // Remove password from confirmation data to avoid displaying it
+    const confirmationDataCopy = {...appointmentData};
+    if (confirmationDataCopy.password) {
+      delete confirmationDataCopy.password;
+    }
+
     try {
       await onSave(appointmentData);
-      setConfirmationData(appointmentData);
+      setConfirmationData(confirmationDataCopy);
       setCurrentStep(4); // Move to confirmation step
     } catch (error) {
       console.error('Error saving appointment:', error);
@@ -341,8 +365,12 @@ const ClientAppointmentCalendar = ({
                   // Check if the day has any available slots
                   // A day is fully booked only if all slots are taken
                   const formattedDate = getFormattedDate(0, fullDate);
-                  const bookedSlotsForDay = appointments?.filter(appt => appt.day === formattedDate) || [];
-                  const isFullyBooked = bookedSlotsForDay.length >= defaultTimeSlots.length;
+                  const bookedSlotsForDay =
+                    appointments?.filter(
+                      (appt) => appt.day === formattedDate
+                    ) || [];
+                  const isFullyBooked =
+                    bookedSlotsForDay.length >= defaultTimeSlots.length;
                   return (
                     <div
                       key={index}
@@ -527,6 +555,86 @@ const ClientAppointmentCalendar = ({
               </p>
             </div>
 
+            <div className='space-y-4 mb-6'>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  {t('name')} *
+                </label>
+                <input
+                  type='text'
+                  className='w-full p-2 border rounded'
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({...formData, name: e.target.value})
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  {t('email')} *
+                </label>
+                <input
+                  type='email'
+                  className='w-full p-2 border rounded'
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({...formData, email: e.target.value})
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  {t('phone')}
+                </label>
+                <input
+                  type='tel'
+                  className='w-full p-2 border rounded'
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData({...formData, phone: e.target.value})
+                  }
+                />
+              </div>
+
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  {t('password')} *
+                </label>
+                <input
+                  type='password'
+                  className='w-full p-2 border rounded'
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({...formData, password: e.target.value})
+                  }
+                  placeholder={t('create_password_for_account')}
+                  required
+                  minLength={6}
+                />
+                <p className='text-xs text-gray-500 mt-1'>
+                  {t('password_will_create_account')}
+                </p>
+              </div>
+
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  {t('comments')}
+                </label>
+                <textarea
+                  className='w-full p-2 border rounded'
+                  rows={3}
+                  value={formData.comments}
+                  onChange={(e) =>
+                    setFormData({...formData, comments: e.target.value})
+                  }
+                ></textarea>
+              </div>
+            </div>
+
             <div className='flex justify-between mt-6'>
               <button
                 className='px-4 py-2 border rounded hover:bg-gray-100'
@@ -537,6 +645,9 @@ const ClientAppointmentCalendar = ({
               <button
                 className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50'
                 onClick={() => saveAppointment()}
+                disabled={
+                  !formData.name || !formData.email || !formData.password
+                }
               >
                 {t('book_selected_appointment')}
               </button>

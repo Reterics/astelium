@@ -41,7 +41,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,member,viewer', // Allow only specific roles
+            'role' => 'required|in:admin,member,viewer,client', // Allow only specific roles
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'workingSchedule' => 'nullable|json',
             'bio' => 'nullable|string',
@@ -86,6 +86,24 @@ class UserController extends Controller
     }
 
     /**
+     * Get public information for a specific user.
+     * GET /api/public/users/{user}
+     */
+    public function publicShow(User $user): \Illuminate\Http\JsonResponse
+    {
+        // Return only the public information
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'role' => $user->role,
+            'bio' => $user->bio,
+            'workingSchedule' => $user->workingSchedule,
+            'image' => $user->image,
+            'title' => $user->title
+        ]);
+    }
+
+    /**
      * Update an existing user.
      * PUT /api/users/{user}
      */
@@ -97,7 +115,7 @@ class UserController extends Controller
             'name'     => 'sometimes|required|string|max:255',
             'email'    => "sometimes|required|email|max:255|unique:users,email,{$user->id}",
             'password' => 'sometimes|nullable|string|min:8',
-            'role' => 'sometimes|required|in:admin,member,viewer', // Allow only specific roles
+            'role' => 'sometimes|required|in:admin,member,viewer,client', // Allow only specific roles
             'image' => 'nullable|string|max:2048',
             'workingSchedule' => 'nullable|json',
             'bio' => 'nullable|string',
