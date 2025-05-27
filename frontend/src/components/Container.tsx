@@ -95,21 +95,24 @@ const menu: MenuItem[] = [
 
 interface ContainerProps {
   children?: React.ReactNode;
+  menu?: MenuItem[];
 }
 
-const Container: React.FC<ContainerProps> = ({children}) => {
+const Container: React.FC<ContainerProps> = ({children, menu: propMenu}) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
 
+  const currentMenu = propMenu || menu;
+
   const selectedMenu =
-    menu.find((m) => m.path === location.pathname) ||
-    menu
+    currentMenu.find((m) => m.path === location.pathname) ||
+    currentMenu
       .flatMap((m) => m.submenu || [])
       .find((s) => s.path === location.pathname);
 
   return (
     <div className='flex h-screen overflow-hidden bg-neutral-100 text-zinc-700'>
-      <Sidebar menu={menu} collapsed={sidebarCollapsed} />
+      <Sidebar menu={currentMenu} collapsed={sidebarCollapsed} />
       <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto relative'>
         <Header
           selectedMenu={selectedMenu}
