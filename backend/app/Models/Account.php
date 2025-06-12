@@ -35,4 +35,9 @@ class Account extends Model
     {
         return $this->belongsTo(User::class, 'admin_user_id');
     }
+
+    public function setting(): HasMany
+    {
+        return $this->hasMany(Setting::class);
+    }
 }

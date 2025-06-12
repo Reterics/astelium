@@ -56,8 +56,8 @@ const Settings = () => {
 
   // Initialize settings from API data
   useEffect(() => {
-    if (settingsData && !isLoading) {
-      setSettings(settingsData);
+    if (settingsData?.length && !isLoading) {
+      setSettings(settingsData[0]);
     }
   }, [settingsData, isLoading]);
 
