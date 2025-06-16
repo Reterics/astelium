@@ -6,15 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
 
 class LoginController extends Controller
 {
-    public function showLoginForm(): \Inertia\Response
-    {
-        return Inertia::render('Auth/Login');
-    }
-
     public function login(Request $request): \Illuminate\Http\RedirectResponse
     {
         Log::debug('Login attempt with data:', $request->all());

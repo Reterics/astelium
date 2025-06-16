@@ -2,17 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-
 class HomeController extends Controller
 {
-    public function index(): \Inertia\Response
+    /**
+     * Render the SPA view
+     *
+     * @return \Illuminate\View\View
+     */
+    public function spa()
     {
-        return Inertia::render('Index');
+        return view('spa');
     }
 
-    public function appointments(): \Inertia\Response
+    /**
+     * Home page
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index()
     {
-        return Inertia::render('Appointments');
+        return $this->spa();
+    }
+
+    /**
+     * Appointments page
+     *
+     * @return \Illuminate\View\View
+     */
+    public function appointments()
+    {
+        return $this->spa();
     }
 }

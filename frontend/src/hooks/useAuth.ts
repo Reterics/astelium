@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {baseURL} from '../utils/utils.ts';
 import {UserDetails} from '../components/UserProfileCard.tsx';
+import {NavigateFunction} from 'react-router-dom';
 
 interface AuthResponse {
   access_token: string;
@@ -19,6 +20,7 @@ function getSavedUser() {
   }
   return user;
 }
+
 export const useAuth = () => {
   const [user, setUser] = useState<UserDetails | null>(getSavedUser());
 
@@ -46,7 +48,7 @@ export const useAuth = () => {
     setUser(data.user);
   };
 
-  const logout = async () => {
+  const logout = async (navigate?: NavigateFunction) => {
     await fetch(baseURL + '/api/logout', {
       method: 'POST',
       headers: {
@@ -57,7 +59,13 @@ export const useAuth = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    window.location.href = baseURL + '/login';
+
+    // Use React Router navigation if provided, otherwise fallback to window.location
+    if (navigate) {
+      navigate('/login');
+    } else {
+      window.location.href = baseURL + '/login';
+    }
   };
 
   return {user, login, logout};

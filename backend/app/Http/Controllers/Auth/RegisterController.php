@@ -8,16 +8,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Account;
-use Inertia\Inertia;
 
 class RegisterController extends Controller
 {
-
-    public function showRegistrationForm(): \Inertia\Response
-    {
-        return Inertia::render('Auth/Register');
-    }
-
     /**
      * Handle user registration and account creation.
      */

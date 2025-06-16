@@ -79,6 +79,7 @@ const Tasks = () => {
       editable: false,
       sortable: false,
       visible: true,
+      creatable: false,
     },
     {
       key: 'title',

@@ -1,12 +1,7 @@
 import ClientAppointments from './ClientAppointments.tsx';
-import {BrowserRouter} from 'react-router-dom';
 
 const Appointments = () => {
-  return (
-    <BrowserRouter>
-      <ClientAppointments />
-    </BrowserRouter>
-  );
+  return <ClientAppointments />;
 };
 
 export default Appointments;

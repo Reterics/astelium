@@ -5,7 +5,7 @@ function getAppBasePath(appUrl: string) {
     const app = new URL(appUrl);
     let base = app.pathname;
 
-    if (!base || base === '/') return '';
+    if (!base || base  === '/') return '';
     if (base.endsWith('/')) base = base.slice(0, -1);
 
     return base;

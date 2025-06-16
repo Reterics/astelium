@@ -1,4 +1,4 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import {Routes, Route} from 'react-router-dom';
 import Container from '../../components/Container.tsx';
 
 import Dashboard from './Dashboard';
@@ -24,44 +24,41 @@ import Board from './Board.tsx';
 import Account from './Account.tsx';
 import Maps from './Maps.tsx';
 import Map from './Map.tsx';
-import {baseURL} from '../../utils/utils.ts';
 import AdminAppointments from './AdminAppointments.tsx';
 
 const AdminPanel = () => {
   return (
-    <BrowserRouter basename={`${baseURL}/admin`}>
-      <Container>
-        <Routes>
-          <Route element={<PrivateRoute />}>
-            <Route path='/dashboard' element={<Dashboard />} />
-            <Route path='/users' element={<Users />} />
-            <Route path='/projects' element={<Projects />} />
-            <Route path='/tasks' element={<Tasks />} />
-            <Route path='/board' element={<Board />} />
-            <Route path='/clients' element={<Clients />} />
-            <Route path='/notes' element={<Notes />} />
-            <Route path='/reports' element={<Reports />} />
-            <Route path='/settings' element={<Settings />} />
-            <Route path='/example' element={<MainContent />} />
+    <Container>
+      <Routes>
+        <Route element={<PrivateRoute />}>
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/users' element={<Users />} />
+          <Route path='/projects' element={<Projects />} />
+          <Route path='/tasks' element={<Tasks />} />
+          <Route path='/board' element={<Board />} />
+          <Route path='/clients' element={<Clients />} />
+          <Route path='/notes' element={<Notes />} />
+          <Route path='/reports' element={<Reports />} />
+          <Route path='/settings' element={<Settings />} />
+          <Route path='/example' element={<MainContent />} />
 
-            <Route path='/warehouses' element={<Warehouses />} />
-            <Route path='/storage' element={<StoragePage />} />
-            <Route path='/domains' element={<Domains />} />
+          <Route path='/warehouses' element={<Warehouses />} />
+          <Route path='/storage' element={<StoragePage />} />
+          <Route path='/domains' element={<Domains />} />
 
-            <Route path='/invoice-users' element={<InvoiceUsers />} />
-            <Route path='/invoices' element={<Invoices />} />
-            <Route path='/contract-templates' element={<ContractTemplates />} />
-            <Route path='/contracts' element={<Contracts />} />
-            <Route path='/transactions' element={<Transactions />} />
+          <Route path='/invoice-users' element={<InvoiceUsers />} />
+          <Route path='/invoices' element={<Invoices />} />
+          <Route path='/contract-templates' element={<ContractTemplates />} />
+          <Route path='/contracts' element={<Contracts />} />
+          <Route path='/transactions' element={<Transactions />} />
 
-            <Route path='/appointments' element={<AdminAppointments />} />
-            <Route path='/maps' element={<Maps />} />
-            <Route path='/map' element={<Map />} />
-            <Route path='/account' element={<Account />} />
-          </Route>
-        </Routes>
-      </Container>
-    </BrowserRouter>
+          <Route path='/appointments' element={<AdminAppointments />} />
+          <Route path='/maps' element={<Maps />} />
+          <Route path='/map' element={<Map />} />
+          <Route path='/account' element={<Account />} />
+        </Route>
+      </Routes>
+    </Container>
   );
 };
 

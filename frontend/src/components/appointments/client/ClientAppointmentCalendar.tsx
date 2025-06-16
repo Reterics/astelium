@@ -12,7 +12,7 @@ import SelectComponent from '../../SelectComponent.tsx';
 import {generateTimeSlots, getFormattedDate} from '../../../utils/dateUtils.ts';
 import {useTranslation} from 'react-i18next';
 import {baseURL, getFetchOptions} from '../../../utils/utils.ts';
-import {useSearchParams} from 'react-router-dom';
+import {useSearchParams, useNavigate} from 'react-router-dom';
 import UserProfileCard, {UserDetails} from '../../UserProfileCard';
 
 const shiftStart = '08:00';
@@ -86,6 +86,7 @@ const ClientAppointmentCalendar = ({
   });
   const {t} = useTranslation();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   // Use effect to fetch user details when user_id changes
   useEffect(() => {
@@ -717,7 +718,7 @@ const ClientAppointmentCalendar = ({
               </button>
               <button
                 className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
-                onClick={() => (window.location.href = '/')}
+                onClick={() => navigate('/')}
               >
                 {t('return_to_home')}
               </button>

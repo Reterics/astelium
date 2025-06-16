@@ -23,34 +23,34 @@ import {useState} from 'react';
 import {useLocation} from 'react-router-dom';
 
 const menu: MenuItem[] = [
-  {label: 'Dashboard', path: '/dashboard', icon: FiHome},
+  {label: 'Dashboard', path: '/admin/dashboard', icon: FiHome},
 
   {
     label: 'Projects',
     icon: FiFolder,
-    path: '/projects',
+    path: '/admin/projects',
   },
   {
     label: 'Tasks',
     icon: FiList,
     submenu: [
-      {label: 'List', path: '/tasks', icon: FiList},
-      {label: 'Board', path: '/board', icon: FiColumns},
+      {label: 'List', path: '/admin/tasks', icon: FiList},
+      {label: 'Board', path: '/admin/board', icon: FiColumns},
     ],
   },
   {
     label: 'Notes',
     icon: FiFileText,
-    path: '/notes',
+    path: '/admin/notes',
   },
 
   {
     label: 'Inventory',
     icon: FiArchive,
     submenu: [
-      {label: 'Warehouses', path: '/warehouses', icon: FiDatabase},
-      {label: 'Storage', path: '/storage', icon: FiDatabase},
-      {label: 'Domains', path: '/domains', icon: FiGlobe},
+      {label: 'Warehouses', path: '/admin/warehouses', icon: FiDatabase},
+      {label: 'Storage', path: '/admin/storage', icon: FiDatabase},
+      {label: 'Domains', path: '/admin/domains', icon: FiGlobe},
     ],
   },
 
@@ -58,37 +58,37 @@ const menu: MenuItem[] = [
     label: 'Management',
     icon: FiClipboard,
     submenu: [
-      {label: 'Clients', path: '/clients', icon: FiUser},
-      {label: 'Invoices', path: '/invoices', icon: FiFile},
-      {label: 'Appointments', path: '/appointments', icon: FiCalendar},
+      {label: 'Clients', path: '/admin/clients', icon: FiUser},
+      {label: 'Invoices', path: '/admin/invoices', icon: FiFile},
+      {label: 'Appointments', path: '/admin/appointments', icon: FiCalendar},
       {
         label: 'Contract Templates',
-        path: '/contract-templates',
+        path: '/admin/contract-templates',
         icon: FiFileText,
       },
-      {label: 'Contracts', path: '/contracts', icon: FiFileText},
-      {label: 'Transactions', path: '/transactions', icon: FiCreditCard},
+      {label: 'Contracts', path: '/admin/contracts', icon: FiFileText},
+      {label: 'Transactions', path: '/admin/transactions', icon: FiCreditCard},
     ],
   },
 
   {
     label: 'Reports',
     icon: FiFileText,
-    path: '/reports',
+    path: '/admin/reports',
   },
   {
     label: 'Maps',
     icon: FiMap,
-    path: '/maps',
+    path: '/admin/maps',
   },
 
   {
     label: 'Admin',
     icon: FiSettings,
     submenu: [
-      {label: 'Users', path: '/users', icon: FiUsers},
-      {label: 'Invoice Users', path: '/invoice-users', icon: FiUser},
-      {label: 'Settings', path: '/settings', icon: FiSettings},
+      {label: 'Users', path: '/admin/users', icon: FiUsers},
+      {label: 'Invoice Users', path: '/admin/invoice-users', icon: FiUser},
+      {label: 'Settings', path: '/admin/settings', icon: FiSettings},
     ],
   },
 ];

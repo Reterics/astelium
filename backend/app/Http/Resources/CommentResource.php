@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
+
+class CommentResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toArray($request): array
+    {
+        $user = Auth::guard('sanctum')->user();
+
+        // If the user is an admin or belongs to the account that owns this comment, return all fields
+        if ($user && ($user->isAdmin() || $user->account_id === $this->account_id)) {
+            return [
+                'id' => $this->id,
+                'task_id' => $this->task_id,
+                'author' => $this->author,
+                'text' => $this->text,
+                'account_id' => $this->account_id,
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+                'task' => $this->when($this->relationLoaded('task'), new TaskResource($this->task)),
+                'account' => $this->when($this->relationLoaded('account'), new AccountResource($this->account)),
+            ];
+        }
+
+        // For other authenticated users, return limited information
+        return [
+            'id' => $this->id,
+            'author' => $this->author,
+            'text' => $this->text,
+            'created_at' => $this->created_at,
+        ];
+    }
+}

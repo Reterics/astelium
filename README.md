@@ -2,13 +2,13 @@
 
 [![build](https://github.com/Reterics/astelium/actions/workflows/build.yml/badge.svg)](https://github.com/Reterics/astelium/actions/workflows/build.yml)
 
-Astelium is a unified Task & Project Management and CRM system built as a monorepo with a Laravel backend and a React/Vite frontend using Inertia.js and TailwindCSS. The project is containerized with Docker and Docker Compose.
+Astelium is a unified Task & Project Management and CRM system built as a monorepo with a Laravel backend and a React/Vite frontend using TailwindCSS. The project is containerized with Docker and Docker Compose.
 
 ![table.png](docs/table.png)
 
 ## Overview
 
-- **Backend:** Laravel with Fortify (for authentication/MFA), Inertia.js, and MySQL.
+- **Backend:** Laravel with Fortify (for authentication/MFA), and MySQL.
 - **Frontend:** React with TypeScript, Vite, and TailwindCSS.
 - **Containerization:** Docker and Docker Compose for development and deployment.
 

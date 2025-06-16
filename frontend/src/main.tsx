@@ -1,25 +1,42 @@
-import {createInertiaApp} from '@inertiajs/react';
-import {createRoot} from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import App from './App.tsx';
-import {resolvePageComponent} from 'laravel-vite-plugin/inertia-helpers';
 import './index.css';
 import './i18n/i18n';
 
-createInertiaApp({
-  resolve: (name) =>
-    resolvePageComponent(
-      `./Pages/${name}.tsx`,
-      import.meta.glob('./Pages/**/*.tsx')
-    ),
+// Pages
+import LandingPage from './Pages/Index.tsx';
+import Login from './Pages/Auth/Login.tsx';
+import Register from './Pages/Auth/Register.tsx';
+import Appointments from './Pages/Appointments.tsx';
+import AdminPanel from './Pages/Admin/Admin.tsx';
 
-  setup({el, App: InertiaApp, props}) {
-    createRoot(el).render(
+// Components
+import PrivateRoute from './components/PrivateRoute.tsx';
+import {baseURL} from './utils/utils.ts';
+
+const root = document.getElementById('app');
+
+if (root) {
+  createRoot(root).render(
+    <BrowserRouter basename={baseURL}>
       <App>
-        <InertiaApp {...props} />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          <Route element={<PrivateRoute />}>
+            <Route path="/appointments" element={<Appointments />} />
+          </Route>
+
+          <Route path="/admin/*" element={<AdminPanel />} />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </App>
-    );
-  },
-  id: 'app',
-}).then(() => {
-  console.log('Inertia App loaded');
-});
+    </BrowserRouter>
+  );
+
+  console.log('SPA loaded successfully');
+}

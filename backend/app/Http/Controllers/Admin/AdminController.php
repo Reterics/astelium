@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Inertia\Inertia;
 
 class AdminController extends Controller
 {
-    public function index(): \Inertia\Response
+    /**
+     * Render the SPA view for admin routes
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index()
     {
-        return Inertia::render('Admin/Admin');
+        return view('spa');
     }
 }
