@@ -11,6 +11,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ContractTemplateController;
 use App\Http\Controllers\DomainController;
+use App\Http\Controllers\GoalController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceUserController;
 use App\Http\Controllers\MapController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TransactionCategoryController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Api\ApiLoginController;
@@ -44,6 +46,10 @@ Route::middleware(['auth:sanctum', EnsureAccountAccess::class])->group(function 
 
 
     Route::apiResource('transactions', TransactionController::class);
+
+    Route::apiResource('transaction-categories', TransactionCategoryController::class);
+
+    Route::apiResource('goals', GoalController::class);
 
     Route::apiResource('notes', NoteController::class);
 

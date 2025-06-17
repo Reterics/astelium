@@ -31,7 +31,7 @@ return new class extends Migration {
 
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['income', 'outgoing']);
+            $table->enum('type', ['income', 'expense', 'transfer']);
             $table->decimal('amount', 10, 2);
             $table->date('date');
             $table->text('description')->nullable();

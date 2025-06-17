@@ -46,6 +46,12 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // Seed transaction categories
+        $this->call(TransactionCategorySeeder::class);
+
+        // Seed demo goal with linked categories
+        $this->call(GoalSeeder::class);
+
         $this->command->info('Database seeded successfully.');
     }
 }

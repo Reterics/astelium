@@ -22,7 +22,7 @@ Route::get('/admin/{any?}', [AdminController::class, 'index'])
 
 // Catch-all route for the SPA
 // This must be the last route to ensure it doesn't override any specific routes
-Route::get('/', [HomeController::class, 'spa'])->name('spa');
-Route::get('/appointments', [HomeController::class, 'appointments'])->name('appointments');
-Route::get('/register', [HomeController::class, 'spa'])->name('register');
-Route::get('/login', [HomeController::class, 'spa'])->name('login');
+// The {any?} catch-all pattern will let client-side routing work within the SPA
+Route::get('/{any?}', [HomeController::class, 'spa'])
+    ->where('any', '.*')
+    ->name('spa');

@@ -18,6 +18,14 @@ class Transaction extends Model
         return $this->belongsTo(Account::class);
     }
 
+    /**
+     * Get the categories that belong to this transaction.
+     */
+    public function categories()
+    {
+        return $this->belongsToMany(TransactionCategory::class, 'category_transaction', 'transaction_id', 'transaction_category_id');
+    }
+
     protected static function booted()
     {
         static::creating(function ($invoice) {
