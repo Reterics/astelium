@@ -69,9 +69,7 @@ const GoalLineChart: React.FC<GoalLineChartProps> = ({
       // Check date range
       const transactionDate = new Date(transaction.date);
       if (dateRange.start && transactionDate < dateRange.start) return false;
-      if (dateRange.end && transactionDate > dateRange.end) return false;
-
-      return true;
+      return !(dateRange.end && transactionDate > dateRange.end);
     });
 
     // Create data points for each transaction and category
@@ -168,7 +166,20 @@ const GoalLineChart: React.FC<GoalLineChartProps> = ({
       };
     });
 
-    return { timeKeys, series };
+    const cumulativeValues: { [key: string]: number } = {};
+    let runningTotal = 0;
+    timeKeys.forEach(timeKey => {
+      const total = Object.values(aggregatedData[timeKey]).reduce((a, b) => a + b, 0);
+      runningTotal += total;
+      cumulativeValues[timeKey] = runningTotal;
+    });
+
+    const remainingSeries = timeKeys.map(timeKey => ({
+      date: parseTimeKey(timeKey, timeScaleOption),
+      value: Math.max(goal.target_amount - cumulativeValues[timeKey], 0),
+    }));
+
+    return { timeKeys, series, remainingSeries };
   };
 
   // Parse time key back to Date object
@@ -227,7 +238,7 @@ const GoalLineChart: React.FC<GoalLineChartProps> = ({
     if (categories.length === 0 || dataPoints.length === 0) return;
 
     const aggregatedData = aggregateData(dataPoints, timeScaleOption);
-    const { timeKeys, series } = formatDataForChart(aggregatedData, categories);
+    const { timeKeys, series, remainingSeries } = formatDataForChart(aggregatedData, categories);
 
     if (timeKeys.length === 0) return;
 
@@ -245,28 +256,52 @@ const GoalLineChart: React.FC<GoalLineChartProps> = ({
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Create scales
-    const x = d3.scaleTime()
+    const xTime = d3.scaleTime()
       .domain([
         d3.min(series, s => d3.min(s.values, d => d.date)) || new Date(),
         d3.max(series, s => d3.max(s.values, d => d.date)) || new Date()
       ])
       .range([0, chartWidth]);
 
+    const xBand = d3.scaleBand<Date>()
+      .domain(remainingSeries.map(d => d.date))
+      .range([0, chartWidth])
+      .padding(0.01);
+
     const y = d3.scaleLinear()
-      .domain([0, d3.max(series, s => d3.max(s.values, d => d.value)) || 0])
+      .domain([
+        0,
+        Math.max(
+          d3.max(series, s => d3.max(s.values, d => d.value)) || 0,
+          goal.target_amount // <- Ensure y-scale can visualize the full goal
+        )
+      ])
       .nice()
       .range([chartHeight, 0]);
 
     // Create line generator
     const line = d3.line<{date: Date, value: number}>()
-      .x(d => x(d.date))
+      .x(d => xTime(d.date))
       .y(d => y(d.value))
       .curve(d3.curveMonotoneX);
+
+    chart.selectAll('.remaining-bar')
+      .data(remainingSeries)
+      .enter()
+      .append('rect')
+      .attr('class', 'remaining-bar')
+      .attr('x', d => xBand(d.date)!)
+      .attr('width', xBand.bandwidth())
+      .attr('y', d => y(d.value))
+      .attr('height', d => chartHeight - y(d.value))
+      .attr('fill', '#9fabed')
+      .attr('opacity', 0.3)
+      .lower(); // Move bars to background
 
     // Add X axis
     chart.append('g')
       .attr('transform', `translate(0,${chartHeight})`)
-      .call(d3.axisBottom(x).ticks(5))
+      .call(d3.axisBottom(xTime).ticks(5))
       .selectAll('text')
       .style('text-anchor', 'end')
       .attr('dx', '-.8em')
@@ -293,8 +328,7 @@ const GoalLineChart: React.FC<GoalLineChartProps> = ({
       .attr('dy', '1em')
       .style('text-anchor', 'middle')
       .style('font-size', '12px')
-      .style('fill', '#4B5563')
-      .text(t('dashboard.amount'));
+      .style('fill', '#4B5563');
 
     // Add grid lines
     chart.append('g')
@@ -305,7 +339,7 @@ const GoalLineChart: React.FC<GoalLineChartProps> = ({
           .tickFormat(() => '')
       )
       .style('stroke', '#E5E7EB')
-      .style('stroke-opacity', 0.7)
+      .style('stroke-opacity', 0.2)
       .selectAll('.domain')
       .style('stroke-opacity', 0);
 
@@ -325,7 +359,7 @@ const GoalLineChart: React.FC<GoalLineChartProps> = ({
         .enter()
         .append('circle')
         .attr('class', `dot-${s.id}`)
-        .attr('cx', d => x(d.date))
+        .attr('cx', d => xTime(d.date))
         .attr('cy', d => y(d.value))
         .attr('r', 4)
         .attr('fill', s.color)
@@ -398,15 +432,6 @@ const GoalLineChart: React.FC<GoalLineChartProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-800">
-          {goal.title} - {t('dashboard.progress_over_time')}
-        </h2>
-        <p className="text-sm text-gray-500">
-          {t('dashboard.goal_progress_description')}
-        </p>
-      </div>
-
       <div className="flex-grow relative h-[400px]">
         <svg
           ref={svgRef}
