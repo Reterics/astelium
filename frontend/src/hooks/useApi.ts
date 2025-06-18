@@ -4,6 +4,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {baseURL, getFetchOptions} from '../utils/utils.ts';
+import {parseDateStrings, parseDateStringsInItem} from '../utils/dateUtils.ts';
 
 export interface UseApiProps {
   perPage: number;
@@ -48,10 +49,11 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     const data = await response.json();
 
     if (data.data && data.current_page !== undefined) {
+      data.data = parseDateStrings(data?.data)
       return data;
     } else {
       return {
-        data: data || [],
+        data: Array.isArray(data) ? parseDateStrings(data) : data,
         current_page: 1,
         next_page_url: null,
         first_page_url: pageUrl,
@@ -108,7 +110,8 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
         body: formData,
       });
       if (!response.ok) throw new Error(`Failed to create ${endpoint}`);
-      return response.json();
+      const data = await response.json()
+      return data ? parseDateStringsInItem(data) : data;
     },
     onSuccess: () => {
       return queryClient.invalidateQueries({queryKey: [endpoint]});
@@ -142,7 +145,8 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
         body: formData,
       });
       if (!response.ok) throw new Error(`Failed to update ${endpoint}`);
-      return response.json();
+      const data = await response.json()
+      return data ? parseDateStringsInItem(data) : data;
     },
     onSuccess: () => {
       return queryClient.invalidateQueries({queryKey: [endpoint]});

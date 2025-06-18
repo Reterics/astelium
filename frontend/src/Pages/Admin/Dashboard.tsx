@@ -4,6 +4,7 @@ import {
   FiBarChart,
   FiTrendingUp,
   FiSave,
+  FiTarget,
 } from 'react-icons/fi';
 import {useApi} from '../../hooks/useApi.ts';
 import TransactionChartCard from '../../components/visualizations/TransactionChartCard.tsx';
@@ -12,12 +13,14 @@ import {useTranslation} from 'react-i18next';
 import {useState, useEffect} from 'react';
 import {motion} from 'framer-motion';
 import DraggableDashboard from '../../components/DraggableDashboard.tsx';
+import GoalProgressCard from '../../components/GoalProgressCard';
 
 const Dashboard = () => {
   const {data: users} = useApi('users');
   const {data: projects} = useApi('projects');
   const {data: tasks} = useApi('tasks');
   const {data: transactions} = useApi('transactions');
+  const {data: goals, isLoading: goalsLoading} = useApi('goals');
   const {t} = useTranslation();
   const [activeView, setActiveView] = useState('default');
   const [isLoading, setIsLoading] = useState(true);
@@ -231,6 +234,80 @@ const Dashboard = () => {
     </div>
   );
 
+  // Active Goals Widget
+  const ActiveGoalsWidget = () => {
+    // Filter for active goals
+    const activeGoals = goals?.filter(goal => goal.status === 'active') || [];
+
+    if (goalsLoading) {
+      return (
+        <div className='bg-white shadow-sm rounded-lg p-4 overflow-hidden'>
+          <div className='flex items-center gap-2 mb-4'>
+            <FiTarget className='text-indigo-600' />
+            <h2 className='text-lg font-semibold text-gray-800'>
+              {t('dashboard.active_goals')}
+            </h2>
+          </div>
+          <div className='space-y-4 animate-pulse'>
+            {[1, 2, 3].map(i => (
+              <div key={i} className='h-20 bg-gray-200 rounded'></div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (activeGoals.length === 0) {
+      return (
+        <div className='bg-white shadow-sm rounded-lg p-4 overflow-hidden'>
+          <div className='flex items-center gap-2 mb-4'>
+            <FiTarget className='text-indigo-600' />
+            <h2 className='text-lg font-semibold text-gray-800'>
+              {t('dashboard.active_goals')}
+            </h2>
+          </div>
+          <p className='text-gray-500 text-center py-8'>
+            {t('dashboard.no_active_goals')}
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className='bg-white shadow-sm rounded-lg p-4 overflow-hidden'>
+        <div className='flex items-center gap-2 mb-4'>
+          <FiTarget className='text-indigo-600' />
+          <h2 className='text-lg font-semibold text-gray-800'>
+            {t('dashboard.active_goals')}
+          </h2>
+        </div>
+        <div className='space-y-4'>
+          {activeGoals.map(goal => (
+            <div key={goal.id} className='border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow'>
+              <div className='flex justify-between items-start mb-2'>
+                <h3 className='font-medium text-gray-800'>{goal.title}</h3>
+                <span className='text-sm font-medium text-white bg-green-500 px-2 py-0.5 rounded-full'>
+                  {t('dashboard.active')}
+                </span>
+              </div>
+              <div className='mb-3'>
+                <GoalProgressCard goalId={goal.id} showDetails={true} />
+              </div>
+              <div className='flex justify-between items-center text-sm'>
+                <span className='text-gray-500'>
+                  {t('dashboard.target')}: ${parseFloat(goal.target_amount).toLocaleString()}
+                </span>
+                <span className='text-gray-500'>
+                  {t('dashboard.due')}: {new Date(goal.due_date).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   // Dashboard widgets array
   const dashboardWidgets = [
     <StatCardsWidget key='stats' />,
@@ -239,6 +316,7 @@ const Dashboard = () => {
       <TaskListWidget />
     </div>,
     <TransactionChartWidget key='transactions' />,
+    <ActiveGoalsWidget key='active-goals' />,
   ];
 
   return (

@@ -368,7 +368,6 @@ const TableComponent: React.FC<TableProps> = ({
                         onChange,
                       });
                       if (custom !== undefined) return custom;
-
                       if (isEditing) {
                         if (col.type === 'select') {
                           return (
@@ -407,15 +406,15 @@ const TableComponent: React.FC<TableProps> = ({
                         if (col.type === 'image') {
                           return (
                             <img
-                              src={changes[rowIndex]?.[col.key] ?? row[col.key]}
+                              src={value}
                             />
                           );
                         }
                         return (
                           <input
-                            title={changes[rowIndex]?.[col.key] ?? row[col.key]}
+                            title={value}
                             type={col.type || 'text'}
-                            value={changes[rowIndex]?.[col.key] ?? row[col.key]}
+                            value={value}
                             onChange={(e) => {
                               handleEdit(row.rowIndex, col.key, e.target.value);
                               col.props?.onChange?.(e, row);
@@ -430,6 +429,10 @@ const TableComponent: React.FC<TableProps> = ({
                           <UserAvatar image={row[col.key]} name={row.name} />
                         );
                       }
+                      if (row[col.key] instanceof Date) {
+                        return row[col.key].toISOString().split('T')[0]
+                      }
+
                       return row[col.key];
                     })()}
                   </td>

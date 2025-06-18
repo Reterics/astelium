@@ -25,6 +25,7 @@ import Account from './Account.tsx';
 import Maps from './Maps.tsx';
 import Map from './Map.tsx';
 import AdminAppointments from './AdminAppointments.tsx';
+import Goals from './Goals.tsx';
 
 const AdminPanel = () => {
   return (
@@ -51,6 +52,7 @@ const AdminPanel = () => {
           <Route path='/contract-templates' element={<ContractTemplates />} />
           <Route path='/contracts' element={<Contracts />} />
           <Route path='/transactions' element={<Transactions />} />
+          <Route path='/goals' element={<Goals />} />
 
           <Route path='/appointments' element={<AdminAppointments />} />
           <Route path='/maps' element={<Maps />} />

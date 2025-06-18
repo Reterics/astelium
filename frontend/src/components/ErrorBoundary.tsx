@@ -1,112 +1,140 @@
-import React, {useState, useEffect} from 'react';
+import { Component, ReactNode } from 'react';
 import ErrorMessage from './ui/ErrorMessage';
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode;
+  children: ReactNode;
+  fallback?: ReactNode;
 }
 
-const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({children}) => {
-  const [errors, setErrors] = useState<
-    Array<{
-      id: string;
-      title?: string;
-      message: string;
-      details?: string;
-      timestamp: number;
-    }>
-  >([]);
+interface ErrorState {
+  hasError: boolean;
+  error: Error | null;
+  errors: {
+    id: string;
+    title?: string;
+    message: string;
+    details?: string;
+    timestamp: number;
+  }[];
+}
 
-  // Listen for unhandled errors
-  useEffect(() => {
-    const handleGlobalError = (event: ErrorEvent) => {
-      event.preventDefault();
-      addError({
-        title: 'Unexpected Error',
-        message: event.message || 'An unexpected error occurred',
-        details: event.error?.stack,
-      });
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorState> {
+  state: ErrorState = {
+    hasError: false,
+    error: null,
+    errors: [],
+  };
+
+  static getDerivedStateFromError(error: Error): Partial<ErrorState> {
+    const now = Date.now().toString();
+    return {
+      error,
+      hasError: true,
+      errors: [{
+        id: now,
+        title: 'Uncaught Error',
+        message: error.message,
+        details: error.stack,
+        timestamp: Date.now(),
+      }],
     };
+  }
 
-    // Listen for unhandled promise rejections
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      event.preventDefault();
-      addError({
-        title: 'Promise Error',
-        message:
-          event.reason?.message || 'An unexpected promise error occurred',
-        details: event.reason?.stack,
-      });
+  componentDidMount() {
+    window.addEventListener('error', this.onGlobalError);
+    window.addEventListener('unhandledrejection', this.onUnhandledRejection);
+
+    // @ts-expect-error - Expose manual error tools
+    window.errorBoundary = {
+      addError: this.addError,
+      removeError: this.removeError,
+      clearAllErrors: this.clearAllErrors,
     };
+  }
 
-    window.addEventListener('error', handleGlobalError);
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+  componentWillUnmount() {
+    window.removeEventListener('error', this.onGlobalError);
+    window.removeEventListener('unhandledrejection', this.onUnhandledRejection);
+  }
 
-    return () => {
-      window.removeEventListener('error', handleGlobalError);
-      window.removeEventListener(
-        'unhandledrejection',
-        handleUnhandledRejection
-      );
-    };
-  }, []);
+  onGlobalError = (event: ErrorEvent) => {
+    event.preventDefault();
+    this.addError({
+      title: 'JS Error',
+      message: event.message,
+      details: event.error?.stack,
+    });
+  };
 
-  // Add a new error to the errors array
-  const addError = ({
-    title,
-    message,
-    details,
-  }: {
+  onUnhandledRejection = (event: PromiseRejectionEvent) => {
+    event.preventDefault();
+    const message =
+      event.reason?.message || 'Unhandled Promise Rejection';
+    const stack = event.reason?.stack;
+    this.addError({ title: 'Promise Error', message, details: stack });
+  };
+
+  addError = ({
+                title,
+                message,
+                details,
+              }: {
     title?: string;
     message: string;
     details?: string;
   }) => {
-    setErrors((prev) => [
-      ...prev,
-      {
-        id: Date.now().toString(),
-        title,
-        message,
-        details,
-        timestamp: Date.now(),
-      },
-    ]);
+    this.setState((prev) => ({
+      errors: [
+        ...prev.errors,
+        {
+          id: Date.now().toString(),
+          title,
+          message,
+          details,
+          timestamp: Date.now(),
+        },
+      ],
+    }));
   };
 
-  // Remove an error from the errors array
-  const removeError = (id: string) => {
-    setErrors((prev) => prev.filter((error) => error.id !== id));
+  removeError = (id: string) => {
+    this.setState((prev) => ({
+      errors: prev.errors.filter((e) => e.id !== id),
+    }));
   };
 
-  // Expose the error handling functions to the window object
-  useEffect(() => {
-    // @ts-expect-error - Adding custom property to window object
-    window.errorBoundary = {
-      addError,
-      removeError,
-      clearAllErrors: () => setErrors([]),
-    };
-  }, []);
+  clearAllErrors = () => {
+    this.setState({ errors: [], hasError: false, error: null });
+  };
 
-  return (
-    <>
-      {/* Error messages container */}
-      {errors.length > 0 && (
-        <div className='fixed top-0 left-0 right-0 z-50 flex flex-col gap-2 p-4'>
-          {errors.map((error) => (
-            <ErrorMessage
-              key={error.id}
-              title={error.title}
-              message={error.message}
-              details={error.details}
-              variant='toast'
-              onDismiss={() => removeError(error.id)}
-            />
-          ))}
-        </div>
-      )}
-      {children}
-    </>
-  );
-};
+  handleRetry = () => {
+    this.clearAllErrors();
+  };
+
+  render() {
+    const { errors, hasError } = this.state;
+    const { children } = this.props;
+
+    return (
+      <>
+        {errors.length > 0 && (
+          <div className='fixed top-0 left-0 right-0 z-50 flex flex-col gap-2 p-4'>
+            {errors.map((error) => (
+              <ErrorMessage
+                key={error.id}
+                title={error.title}
+                message={error.message}
+                details={error.details}
+                variant='toast'
+                onDismiss={() => this.removeError(error.id)}
+              />
+            ))}
+          </div>
+        )}
+        {!hasError && children}
+      </>
+    );
+  }
+}
 
 export default ErrorBoundary;

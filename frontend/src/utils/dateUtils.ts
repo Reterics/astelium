@@ -43,3 +43,26 @@ export const generateTimeSlots = (
 
   return slots;
 };
+
+export const dateFields = [
+  'created_at', 'updated_at',
+  'start_date', 'due_date',
+  'date',
+  'day', 'time',
+  'start_time',
+  'email_verified_at',
+  'invoiceIssueDate', 'invoiceDeliveryDate', 'invoicePaymentDate',
+  'created',
+]
+
+export const parseDateStringsInItem = (item: Record<string, unknown>) => {
+  dateFields.forEach(field => {
+    if (item[field]) {
+      item[field] = new Date(item[field] as string);
+    }
+  });
+  return item;
+};
+
+export const parseDateStrings = (dateStrings: Record<string, unknown>[]) =>
+  dateStrings.map(parseDateStringsInItem);
