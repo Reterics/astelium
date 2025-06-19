@@ -44,25 +44,31 @@ export const generateTimeSlots = (
   return slots;
 };
 
-export const dateFields = [
-  'created_at', 'updated_at',
-  'start_date', 'due_date',
-  'date',
-  'day', 'time',
-  'start_time',
-  'email_verified_at',
-  'invoiceIssueDate', 'invoiceDeliveryDate', 'invoicePaymentDate',
-  'created',
-]
+const isoDateRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?/;
 
-export const parseDateStringsInItem = (item: Record<string, unknown>) => {
-  dateFields.forEach(field => {
-    if (item[field]) {
-      item[field] = new Date(item[field] as string);
+export const isDateLike = (value: unknown): boolean =>
+  typeof value === 'string' && isoDateRegex.test(value);
+
+export const parseDateStringsInItem = (item: Record<string, unknown>, depth = 3) => {
+  if (depth <= 0) return item;
+
+  Object.keys(item).forEach(key => {
+    if (isDateLike(item[key])) {
+      item[key] = new Date(item[key] as string);
+    } else if (Array.isArray(item[key]) && depth) {
+      item[key].forEach(i => {
+        if (i && typeof i === 'object') {
+          parseDateStringsInItem(i as Record<string, unknown>, depth - 1);
+        }
+      });
+    } else if (item[key] && typeof item[key] === 'object') {
+      parseDateStringsInItem(item[key] as Record<string, unknown>, depth - 1);
     }
-  });
+  })
   return item;
 };
 
-export const parseDateStrings = (dateStrings: Record<string, unknown>[]) =>
-  dateStrings.map(parseDateStringsInItem);
+export const parseDateStrings = (items: Record<string, unknown>[]) => {
+  items.forEach(parseDateStringsInItem);
+  return items;
+};

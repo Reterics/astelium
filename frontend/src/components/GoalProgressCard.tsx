@@ -1,68 +1,57 @@
-import React, { useEffect, useState } from 'react';
-import { useApi } from '../hooks/useApi.ts';
+import React from 'react';
+import {Transaction} from '../Pages/Admin/Transactions.tsx';
 
-interface Goal {
+export type TransactionCategoryPivot = {
+  goal_id: number;
+  transaction_category_id: number;
+};
+
+export interface TransactionCategory {
+  id: number;
+  name: string;
+  icon?: string;
+  color?: string;
+  account_id: number;
+  created_at: Date;
+  updated_at: Date;
+  pivot?: TransactionCategoryPivot
+}
+
+export interface Goal {
   id: number;
   title: string;
   target_amount: number;
-  start_date: string;
-  due_date: string;
+  start_date: Date;
+  due_date: Date;
   status: 'active' | 'paused' | 'completed';
-  transaction_categories: any[];
+  transaction_categories: TransactionCategory[];
 }
 
 interface GoalProgressCardProps {
-  goalId: number;
+  goal: Goal;
+  transactions: Transaction[];
   showDetails?: boolean;
 }
 
-const GoalProgressCard: React.FC<GoalProgressCardProps> = ({ goalId, showDetails = true }) => {
-  const { data: goals, isLoading: goalsLoading } = useApi('goals');
-  const { data: transactions, isLoading: transactionsLoading } = useApi('transactions');
-  const [goal, setGoal] = useState<Goal | null>(null);
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [progressPercentage, setProgressPercentage] = useState(0);
-console.error(goalsLoading, goals)
-  useEffect(() => {
-    if (!goalsLoading && goals && goals.length > 0) {
-      const foundGoal = goals.find((g: Goal) => g.id === goalId);
-      if (foundGoal) {
-        setGoal(foundGoal);
-      }
+const GoalProgressCard: React.FC<GoalProgressCardProps> = ({ goal, transactions, showDetails = true }) => {
+  const categoryIds = goal.transaction_categories.map((cat) => cat.id);
+
+  // Filter transactions that belong to these categories
+  const relevantTransactions = transactions.filter((transaction: any) => {
+    if (!transaction.categories || !transaction.categories.length) return false;
+
+    return transaction.categories.some((cat: any) => categoryIds.includes(cat.id));
+  });
+
+  // Calculate total amount (only count income transactions)
+  const totalAmount = relevantTransactions.reduce((sum: number, transaction: any) => {
+    if (transaction.type === 'income') {
+      return sum + parseFloat(transaction.amount);
     }
-  }, [goalId, goals, goalsLoading]);
+    return sum;
+  }, 0);
 
-  useEffect(() => {
-    if (goal && !transactionsLoading && transactions) {
-      // Get category IDs from the goal
-      const categoryIds = goal.transaction_categories.map((cat) => cat.id);
-
-      // Filter transactions that belong to these categories
-      const relevantTransactions = transactions.filter((transaction: any) => {
-        if (!transaction.categories || !transaction.categories.length) return false;
-
-        return transaction.categories.some((cat: any) => categoryIds.includes(cat.id));
-      });
-
-      // Calculate total amount (only count income transactions)
-      const total = relevantTransactions.reduce((sum: number, transaction: any) => {
-        if (transaction.type === 'income') {
-          return sum + parseFloat(transaction.amount);
-        }
-        return sum;
-      }, 0);
-
-      setTotalAmount(total);
-
-      // Calculate progress percentage
-      const percentage = Math.min(100, Math.round((total / goal.target_amount) * 100));
-      setProgressPercentage(percentage);
-    }
-  }, [goal, transactions, transactionsLoading]);
-
-  if (goalsLoading || !goal) {
-    return <div className="p-4 bg-white shadow rounded-lg">Loading goal data...</div>;
-  }
+  const progressPercentage = Math.min(100, Math.round((totalAmount / goal.target_amount) * 100));
 
   // Calculate days remaining
   const today = new Date();

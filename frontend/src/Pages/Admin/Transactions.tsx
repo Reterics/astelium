@@ -1,6 +1,17 @@
 import CrudManager from '../../components/CrudManager';
 import {useApi} from '../../hooks/useApi.ts';
 
+export interface Transaction {
+  id: number;
+  type: 'income' | 'expense' | 'transfer';
+  amount: number;
+  date: string;
+  description: string;
+  related_project_id: number;
+  related_client_id: number;
+  categories: number[];
+}
+
 const Transactions = () => {
   const {data: projectsRaw, isLoading: projectsAreLoading} = useApi('projects');
   const {data: clientsRaw, isLoading: clientsAreLoading} = useApi('clients');
@@ -9,7 +20,7 @@ const Transactions = () => {
   if (projectsAreLoading || clientsAreLoading || categoriesAreLoading) return <p>Loading...</p>;
 
   const projects = projectsRaw.map((d) => ({
-    value: d.id,
+    value: d.id.toString(),
     label: d.name,
   }));
 

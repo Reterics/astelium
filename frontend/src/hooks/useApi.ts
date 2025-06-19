@@ -18,7 +18,9 @@ export class UseApiError extends Error {
   }
 }
 
-export const useApi = (endpoint: string, options?: UseApiProps) => {
+type UseApiReturnValueType = string|number|boolean;
+
+export const useApi = <T = Record<string, UseApiReturnValueType>>(endpoint: string, options?: UseApiProps) => {
   const queryClient = useQueryClient();
 
   const fetchData = async ({pageParam = 1}) => {
@@ -78,9 +80,9 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
     });
 
   const createMutation = useMutation({
-    mutationFn: async (newData: Record<string, any>) => {
+    mutationFn: async (newData: T) => {
       // Check if any field contains a File object
-      const hasFileUpload = Object.values(newData).some(
+      const hasFileUpload = Object.values(newData as Record<string, unknown>).some(
         (value) => value instanceof File
       );
 
@@ -89,9 +91,9 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       if (hasFileUpload) {
         formData = new FormData();
 
-        Object.entries(newData).forEach(([key, value]) => {
+        Object.entries(newData as Record<string, unknown>).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
-            (formData as FormData).append(key, value);
+            (formData as FormData).append(key, value instanceof File ? value : String(value));
           }
         });
       } else {
@@ -119,9 +121,9 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (props: Record<string, any> & {id: number}) => {
+    mutationFn: async (props: T & {id: number}) => {
       // Check if any field contains a File object
-      const hasFileUpload = Object.values(props).some(
+      const hasFileUpload = Object.values(props as Record<string, unknown>).some(
         (value) => value instanceof File
       );
 
@@ -130,9 +132,9 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
       if (hasFileUpload) {
         formData = new FormData();
 
-        Object.entries(props).forEach(([key, value]) => {
+        Object.entries(props as Record<string, unknown>).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
-            (formData as FormData).append(key, value);
+            (formData as FormData).append(key, value instanceof File ? value : String(value));
           }
         });
       } else {
@@ -172,10 +174,7 @@ export const useApi = (endpoint: string, options?: UseApiProps) => {
 
   return {
     data:
-      (data?.pages.flatMap((page) => page.data ?? page) as Record<
-        string,
-        any
-      >[]) || [],
+      (data?.pages.flatMap((page) => page.data ?? page) as T[]) || [],
     error,
     isLoading,
     createMutation,
