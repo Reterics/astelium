@@ -112,10 +112,11 @@ const Container: React.FC<ContainerProps> = ({children, menu: propMenu}) => {
 
   return (
     <div className='flex h-screen overflow-hidden bg-neutral-100 text-zinc-700'>
-      <Sidebar menu={currentMenu} collapsed={sidebarCollapsed} />
+      <Sidebar menu={currentMenu} collapsed={sidebarCollapsed} toggleCollapsed={() => setSidebarCollapsed(!sidebarCollapsed)} />
       <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto relative'>
         <Header
           selectedMenu={selectedMenu}
+          collapsed={sidebarCollapsed}
           toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
         ></Header>
 

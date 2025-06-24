@@ -14,6 +14,7 @@ import {useAuth} from '../hooks/useAuth.ts';
 
 interface HeaderProps {
   selectedMenu?: MenuItem;
+  collapsed?: boolean;
   toggleSidebar: () => void;
 }
 
@@ -25,7 +26,7 @@ interface Notification {
   read: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({selectedMenu, toggleSidebar}) => {
+const Header: React.FC<HeaderProps> = ({selectedMenu, collapsed, toggleSidebar}) => {
   const {user} = useAuth();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotificationsDropdown, setShowNotificationsDropdown] =
@@ -109,7 +110,8 @@ const Header: React.FC<HeaderProps> = ({selectedMenu, toggleSidebar}) => {
       <div className='flex items-center gap-3 w-1/3'>
         <button
           onClick={toggleSidebar}
-          className='p-2 bg-transparent border-none rounded-md hover:bg-zinc-100 focus:bg-zinc-100 focus:outline-none transition-colors duration-150'
+          className={'p-2 bg-transparent border-none rounded-md hover:bg-zinc-100 focus:bg-zinc-100 focus:outline-none transition-colors duration-150'
+            + (!collapsed ? ' hidden' : '')}
           tabIndex={0}
           aria-label='Toggle sidebar'
         >
@@ -201,7 +203,7 @@ const Header: React.FC<HeaderProps> = ({selectedMenu, toggleSidebar}) => {
             tabIndex={0}
             aria-label='User profile'
           >
-            <UserAvatar name={user?.name} image={user?.image} />
+            <UserAvatar name={user?.name || ''} image={user?.image} />
             <span className='font-medium text-zinc-800 text-sm hidden sm:inline'>
               {user?.name}
             </span>
@@ -211,7 +213,7 @@ const Header: React.FC<HeaderProps> = ({selectedMenu, toggleSidebar}) => {
             <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-zinc-200'>
               <div className='p-3 border-b border-zinc-200'>
                 <div className='flex items-center gap-2'>
-                  <UserAvatar name={user?.name} image={user?.image} />
+                  <UserAvatar name={user?.name || ''} image={user?.image} />
                   <div>
                     <h3 className='text-sm font-semibold text-zinc-800'>
                       {user?.name}

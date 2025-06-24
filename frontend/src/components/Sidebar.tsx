@@ -94,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`thin-scrollbar h-screen bg-zinc-900 text-zinc-100 border-r border-zinc-800 flex flex-col transition-all duration-200 ease-in-out ${
+      className={`thin-scrollbar h-screen bg-zinc-900 text-zinc-100 border-r border-zinc-800 flex flex-col ease-in-out ${
         collapsed ? 'w-16' : 'w-64'
       }`}
       style={{
@@ -103,7 +103,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         letterSpacing: 0,
       }}
     >
-      {/* Sidebar header with logo and collapse toggle */}
       <div className='flex items-center justify-between p-4 border-b border-zinc-800'>
         <div
           className={`flex items-center ${collapsed ? 'justify-center w-full' : ''}`}
@@ -127,17 +126,15 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      <nav className='flex-1 py-4 overflow-y-auto'>
+      <nav className={'flex-1 py-4 overflow-y-auto' + (collapsed ? ' overflow-x-hidden' : '')}>
         {sortedCategories.map((category, categoryIndex) => (
           <div key={categoryIndex} className='mb-4'>
-            {/* Category header (only show when not collapsed) */}
             {!collapsed && (
               <div className='px-4 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider'>
                 {category}
               </div>
             )}
 
-            {/* Menu items in this category */}
             {categorizedMenu[category].map((item, index) => {
               const globalIndex = menu.findIndex((m) => m.label === item.label);
               const active = isActive(item);
@@ -149,8 +146,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                       to={item.path}
                       className={`flex items-center justify-start gap-3 px-4 py-2.5 w-full
                         hover:bg-zinc-800 active:bg-zinc-700
-                        focus:outline-none focus:bg-zinc-800
-                        transition-all duration-150 relative
+                        focus:outline-none focus:bg-zinc-800 mx-auto
+                        relative group
                         ${active ? 'bg-zinc-800 text-white' : 'text-zinc-300'}`}
                       tabIndex={0}
                     >
@@ -167,7 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       </div>
 
                       <span
-                        className={`transition-all duration-200 truncate font-medium text-sm ${
+                        className={`truncate font-medium text-sm ${
                           collapsed
                             ? 'opacity-0 w-0 absolute'
                             : 'opacity-100 w-auto'
@@ -176,7 +173,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {item.label}
                       </span>
 
-                      {/* Tooltip for collapsed mode */}
                       {collapsed && (
                         <div className='absolute left-full ml-2 px-2 py-1 bg-zinc-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity duration-150'>
                           {item.label}
@@ -187,7 +183,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <button
                       className={`flex items-center justify-between gap-3 px-4 py-2.5 w-full bg-transparent border-none outline-none
                         hover:bg-zinc-800 active:bg-zinc-700 focus:bg-zinc-800
-                        transition-all duration-150 relative
+                        relative group mx-auto
                         ${active ? 'bg-zinc-800 text-white' : 'text-zinc-300'}`}
                       onClick={() => item.submenu && toggleSubmenu(globalIndex)}
                       tabIndex={0}
@@ -197,7 +193,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         <div className='absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r'></div>
                       )}
 
-                      <div className='flex items-center gap-3'>
+                      <div className={'flex items-center gap-3' + (collapsed ? ' mx-auto' : '')}>
                         <div className={`${collapsed ? 'mx-auto' : ''}`}>
                           {item.icon && (
                             <item.icon
@@ -207,7 +203,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </div>
 
                         <span
-                          className={`truncate font-medium text-sm transition-all duration-200 ${
+                          className={`truncate font-medium text-sm ${
                             collapsed
                               ? 'opacity-0 w-0 absolute'
                               : 'opacity-100 w-auto'
@@ -226,10 +222,15 @@ const Sidebar: React.FC<SidebarProps> = ({
                           )}
                         </div>
                       )}
+
+                      {collapsed && (
+                        <div className='absolute left-full ml-2 px-2 py-1 bg-zinc-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50'>
+                          {item.label}
+                        </div>
+                      )}
                     </button>
                   )}
 
-                  {/* Submenu items */}
                   {item.submenu && openSubmenus[globalIndex] && !collapsed && (
                     <div className='ml-7 pl-4 border-l border-zinc-700 bg-zinc-900/50 rounded-sm my-1'>
                       {item.submenu.map((sub, subIndex) => {
@@ -266,21 +267,31 @@ const Sidebar: React.FC<SidebarProps> = ({
         ))}
       </nav>
 
-      {/* Sidebar footer */}
       <div className='mt-auto border-t border-zinc-800 pt-2 pb-4'>
-        {!collapsed && (
+        {!collapsed ? (
           <div className='px-4 py-2 mb-2'>
-            <div className='flex items-center gap-3 p-2 bg-zinc-800/50 rounded-md'>
-              <FiSettings className='w-5 h-5 text-zinc-400' />
-              <div className='flex-1'>
-                <div className='text-sm font-medium text-zinc-300'>
-                  Settings
-                </div>
-                <div className='text-xs text-zinc-500'>
-                  Configure your workspace
+            <Link to='/admin/settings' className='block hover:bg-zinc-800/70 rounded-md transition-colors'>
+              <div className='flex items-center gap-3 p-2 bg-zinc-800/50 rounded-md'>
+                <FiSettings className='w-5 h-5 text-zinc-400' />
+                <div className='flex-1'>
+                  <div className='text-sm font-medium text-zinc-300'>
+                    Settings
+                  </div>
+                  <div className='text-xs text-zinc-500'>
+                    Configure your workspace
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
+          </div>
+        ) : (
+          <div className='px-2 py-2 mb-2 flex justify-center'>
+            <Link to='/admin/settings' className='p-2 rounded-md hover:bg-zinc-800 group relative'>
+              <FiSettings className='w-5 h-5 text-zinc-400' />
+              <div className='absolute left-full ml-2 px-2 py-1 bg-zinc-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50'>
+                Settings
+              </div>
+            </Link>
           </div>
         )}
 
@@ -289,24 +300,18 @@ const Sidebar: React.FC<SidebarProps> = ({
           className={`flex items-center ${collapsed ? 'justify-center' : 'justify-start gap-3'}
             px-4 py-2 mx-2 text-zinc-400 hover:text-white hover:bg-zinc-800
             font-medium border-none bg-transparent outline-none rounded-md
-            transition-colors duration-150 w-auto`}
+            transition-colors duration-150 w-auto relative group`}
           tabIndex={0}
         >
           <FiLogOut className='w-5 h-5' />
           {!collapsed && <span className='truncate text-sm'>Logout</span>}
+          {collapsed && (
+            <div className='absolute left-full ml-2 px-2 py-1 bg-zinc-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50'>
+              Logout
+            </div>
+          )}
         </button>
       </div>
-
-      {/* Expand button when collapsed */}
-      {collapsed && (
-        <button
-          onClick={toggleCollapsed}
-          className='mx-auto mb-4 p-2 rounded-md hover:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition-colors'
-          aria-label='Expand sidebar'
-        >
-          <FiChevronRight className='w-5 h-5 text-zinc-400' />
-        </button>
-      )}
     </aside>
   );
 };
