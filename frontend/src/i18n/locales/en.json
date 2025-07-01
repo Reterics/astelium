@@ -79,7 +79,21 @@
     "line_chart_title": "Transaction Overview",
     "task_list_title": "Your Tasks",
     "view": "View",
-    "no_open_tasks_available": "No open or in-progress tasks assigned to you."
+    "no_open_tasks_available": "No open or in-progress tasks assigned to you.",
+    "tasks_by_status": "Tasks by Status",
+    "financial_overview": "Financial Overview",
+    "income": "Income",
+    "outgoing": "Outgoing",
+    "balance": "Balance",
+    "active_goals": "Active Goals",
+    "no_active_goals": "No Active Goals",
+    "task_status": "Task Status",
+    "task_count": "Task Count",
+    "time_period": "Time Period",
+    "amount": "Amount",
+    "due": "due",
+    "active": "active",
+    "target": "target"
   },
   "task": {
     "low": "Low",

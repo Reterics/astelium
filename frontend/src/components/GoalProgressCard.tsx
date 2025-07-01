@@ -67,7 +67,7 @@ const GoalProgressCard: React.FC<GoalProgressCardProps> = ({ goal, transactions,
   } else if (daysRemaining < 60 && progressPercentage < 75) {
     progressColor = 'bg-yellow-500';
   }
-console.error(transactions, goal, progressPercentage, totalAmount, )
+
   return (
     <div className="bg-white shadow rounded-lg overflow-hidden">
       <div className="p-4 border-b border-gray-200">
